@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atividade Dinâmica de TIC - SENAI</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #0056b3;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .header h1 { color: #0056b3; margin: 0; font-size: 26px; }
+        .header h2 { color: #555; margin: 5px 0; font-size: 16px; font-weight: normal; }
+        .header p { color: #666; margin: 5px 0 0 0; font-size: 14px; }
+        .student-info {
+            background-color: #e8f0fe;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border: 1px solid #b1d1ff;
+        }
+        .student-info label {
+            font-weight: bold;
+            color: #0056b3;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .student-info input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #a0c4ff;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .section-title {
+            background-color: #0056b3;
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 18px;
+            margin-top: 30px;
+        }
+        .question {
+            background-color: #f9fbfd;
+            border-left: 5px solid #00a8cc;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .question p { font-weight: bold; margin-top: 0; }
+        .options-group { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+        .radio-label { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 5px; border-radius: 4px; font-weight: normal;}
+        .radio-label:hover { background-color: #edf2f7; }
+        select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            font-size: 14px;
+            width: 100%;
+            max-width: 280px;
+        }
+        .flex-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        @media(max-width: 600px) { .flex-table { grid-template-columns: 1fr; } }
+        .item-box {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .btn-enviar {
+            display: block;
+            width: 100%;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 25px;
+            transition: background 0.3s;
+        }
+        .btn-enviar:hover { background-color: #004085; }
+        .feedback {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+            border: 2px dashed #28a745;
+            background-color: #f4fff6;
+        }
+        .whatsapp-box {
+            background-color: #e3fcef;
+            border: 1px solid #a3e9be;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .btn-copiar {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-copiar:hover { background-color: #218838; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Atividade Interativa: Fundamentos de TIC</h1>
+        <h2><strong>Instrutor:</strong> Elielson Mourão</h2>
+        <p><strong>Instituição:</strong> SENAI - Serviço Nacional de Aprendizagem Industrial</p>
+        <p><strong>Curso:</strong> Operador de Computador | <strong>Aula de:</strong> 13/06/2026</p>
+    </div>
+
+    <div class="student-info">
+        <label for="studentName">DIGITE SEU NOME COMPLETO PARA INICIAR:</label>
+        <input type="text" id="studentName" placeholder="Ex: João Silva de Souza" required>
+    </div>
+
+    <form id="quizForm">
+
+        <div class="section-title">Parte 1 – Fundamentos de Informática</div>
+
+        <div class="question">
+            <p>1. [Escolha a Função] O Sistema Operacional gerencia vários recursos. Associe a ação à sua respectiva função principal:</p>
+            <div class="flex-table">
+                <div class="item-box">
+                    <span>Decide quais programas rodam e por quanto tempo.</span>
+                    <select id="q1_1" required>
+                        <option value="">-- Selecione --</option>
+                        <option value="proc">Gerenciamento de processos</option>
+                        <option value="mem">Gerenciamento de memória</option>
+                        <option value="perif">Gerenciamento de dispositivos</option>
+                    </select>
+                </div>
+                <div class="item-box">
+                    <span>Controla a RAM, evitando conflitos de programas.</span>
+                    <select id="q1_2" required>
+                        <option value="">-- Selecione --</option>
+                        <option value="proc">Gerenciamento de processos</option>
+                        <option value="mem">Gerenciamento de memória</option>
+                        <option value="perif">Gerenciamento de dispositivos</option>
+                    </select>
+                </div>
+                <div class="item-box">
+                    <span>Permite que impressoras, mouses e teclados funcionem.</span>
+                    <select id="q1_3" required>
+                        <option value="">-- Selecione --</option>
+                        <option value="proc">Gerenciamento de processos</option>
+                        <option value="mem">Gerenciamento de memória</option>
+                        <option value="perif">Gerenciamento de dispositivos</option>
+                    </select>
+                </div>
+                <div class="item-box">
+                    <span>Organiza os dados salvos em pastas e discos.</span>
+                    <select id="q1_4" required>
+                        <option value="">-- Selecione --</option>
+                        <option value="arq">Gerenciamento de arquivos</option>
+                        <option value="int">Interface com o usuário</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>2. [Classificação de Periféricos] Identifique o tipo correto de cada dispositivo externo ou interno:</p>
+            <div class="flex-table">
+                <div class="item-box"><span>Teclado e Mouse</span>
+                    <select id="q2_1" required>
+                        <option value="">-- Tipo --</option>
+                        <option value="E">Entrada</option>
+                        <option value="S">Saída</option>
+                        <option value="M">Misto</option>
+                    </select>
+                </div>
+                <div class="item-box"><span>Monitor e Caixas de Som</span>
+                    <select id="q2_2" required>
+                        <option value="">-- Tipo --</option>
+                        <option value="E">Entrada</option>
+                        <option value="S">Saída</option>
+                        <option value="M">Misto</option>
+                    </select>
+                </div>
+                <div class="item-box"><span>Monitor Touchscreen e Headset</span>
+                    <select id="q2_3" required>
+                        <option value="">-- Tipo --</option>
+                        <option value="E">Entrada</option>
+                        <option value="S">Saída</option>
+                        <option value="M">Misto</option>
+                    </select>
+                </div>
+                <div class="item-box"><span>Scanner e Microfone</span>
+                    <select id="q2_4" required>
+                        <option value="">-- Tipo --</option>
+                        <option value="E">Entrada</option>
+                        <option value="S">Saída</option>
+                        <option value="M">Misto</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>3. [Montando o Caminho Absoluto] Baseado na estrutura hierárquica do conteúdo, qual é o endereço completo (caminho absoluto) correto para chegar até o relatório do João?</p>
+            <div class="options-group">
+                <label class="radio-label"><input type="radio" name="q3" value="A" required> C:\Usuários\João\Imagens\relatorio.docx</label>
+                <label class="radio-label"><input type="radio" name="q3" value="B"> C:\João\Documentos\relatorio.docx</label>
+                <label class="radio-label"><input type="radio" name="q3" value="C"> C:\Usuários\João\Documentos\relatorio.docx</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>4. [Filtro de Pesquisa Avançada] Se você precisa localizar na barra de pesquisa do Windows exclusivamente todos os arquivos de imagem do formato PNG, qual comando deve utilizar?</p>
+            <div class="options-group">
+                <label class="radio-label"><input type="radio" name="q4" value="A" required> png*</label>
+                <label class="radio-label"><input type="radio" name="q4" value="B"> *.png</label>
+                <label class="radio-label"><input type="radio" name="q4" value="C"> pesquisar.png</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>5. [Tipo de Compactação] Selecione o tipo de compactação correto de acordo com a regra de integridade dos dados:</p>
+            <div class="flex-table">
+                <div class="item-box">
+                    <span>Usada em mídias (MP3, JPEG) onde o arquivo perde qualidade.</span>
+                    <select id="q5_1" required>
+                        <option value="">-- Tipo --</option>
+                        <option value="lossy">Compactação com perda</option>
+                        <option value="lossless">Compactação sem perda (lossless)</option>
+                    </select>
+                </div>
+                <div class="item-box">
+                    <span>Usada para documentos e programas onde se mantém os dados originais.</span>
+                    <select id="q5_2" required>
+                        <option value="">-- Tipo --</option>
+                        <option value="lossy">Compactação com perda</option>
+                        <option value="lossless">Compactação sem perda (lossless)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">Parte 2 – Internet e Comunicação Digital</div>
+
+        <div class="question">
+            <p>6. [Operadores do Google] Uma pesquisa avançada foi estruturada assim: <br><span style="color:#c0392b;">"mudanças climáticas" site:gov.br filetype:pdf</span><br> O que esse comando vai encontrar exatamente?</p>
+            <div class="options-group">
+                <label class="radio-label"><input type="radio" name="q6" value="A" required> Qualquer site que fale sobre mudanças climáticas em formato de texto comum.</label>
+                <label class="radio-label"><input type="radio" name="q6" value="B"> Apenas arquivos PDF oficiais do governo brasileiro que contenham a frase literal exata.</label>
+                <label class="radio-label"><input type="radio" name="q6" value="C"> Sites variados excluindo termos do governo.</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>7. [Protocolos de Correio Eletrônico] Associe cada protocolo de e-mail à sua respectiva regra de funcionamento técnico:</p>
+            <div class="flex-table">
+                <div class="item-box">
+                    <span>Responsável estritamente pelo ENVIO de mensagens digitais.</span>
+                    <select id="q7_1" required>
+                        <option value="">-- Protocolo --</option>
+                        <option value="smtp">SMTP</option>
+                        <option value="pop3">POP3 / IMAP</option>
+                    </select>
+                </div>
+                <div class="item-box">
+                    <span>IMAP mantém no servidor; POP3 baixa para o dispositivo físico.</span>
+                    <select id="q7_1" required>
+                        <option value="">-- Protocolo --</option>
+                        <option value="smtp">SMTP</option>
+                        <option value="pop3">POP3 / IMAP</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>8. [Uso Ético e Direitos Autorais] Sobre a Lei de Direitos Autorais (Lei 9.610/98), qual das seguintes condutas é considerada crime?</p>
+            <div class="options-group">
+                <label class="radio-label"><input type="radio" name="q8" value="A" required> Citar pequenos trechos para fins educativos com o devido crédito.</label>
+                <label class="radio-label"><input type="radio" name="q8" value="B"> Optar por conteúdos com licenças livres como Creative Commons.</label>
+                <label class="radio-label"><input type="radio" name="q8" value="C"> Praticar o Plágio (copiar uma obra original sem dar o crédito ao autor).</label>
+            </div>
+        </div>
+
+        <button type="button" class="btn-enviar" onclick="processarEntrega()">Finalizar e Gerar Código de Entrega</button>
+    </form>
+
+    <div id="resultado" class="feedback">
+        <h3 style="color: #28a745; margin-top:0;">✔ Atividade Concluída, Operador!</h3>
+        <p>Sua atividade foi computada com sucesso. Copie o texto do quadro abaixo e envie no grupo de WhatsApp da turma para comprovar sua entrega.</p>
+        
+        <div id="txtWhatsApp" class="whatsapp-box"></div>
+        
+        <button class="btn-copiar" onclick="copiarMensagem()">
+            📋 Copiar Mensagem de Entrega
+        </button>
+    </div>
+</div>
+
+<script>
+    function processarEntrega() {
+        const nome = document.getElementById('studentName').value.trim();
+        if (!nome) {
+            alert('Atenção: Você precisa digitar seu Nome Completo no início da página antes de gerar o código!');
+            document.getElementById('studentName').focus();
+            return;
+        }
+
+        const form = document.getElementById('quizForm');
+        if (!form.checkValidity()) {
+            alert('Por favor, certifique-se de que escolheu opções para todas as perguntas da atividade.');
+            return;
+        }
+
+        // Respostas corretas para conferência interna do hash
+        let acertos = 0;
+        if(document.getElementById('q1_1').value === 'proc') acertos++;
+        if(document.getElementById('q1_2').value === 'mem') acertos++;
+        if(document.getElementById('q1_3').value === 'perif') acertos++;
+        if(document.getElementById('q1_4').value === 'arq') acertos++;
+        if(document.getElementById('q2_1').value === 'E') acertos++;
+        if(document.getElementById('q2_2').value === 'S') acertos++;
+        if(document.getElementById('q2_3').value === 'M') acertos++;
+        if(document.getElementById('q2_4').value === 'E') acertos++;
+        
+        const q3 = document.querySelector('input[name="q3"]:checked').value;
+        if(q3 === 'C') acertos++;
+        const q4 = document.querySelector('input[name="q4"]:checked').value;
+        if(q4 === 'B') acertos++;
+        
+        if(document.getElementById('q5_1').value === 'lossy') acertos++;
+        if(document.getElementById('q5_2').value === 'lossless') acertos++;
+        
+        const q6 = document.querySelector('input[name="q6"]:checked').value;
+        if(q6 === 'B') acertos++;
+        
+        if(document.getElementById('q7_1').value === 'smtp') acertos++;
+        const q8 = document.querySelector('input[name="q8"]:checked').value;
+        if(q8 === 'C') acertos++;
+
+        // Cálculo da pontuação simulada baseada em pesos simples dos inputs
+        const pontuacaoFinal = Math.round((acertos / 14) * 100);
+
+        // Geração do token criptográfico com base nos dados reais do aluno
+        const sanitizarNome = nome.toUpperCase().replace(/\s+/g, '');
+        const tokenValidador = sanitizarNome + "-" + pontuacaoFinal + "-" + 
+                               document.getElementById('q2_1').value + "-" + 
+                               document.getElementById('q2_2').value + "-" + 
+                               document.getElementById('q2_3').value + "-" + 
+                               document.getElementById('q2_4').value + "-" + 
+                               q3 + "-" + q4 + "-" + q6 + "-" + q8;
+
+        // Montagem do texto pronto para o WhatsApp
+        const msgCompleta = `💻 *ENTREGA DE ATIVIDADE - TIC*\n` +
+                            `👤 *Aluno:* ${nome}\n` +
+                            `📅 *Data da Aula:* 13/06/2026\n` +
+                            `👨‍🏫 *Instrutor:* Elielson Mourão (SENAI)\n` +
+                            `🔑 *Código Verificador:* \`${tokenValidador}\``;
+
+        document.getElementById('txtWhatsApp').innerText = msgCompleta;
+        
+        const resultadoDiv = document.getElementById('resultado');
+        resultadoDiv.style.display = 'block';
+        window.scrollTo({ top: resultadoDiv.offsetTop, behavior: 'smooth' });
+    }
+
+    function copiarMensagem() {
+        const texto = document.getElementById('txtWhatsApp').innerText;
+        navigator.clipboard.writeText(texto).then(() => {
+            alert('Mensagem copiada para a área de transferência! Agora vá ao grupo do WhatsApp e cole (Ctrl + V).');
+        }).catch(err => {
+            alert('Erro ao copiar automaticamente. Selecione o texto e copie manualmente.');
+        });
+    }
+</script>
+
+</body>
+</html>
