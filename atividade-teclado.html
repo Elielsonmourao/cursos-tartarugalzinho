@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keyboard Odyssey | Dell Vostro 3400</title>
+    <style>
+        :root {
+            --bg-color: #0d0e15;
+            --panel-bg: rgba(20, 24, 38, 0.6);
+            --neon-cyan: #00f0ff;
+            --neon-magenta: #ff007f;
+            --neon-green: #39ff14;
+            --text-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        /* Efeito Glassmorphism no Container */
+        .game-container {
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 8px 32px 0 rgba(0, 240, 255, 0.1);
+            position: relative;
+        }
+
+        .game-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+            border-radius: 16px 16px 0 0;
+        }
+
+        h1 {
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--neon-cyan);
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: #718096;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        .mission-box {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px dashed var(--neon-cyan);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+        }
+
+        .feedback {
+            font-size: 1.1rem;
+            font-weight: bold;
+            height: 30px;
+            margin-bottom: 20px;
+        }
+
+        .feedback.success {
+            color: var(--neon-green);
+            text-shadow: 0 0 8px rgba(57, 255, 20, 0.4);
+        }
+
+        .feedback.error {
+            color: var(--neon-magenta);
+            text-shadow: 0 0 8px rgba(255, 0, 127, 0.4);
+        }
+
+        /* Representação visual da tecla pressionada */
+        .key-display {
+            font-size: 3rem;
+            color: var(--neon-magenta);
+            text-shadow: 0 0 15px rgba(255, 0, 127, 0.6);
+            height: 80px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+        }
+
+        .progress-bar-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            height: 12px;
+            width: 100%;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-green));
+            height: 100%;
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 0.85rem;
+            color: #a0aec0;
+        }
+
+        /* Tela Final */
+        .hidden {
+            display: none !important;
+        }
+
+        .btn-restart {
+            background: transparent;
+            border: 2px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            padding: 10px 25px;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .btn-restart:hover {
+            background: var(--neon-cyan);
+            color: var(--bg-color);
+            box-shadow: 0 0 15px var(--neon-cyan);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container" id="game-screen">
+        <h1>Keyboard Odyssey</h1>
+        <p class="subtitle">Dell Vostro 3400 Training Mode</p>
+
+        <div class="mission-box" id="mission-text">
+            Carregando primeira missão...
+        </div>
+
+        <div class="key-display" id="key-pressed">-</div>
+        <div class="feedback" id="feedback-text"></div>
+
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progress"></div>
+        </div>
+
+        <div class="score-board">
+            <span>Missão: <strong id="current-step">1</strong>/10</span>
+            <span>Pontos de Sincronia: <strong id="score">0</strong></span>
+        </div>
+    </div>
+
+    <div class="game-container hidden" id="victory-screen">
+        <h1 style="color: var(--neon-green); text-shadow: 0 0 15px rgba(57,255,20,0.6);">Hardware Sincronizado!</h1>
+        <p class="subtitle" style="margin-top: 10px;">Os alunos dominaram o layout do Dell Vostro 3400</p>
+        
+        <div class="mission-box" style="border-color: var(--neon-green); flex-direction: column; gap: 10px;">
+            <p>🚀 Pronto para o próximo nível!</p>
+            <p style="font-size: 1rem; color: #a0aec0;">O teclado físico e a memória muscular estão prontos para o Curso de Digitação.</p>
+        </div>
+
+        <button class="btn-restart" onclick="resetGame()">Reiniciar Missão</button>
+    </div>
+
+    <script>
+        // Configuração das missões específicas focando no Dell Vostro 3400 (ABNT2)
+        const missions = [
+            { msg: "Pressione a maior tecla do teclado (Barra de Espaço) para iniciar os motores.", key: " " },
+            { msg: "Encontre a tecla ENTER para confirmar e enviar dados ao sistema.", key: "Enter" },
+            { msg: "Para corrigir erros, pressione BACKSPACE (a tecla com uma seta para a esquerda acima do Enter).", key: "Backspace" },
+            { msg: "Ative as letras maiúsculas pressionando a tecla FIXA (ou Caps Lock).", key: "CapsLock" },
+            { msg: "Mantenha pressionada a tecla SHIFT (Seta para cima acima do Ctrl) e digite o número 2 para gerar a '@'. (Apenas o Shift conta aqui!).", key: "Shift" },
+            { msg: "Encontre e pressione a tecla TAB (Duas setas opostas) usada para saltar parágrafos ou campos.", key: "Tab" },
+            { msg: "Pressione a tecla Control (Ctrl) esquerda, essencial para atalhos como Ctrl+C.", key: "Control" },
+            { msg: "No Dell Vostro, para usar interrogações e barras, usamos uma tecla dedicada. Pressione a tecla de Barra ( / ) e Interrogação ( ? ).", key: "/" },
+            { msg: "Pressione a tecla ALT esquerda, usada para alternar menus e comandos alternativos.", key: "Alt" },
+            { msg: "Fim do reconhecimento! Pressione a tecla ESC (Escape) no topo esquerdo para finalizar o escaneamento.", key: "Escape" }
+        ];
+
+        let currentMissionIndex = 0;
+        let score = 0;
+
+        const missionText = document.getElementById('mission-text');
+        const keyPressedDisplay = document.getElementById('key-pressed');
+        const feedbackText = document.getElementById('feedback-text');
+        const progressBar = document.getElementById('progress');
+        const currentStepDisplay = document.getElementById('current-step');
+        const scoreDisplay = document.getElementById('score');
+        
+        const gameScreen = document.getElementById('game-screen');
+        const victoryScreen = document.getElementById('victory-screen');
+
+        function updateMission() {
+            if (currentMissionIndex < missions.length) {
+                missionText.innerText = missions[currentMissionIndex].msg;
+                currentStepDisplay.innerText = currentMissionIndex + 1;
+                progressBar.style.width = `${(currentMissionIndex / missions.length) * 100}%`;
+            } else {
+                // Fim do jogo
+                progressBar.style.width = "100%";
+                gameScreen.classList.add('hidden');
+                victoryScreen.classList.remove('hidden');
+            }
+        }
+
+        // Captura o evento do teclado físico do aluno
+        window.addEventListener('keydown', (event) => {
+            // Previne comportamentos padrões do navegador para teclas como Tab, Alt e Espaço
+            if (["Tab", " ", "Alt", "/"].includes(event.key)) {
+                event.preventDefault();
+            }
+
+            if (currentMissionIndex >= missions.length) return;
+
+            const targetKey = missions[currentMissionIndex].key;
+            let pressedKeyText = event.key;
+
+            // Ajuste visual para exibição do espaço em branco
+            if (pressedKeyText === " ") pressedKeyText = "ESPAÇO";
+
+            keyPressedDisplay.innerText = pressedKeyText.toUpperCase();
+
+            if (event.key === targetKey) {
+                // Acertou
+                feedbackText.innerText = "Sincronia Perfeita! +100 XP";
+                feedbackText.className = "feedback success";
+                score += 100;
+                scoreDisplay.innerText = score;
+                currentMissionIndex++;
+                
+                // Pequeno delay para o aluno ver o feedback positivo antes de mudar a frase
+                setTimeout(() => {
+                    feedbackText.innerText = "";
+                    keyPressedDisplay.innerText = "-";
+                    updateMission();
+                }, 800);
+            } else {
+                // Errou
+                feedbackText.innerText = "Código incorreto. Tente novamente!";
+                feedbackText.className = "feedback error";
+            }
+        });
+
+        function resetGame() {
+            currentMissionIndex = 0;
+            score = 0;
+            scoreDisplay.innerText = score;
+            victoryScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            feedbackText.innerText = "";
+            keyPressedDisplay.innerText = "-";
+            updateMission();
+        }
+
+        // Inicializa o game
+        updateMission();
+    </script>
+</body>
+</html>
