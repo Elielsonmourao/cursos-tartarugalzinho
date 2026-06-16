@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Eco-Challenge Industrial - 20 Fases</title>
+    <!-- Ícones Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --azul: #0056b3;
+            --azul-claro: #e6f0fa;
+            --branco: #ffffff;
+            --laranja: #ff7f00;
+            --vermelho: #d90429;
+            --verde: #2b9348;
+            --text-dark: #1e293b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--azul-claro) 0%, #f8fafc 100%);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            width: 100%;
+            background: var(--branco);
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-bottom: 4px solid var(--azul);
+            z-index: 10;
+        }
+
+        .instructor-badge {
+            display: inline-block;
+            background: linear-gradient(90deg, var(--azul), var(--laranja));
+            color: var(--branco);
+            padding: 0.6rem 1.8rem;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1rem;
+            margin-top: 0.6rem;
+            box-shadow: 0 4px 10px rgba(0, 86, 179, 0.2);
+        }
+
+        main {
+            max-width: 850px;
+            width: 92%;
+            margin: 2rem 0;
+            flex-grow: 1;
+            z-index: 10;
+        }
+
+        .game-card {
+            background: var(--branco);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+            border: 2px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ================= TELA INICIAL ================= */
+        .intro-game-title {
+            font-size: 2.8rem;
+            font-weight: 900;
+            color: var(--azul);
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            line-height: 1.1;
+            margin-bottom: 0.5rem;
+            animation: textPulse 1.5s infinite alternate;
+        }
+        .intro-subtitle {
+            font-size: 1.2rem;
+            color: var(--laranja);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+        }
+        @keyframes textPulse {
+            from { transform: scale(1); text-shadow: 0 0 10px rgba(0,86,179,0.1); }
+            to { transform: scale(1.02); text-shadow: 0 0 20px rgba(0,86,179,0.3); }
+        }
+
+        .rules-board {
+            background: #f8fafc;
+            border: 2px solid var(--azul);
+            border-radius: 14px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+        .rules-title {
+            font-weight: bold;
+            color: var(--azul);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+        .rule-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+        .rule-item i { flex-shrink: 0; margin-top: 2px; }
+
+        .player-input-box { margin-bottom: 2rem; }
+        .player-input-box label {
+            display: block; font-weight: bold; margin-bottom: 0.5rem; color: var(--text-dark); font-size: 1.1rem;
+        }
+        .player-name-field {
+            width: 100%; max-width: 400px; padding: 1rem 1.2rem; font-size: 1.2rem;
+            border: 3px solid #cbd5e1; border-radius: 10px; text-align: center; font-weight: bold; transition: all 0.2s;
+        }
+        .player-name-field:focus { outline: none; border-color: var(--laranja); box-shadow: 0 0 12px rgba(255,127,0,0.3); }
+
+        .animate-pop { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+
+        /* ================= STATUS E MAPA (20 FASES) ================= */
+        .status-container {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #f1f5f9; padding: 0.8rem 1.2rem; border-radius: 10px; margin-bottom: 1.5rem; border: 1px solid #cbd5e1;
+        }
+        .hearts-box { display: flex; gap: 0.3rem; color: var(--vermelho); }
+
+        .map-grid-20 {
+            display: grid; grid-template-columns: repeat(20, 1fr); gap: 4px; margin-bottom: 2rem; position: relative;
+        }
+        .map-step-20 {
+            height: 24px; background: #cbd5e1; border-radius: 4px; display: flex;
+            align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; color: #64748b; transition: all 0.2s;
+        }
+        .map-step-20.active { background: var(--azul); color: var(--branco); transform: scale(1.1); box-shadow: 0 0 8px rgba(0,86,179,0.4); }
+        .map-step-20.done { background: var(--verde); color: var(--branco); }
+
+        /* Telas de Jogo */
+        .screen { display: none; }
+        .screen.active { display: block; animation: screenSlide 0.3s ease forwards; }
+        @keyframes screenSlide { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .btn {
+            background: var(--azul); color: var(--branco); border: none; padding: 1rem 2.5rem;
+            border-radius: 10px; font-size: 1.1rem; font-weight: bold; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 0.6rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: all 0.2s;
+        }
+        .btn:hover { background: #004085; transform: translateY(-2px); }
+        .btn-orange { background: var(--laranja); }
+        .btn-orange:hover { background: #e06f00; }
+
+        .options-stack { display: flex; flex-direction: column; gap: 0.8rem; margin-top: 1.2rem; }
+        .opt-card {
+            background: #f8fafc; border: 2px solid #e2e8f0; padding: 1.2rem; border-radius: 10px;
+            text-align: left; cursor: pointer; font-size: 1rem; transition: all 0.2s;
+        }
+        .opt-card:hover { border-color: var(--azul); background: #f0f7ff; }
+        .opt-card.correct { background: #d1fae5; border-color: var(--verde); color: #0f5132; pointer-events: none; }
+        .opt-card.wrong { background: #f8d7da; border-color: var(--vermelho); color: #842029; pointer-events: none; }
+
+        .alert-box { padding: 1.2rem; border-radius: 8px; margin-top: 1.5rem; display: none; font-weight: 500; }
+
+        /* Final */
+        .victory-banner {
+            background: linear-gradient(135deg, var(--verde) 0%, var(--azul) 100%);
+            color: var(--branco); padding: 3rem 2rem; border-radius: 20px; text-align: center; margin-bottom: 2rem;
+        }
+        .token-container {
+            background: #fffbeb; border: 3px dashed var(--laranja); padding: 1.5rem; border-radius: 14px; margin: 1.5rem 0; text-align: center;
+        }
+        .token-code {
+            font-family: 'Courier New', monospace; font-size: 1.4rem; font-weight: 900;
+            color: var(--vermelho); letter-spacing: 2px; background: #ffeae6; padding: 0.6rem 1.2rem; border-radius: 8px; display: inline-block; margin-top: 0.6rem;
+        }
+        .party-bg {
+            background-image: radial-gradient(circle at 15% 20%, var(--laranja) 2%, transparent 3%), radial-gradient(circle at 85% 25%, var(--azul) 2%, transparent 3%), radial-gradient(circle at 50% 15%, var(--verde) 3%, transparent 4%);
+            background-size: 100% 100%; animation: backgroundShift 4s linear infinite alternate;
+        }
+        @keyframes backgroundShift { from { background-position: 0 0; } to { background-position: 20px 10px; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h2 style="color: var(--azul);">Plataforma Prática SENAI Amapá</h2>
+        <div class="instructor-badge">Atividade Desenvolvida pelo Instrutor Elielson Mourão</div>
+    </header>
+
+    <main>
+        <!-- Mapa de 20 Passos Dinâmicos -->
+        <div class="map-grid-20" id="map-bar" style="display: none;">
+            <!-- Gerado via JavaScript -->
+        </div>
+
+        <div class="game-card" id="main-card">
+            
+            <!-- Status Panel -->
+            <div class="status-container" id="status-panel" style="display: none;">
+                <div><strong>Auditor:</strong> <span id="display-player-name" style="color: var(--azul); font-weight: bold;">-</span></div>
+                <div><strong>Etapa Operacional:</strong> <span id="lbl-fase">1/20</span></div>
+                <div class="hearts-box" id="hearts-box"></div>
+            </div>
+
+            <!-- TELA 0: INTRO GAME VIBRANTE -->
+            <div id="scr-intro" class="screen active" style="text-align: center;">
+                <div class="animate-pop">
+                    <div class="intro-game-title">SUPER ECO-CHALLENGE</div>
+                    <div class="intro-subtitle">Maratona de Auditoria Industrial - 20 Níveis</div>
+
+                    <div class="player-input-box">
+                        <label for="txt-player-name">⚡ IDENTIFIQUE-SE PARA INICIAR A CERTIFICAÇÃO:</label>
+                        <input type="text" id="txt-player-name" class="player-name-field" placeholder="Digite seu nome completo..." autocomplete="off">
+                    </div>
+
+                    <div class="rules-board">
+                        <div class="rules-title">
+                            <i data-lucide="scroll-text" style="color: var(--laranja);"></i> PROTOCOLO DE EXECUÇÃO DE LONGA DURABILIDADE
+                        </div>
+                        <div class="rule-item">
+                            <i data-lucide="shield-alert" style="color: var(--vermelho);"></i>
+                            <span><strong>Resistência Exigida:</strong> São 20 cenários sequenciais divididos em Legislação, Resíduos, Sustentabilidade e Infraestrutura.</span>
+                        </div>
+                        <div class="rule-item">
+                            <i data-lucide="refresh-cw" style="color: var(--laranja);"></i>
+                            <span><strong>Vidas e Reinício de Fase:</strong> Você inicia com 2 vidas. Erros consomem 1 vida e resetam a pergunta atual para reavaliação imediata.</span>
+                        </div>
+                        <div class="rule-item">
+                            <i data-lucide="skull" style="color: var(--vermelho);"></i>
+                            <span><strong>Game Over Técnico:</strong> Esgotar as vidas desativa suas credenciais, resetando o progresso total de volta ao Nível 1.</span>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-orange" onclick="validateAndStart()">
+                        INICIAR CIRCUITO EXPANDIDO <i data-lucide="terminal"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- CORE ENGINE: TELA DINÂMICA DE QUESTÕES -->
+            <div id="scr-quiz" class="screen">
+                <h3 id="quiz-title" style="color: var(--azul); margin-bottom: 0.5rem;">Título da Fase</h3>
+                <p id="quiz-desc" style="font-size: 1.1rem; line-height: 1.5; margin-bottom: 1rem;">Descrição do cenário...</p>
+                <div class="options-stack" id="quiz-opts"></div>
+                <div id="quiz-feedback" class="alert-box"></div>
+                <button class="btn btn-orange" id="btn-next-quiz" style="display:none; margin-top:1.5rem;" onclick="nextStep()">
+                    Avançar Diretriz <i data-lucide="arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- TELA DE SUCESSO FINAL -->
+            <div id="scr-end" class="screen">
+                <div class="victory-banner">
+                    <i data-lucide="party-popper" size="64" style="margin-bottom: 1rem;"></i>
+                    <h2>MASTER ECO-CERTIFICATION CONCLUÍDA!</h2>
+                    <p style="color: white; margin: 0; font-weight: bold;">Incrível! Você superou com sucesso todos os 20 eixos ambientais da indústria.</p>
+                </div>
+
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <p>Seu código validador personalizado foi gerado contendo os dados de integridade da sua sessão:</p>
+                </div>
+
+                <div class="token-container">
+                    <strong>CHAVE DE CRIPTOGRAFIA DE DESEMPENHO:</strong><br>
+                    <div class="token-code" id="block-token">MOURAO-GEN-CODE</div>
+                </div>
+
+                <div style="text-align: center;">
+                    <button class="btn" onclick="location.reload()"><i data-lucide="rotate-ccw"></i> Reiniciar Maratona</button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // BANCO DE DADOS COMPLETO - 20 FASES DIAGNÓSTICAS
+        const questionsDatabase = [
+            {
+                title: "Fase 1: Conceituação Legal de Meio Ambiente",
+                desc: "Segundo a legislação ambiental brasileira (Lei nº 6.938/81), qual a definição correta de meio ambiente?",
+                options: [
+                    { text: "Apenas as florestas nativas e ecossistemas isolados.", correct: false },
+                    { text: "Conjunto de condições, leis, influências e interações físicas, químicas e biológicas, que permite, abriga e rege a vida.", correct: true },
+                    { text: "Áreas urbanas destinadas exclusivamente ao convívio público.", correct: false }
+                ],
+                explain: "Perfeito! Definição legal exata do Artigo 3º da Política Nacional do Meio Ambiente."
+            },
+            {
+                title: "Fase 2: Classificação de Óleos Usados",
+                desc: "Lubrificantes e solventes industriais usados pertencem a qual classe de resíduos?",
+                options: [
+                    { text: "Classe I - Perigosos (apresentam inflamabilidade ou toxicidade).", correct: true },
+                    { text: "Classe II A - Não inertes.", correct: false },
+                    { text: "Classe II B - Inertes.", correct: false }
+                ],
+                explain: "Correto! Apresentam riscos severos e exigem destinação específica."
+            },
+            {
+                title: "Fase 3: O Tripé Fundamental da Sustentabilidade",
+                desc: "Quais os três pilares que sustentam o conceito do Triple Bottom Line?",
+                options: [
+                    { text: "Tecnologia, Infraestrutura e Automação.", correct: false },
+                    { text: "Econômico, Social e Ambiental.", correct: true },
+                    { text: "Jurídico, Político e Administrativo.", correct: false }
+                ],
+                explain: "Muito bem! O desenvolvimento sustentável exige o equilíbrio desses três eixos."
+            },
+            {
+                title: "Fase 4: Ordem de Prioridade na Geração",
+                desc: "Na Política Nacional de Resíduos Sólidos (PNRS), qual é a primeira prioridade na ordem de gerenciamento?",
+                options: [
+                    { text: "Reciclagem eficiente.", correct: false },
+                    { text: "Não geração (Redução na fonte).", correct: true },
+                    { text: "Coprocessamento energético.", correct: false }
+                ],
+                explain: "Exato! Evitar a geração é sempre o primeiro e mais importante passo."
+            },
+            {
+                title: "Fase 5: Logística Reversa de Pilhas e Baterias",
+                desc: "Quem é o responsável legal por estruturar e implementar o sistema de logística reversa de pilhas e eletrônicos?",
+                options: [
+                    { text: "Fabricantes, importadores, distribuidores e comerciantes, de forma encadeada.", correct: true },
+                    { text: "Unicamente o consumidor final na hora do descarte.", correct: false },
+                    { text: "Exclusivamente as prefeituras locais.", correct: false }
+                ],
+                explain: "Correto! É uma responsabilidade compartilhada pelo ciclo de vida do produto."
+            },
+            {
+                title: "Fase 6: O Conceito de Poluição Industrial",
+                desc: "O que caracteriza juridicamente a degradação da qualidade ambiental resultante de atividades que prejudiquem a saúde?",
+                options: [
+                    { text: "Efluente líquido neutro.", correct: false },
+                    { text: "Poluição.", correct: true },
+                    { text: "Emissão controlada.", correct: false }
+                ],
+                explain: "Certíssimo. Qualquer alteração prejudicial enquadra-se como poluição."
+            },
+            {
+                title: "Fase 7: Destinação de Sucata Eletrônica",
+                desc: "Placas de circuito impresso antigas contêm metais pesados perigosos. Qual o destino correto delas?",
+                options: [
+                    { text: "Aterro sanitário comum municipal.", correct: false },
+                    { text: "Empresas especializadas em refino e reciclagem de e-waste.", correct: true },
+                    { text: "Incineração simples a céu aberto.", correct: false }
+                ],
+                explain: "Isso! Evita a contaminação do solo por metais pesados (chumbo, cádmio)."
+            },
+            {
+                title: "Fase 8: Auditoria do Senso de Utilização (Seiri)",
+                desc: "Ao aplicar o primeiro S do programa 5S em uma oficina de TI, qual ação deve ser tomada com cabos rompidos e placas queimadas?",
+                options: [
+                    { text: "Guardar em armários para uso futuro indefinido.", correct: false },
+                    { text: "Separar o que é útil do que é inútil, descartando o inútil em ecoponto próprio.", correct: true },
+                    { text: "Deixar sobre a mesa de manutenção técnica.", correct: false }
+                ],
+                explain: "Perfeito. Desocupar espaço eliminando o desnecessário é a base do Seiri."
+            },
+            {
+                title: "Fase 9: Consumo Consciente de Energia",
+                desc: "Qual medida técnica reduz o desperdício de energia elétrica em servidores sem afetar a produção?",
+                options: [
+                    { text: "Desligar o sistema de refrigeração à noite.", correct: false },
+                    { text: "Virtualização de servidores para otimizar o uso do hardware físico.", correct: true },
+                    { text: "Substituir cabos de rede blindados por comuns.", correct: false }
+                ],
+                explain: "Correto! Menos máquinas físicas ligadas consomem menos energia operacional."
+            },
+            {
+                title: "Fase 10: Coleta Seletiva - Cores Oficiais",
+                desc: "Quais as cores oficiais dos coletores para Plástico e Vidro, respectivamente, segundo o CONAMA?",
+                options: [
+                    { text: "Vermelho e Verde.", correct: true },
+                    { text: "Azul e Amarelo.", correct: false },
+                    { text: "Cinza e Marrom.", correct: false }
+                ],
+                explain: "Muito bem! Vermelho para plásticos e Verde para vidros."
+            },
+            {
+                title: "Fase 11: Auditoria do Senso de Ordenação (Seiton)",
+                desc: "Como deve ser feita a organização de ferramentas de manutenção em bancadas industriais?",
+                options: [
+                    { text: "Dispostas por ordem de chegada na bancada.", correct: false },
+                    { text: "Em painéis com silhuetas (sombras) identificadoras para cada ferramenta.", correct: true },
+                    { text: "Armazenadas todas juntas em uma única grande caixa de metal.", correct: false }
+                ],
+                explain: "Exato! Um lugar para cada coisa e cada coisa em seu lugar reduz tempo de busca."
+            },
+            {
+                title: "Fase 12: Reaproveitamento de Água",
+                desc: "A água condensada por sistemas de ar-condicionado industrial pode ser classificada e usada para qual fim?",
+                options: [
+                    { text: "Água potável para consumo humano direto.", correct: false },
+                    { text: "Água não potável para fins de limpeza de pisos e descargas sanitárias.", correct: true },
+                    { text: "Processos de injeção médica esterilizada.", correct: false }
+                ],
+                explain: "Isso! É um excelente reaproveitamento de água não potável para fins secundários."
+            },
+            {
+                title: "Fase 13: O Princípio do Poluidor-Pagador",
+                desc: "O que estabelece fundamentalmente o Princípio do Poluidor-Pagador na legislação industrial?",
+                options: [
+                    { text: "Que a empresa pode poluir livremente desde que pague as taxas contratuais.", correct: false },
+                    { text: "Que o gerador deve arcar com os custos de prevenção e reparação dos danos causados.", correct: true },
+                    { text: "Que o governo assumirá a limpeza com o dinheiro dos impostos comuns.", correct: false }
+                ],
+                explain: "Correto! Internaliza os custos ambientais na cadeia produtiva da própria empresa."
+            },
+            {
+                title: "Fase 14: Resíduos Classe II B (Inertes)",
+                desc: "Qual dos materiais abaixo exemplifica perfeitamente um resíduo industrial Classe II B (Inerte)?",
+                options: [
+                    { text: "Sucata de ferro e entulho de tijolos limpos.", correct: true },
+                    { text: "Efluente sanitário não tratado.", correct: false },
+                    { text: "Lâmpadas fluorescentes de mercúrio quebradas.", correct: false }
+                ],
+                explain: "Isso. Materiais inertes não se decompõem e não alteram a potabilidade da água se dispostos no solo."
+            },
+            {
+                title: "Fase 15: Licenciamento Ambiental - Etapas",
+                desc: "Quais são as três licenças ambientais sequenciais exigidas para a implantação de uma grande indústria?",
+                options: [
+                    { text: "Licença Prévia (LP), Licença de Instalação (LI) e Licença de Operação (LO).", correct: true },
+                    { text: "Licença Provisória, Licença Comercial e Alvará Definitivo.", correct: false },
+                    { text: "Licença de Solo, Licença de Estrutura e Licença de Descarte.", correct: false }
+                ],
+                explain: "Exato! LP aprova a viabilidade, LI autoriza a construção e LO permite o funcionamento."
+            },
+            {
+                title: "Fase 16: Logística Reversa de Lâmpadas",
+                desc: "Por que as lâmpadas fluorescentes queimadas demandam obrigatoriamente descontaminação e logística reversa?",
+                options: [
+                    { text: "Pelo alto valor comercial do vidro comum.", correct: false },
+                    { text: "Porque contêm vapor de mercúrio perigoso à saúde e ao ecossistema.", correct: true },
+                    { text: "Apenas para economizar espaço nos caminhões de lixo.", correct: false }
+                ],
+                explain: "Correto! O mercúrio é altamente neurotóxico e persistente no meio ambiente."
+            },
+            {
+                title: "Fase 17: TI Verde (Green IT)",
+                desc: "Qual prática define uma estratégia corporativa voltada à sustentabilidade tecnológica (TI Verde)?",
+                options: [
+                    { text: "Imprimir relatórios em papel colorido brilhante.", correct: false },
+                    { text: "Aumentar o descarte programado anual de computadores em pleno funcionamento.", correct: false },
+                    { text: "Estender o ciclo de vida dos hardwares e adotar descarte certificado.", correct: true }
+                ],
+                explain: "Perfeito! Aumentar a vida útil dos ativos evita a obsolescência acelerada e geração de lixo."
+            },
+            {
+                title: "Fase 18: Auditoria do Senso de Saúde e Higiene (Seiketsu)",
+                desc: "No contexto do 5S, como se consolida o senso de saúde (Seiketsu) no ambiente de laboratórios?",
+                options: [
+                    { text: "Padronizando as práticas visuais, de segurança e mantendo as condições dos 3S anteriores.", correct: true },
+                    { text: "Limpando o chão apenas uma vez por mês.", correct: false },
+                    { text: "Pintando as paredes com cores escuras para esconder sujeiras.", correct: false }
+                ],
+                explain: "Correto! Padronização e manutenção do asseio técnico garantem a evolução do sistema."
+            },
+            {
+                title: "Fase 19: Prevenção de Riscos com Produtos Químicos",
+                desc: "Qual documento técnico obrigatório deve estar disponível contendo informações de segurança de resíduos perigosos?",
+                options: [
+                    { text: "A FISPQ / FDS (Ficha de Informações de Segurança de Produtos Químicos).", correct: true },
+                    { text: "O manual do usuário do computador da secretaria.", correct: false },
+                    { text: "A nota fiscal de compra do material de escritório.", correct: false }
+                ],
+                explain: "Certíssimo! Contém dados vitais sobre toxicidade, EPIs necessários e primeiros socorros."
+            },
+            {
+                title: "Fase 20: O Objetivo do Desenvolvimento Sustentável (ODS)",
+                desc: "O que prega a Agenda Internacional de Desenvolvimento Sustentável para o consumo industrial moderno?",
+                options: [
+                    { text: "Interromper totalmente a produção industrial mundial.", correct: false },
+                    { text: "Padrões de produção e consumo responsáveis, reduzindo a pegada ecológica global.", correct: true },
+                    { text: "Focar o crescimento econômico ignorando os recursos finitos do planeta.", correct: false }
+                ],
+                explain: "Espetacular! Produzir mais com menos impacto ambiental é a meta máxima global."
+            }
+        ];
+
+        // CONFIGURAÇÕES DE ESTADO
+        let playerName = "";
+        let currentStepIndex = 0; // De 0 a 19
+        let lives = 2;
+        let totalErrors = 0;
+
+        // INICIALIZAÇÃO DO MAPA VISUAL
+        function buildMapBar() {
+            const bar = document.getElementById('map-bar');
+            bar.innerHTML = '';
+            for(let i = 0; i < 20; i++) {
+                const step = document.createElement('div');
+                step.className = 'map-step-20';
+                step.id = `step-${i}`;
+                step.innerText = i + 1;
+                bar.appendChild(step);
+            }
+        }
+
+        function validateAndStart() {
+            const inputField = document.getElementById('txt-player-name');
+            playerName = inputField.value.trim();
+
+            if (playerName.length < 3) {
+                alert("❌ Nome muito curto! Digite seu nome completo para validar a ficha de avaliação.");
+                inputField.focus();
+                return;
+            }
+
+            document.getElementById('scr-intro').classList.remove('active');
+            buildMapBar();
+            document.getElementById('map-bar').style.display = 'grid';
+            document.getElementById('status-panel').style.display = 'flex';
+            document.getElementById('display-player-name').innerText = playerName;
+            
+            currentStepIndex = 0;
+            loadQuestion(currentStepIndex);
+        }
+
+        function updateStatusUI() {
+            document.getElementById('lbl-fase').innerText = `${currentStepIndex + 1}/20`;
+            const box = document.getElementById('hearts-box');
+            box.innerHTML = '';
+            for(let i = 0; i < lives; i++) {
+                box.innerHTML += '<i data-lucide="heart" style="fill: var(--vermelho); margin-right: 2px;"></i>';
+            }
+            
+            // Atualiza barra de passos
+            for(let i = 0; i < 20; i++) {
+                const step = document.getElementById(`step-${i}`);
+                if(step) {
+                    step.className = 'map-step-20';
+                    if(i < currentStepIndex) step.classList.add('done');
+                    if(i === currentStepIndex) step.classList.add('active');
+                }
+            }
+            lucide.createIcons();
+        }
+
+        function loadQuestion(index) {
+            updateStatusUI();
+            const data = questionsDatabase[index];
+
+            document.getElementById('quiz-title').innerText = data.title;
+            document.getElementById('quiz-desc').innerText = data.desc;
+            document.getElementById('btn-next-quiz').style.display = 'none';
+            
+            const fb = document.getElementById('quiz-feedback');
+            fb.style.display = 'none';
+
+            const container = document.getElementById('quiz-opts');
+            container.innerHTML = '';
+
+            data.options.forEach(opt => {
+                const card = document.createElement('div');
+                card.className = 'opt-card';
+                card.innerText = opt.text;
+                card.onclick = () => {
+                    if(opt.correct) {
+                        card.classList.add('correct');
+                        disableOptions();
+                        showFeedbackBox(true, data.explain);
+                        document.getElementById('btn-next-quiz').style.display = 'inline-flex';
+                    } else {
+                        card.classList.add('wrong');
+                        disableOptions();
+                        applyPenalization();
+                    }
+                };
+                container.appendChild(card);
+            });
+
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('scr-quiz').classList.add('active');
+        }
+
+        function disableOptions() {
+            const cards = document.querySelectorAll('.opt-card');
+            cards.forEach(c => c.style.pointerEvents = 'none');
+        }
+
+        function applyPenalization() {
+            lives--;
+            totalErrors++;
+            updateStatusUI();
+
+            if (lives === 1) {
+                alert("⚠️ PROTOCOLO VIOLADO! Resposta errada. Você perdeu 1 Vida. A diretriz operacional será resetada para nova tentativa!");
+                loadQuestion(currentStepIndex);
+            } else if (lives <= 0) {
+                alert("🚨 COLAPSO ESTRUTURAL! 2 erros graves cometidos. Suas credenciais foram revogadas e o sistema reiniciou para o Nível 1.");
+                location.reload();
+            }
+        }
+
+        function showFeedbackBox(isSuccess, text) {
+            const fb = document.getElementById('quiz-feedback');
+            fb.style.display = 'block';
+            fb.innerText = text;
+            if(isSuccess) {
+                fb.style.background = '#d1fae5';
+                fb.style.color = '#0f5132';
+                fb.style.borderLeft = '5px solid var(--verde)';
+            }
+        }
+
+        function nextStep() {
+            currentStepIndex++;
+            if(currentStepIndex < 20) {
+                loadQuestion(currentStepIndex);
+            } else {
+                finishMarathon();
+            }
+        }
+
+        function finishMarathon() {
+            document.getElementById('status-panel').style.display = 'none';
+            document.getElementById('map-bar').style.display = 'none';
+            document.getElementById('main-card').classList.add('party-bg');
+            
+            // Injeta dados e iniciais do aluno no hash final
+            const nameParts = playerName.toUpperCase().split(" ");
+            const initials = nameParts.map(p => p[0]).join("").substring(0, 3);
+            const checkDigit = Math.floor(1000 + Math.random() * 9000);
+            
+            const secureCode = `MOURAO-20F-${initials}-V${lives}-E${totalErrors}-${checkDigit}`;
+            document.getElementById('block-token').innerText = secureCode;
+
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('scr-end').classList.add('active');
+        }
+
+        // Execução Inicial
+        lucide.createIcons();
+    </script>
+</body>
+</html>
