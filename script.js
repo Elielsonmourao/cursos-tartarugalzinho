@@ -1,0 +1,5 @@
+const icones=['🤖','📡','☁️','🛠️','🏭','📊','🦾','💡','🛰️','⚙️','🔧','📈','🚀','🧠','💻','🔒','🌐','📱','🦿','⭐','🔋','🛸','🧩','🎯','🎮','📶','🧪','🖨️','🎓','🏁'];
+const perguntas=[['Qual tecnologia conecta objetos inteligentes?',['iot','internet das coisas']],['Qual tecnologia analisa muitos dados?',['big data','dados']],['Qual tecnologia cria uma réplica virtual?',['gêmeo','digital']],['Quem realiza tarefas automatizadas?',['robô','robo']]];
+let pos=0,pontos=0;board.innerHTML=icones.map(i=>'<div class=casa>'+i+'</div>').join('');atualizar();
+function atualizar(){document.querySelectorAll('.casa').forEach(c=>c.classList.remove('player'));document.querySelectorAll('.casa')[pos].classList.add('player');info.innerHTML='⭐ Pontos: '+pontos+' | '+(pos+1)+'/30';}
+function jogar(){pos=Math.min(29,pos+Math.floor(Math.random()*6)+1);let p=perguntas[Math.floor(Math.random()*perguntas.length)];let r=(prompt(p[0])||'').toLowerCase();if(p[1].some(k=>r.includes(k))){alert('✅ Correto!');pontos+=10}else alert('💡 Resposta aceita com palavras-chave relacionadas.');atualizar();if(pos==29)alert('🏆 Missão concluída! Pontuação '+pontos)}
