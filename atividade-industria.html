@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Missão: Indústria 4.0 | SENAI</title>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #1e293b;
+            --primary-color: #00f0ff;
+            --secondary-color: #7000ff;
+            --text-color: #f8fafc;
+            --accent-color: #39ff14;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            margin: 0;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+        }
+
+        header p {
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .instruction-card {
+            background: linear-gradient(135deg, var(--card-bg), #0f172a);
+            border-left: 5px solid var(--secondary-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .step-box {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid #334155;
+            padding: 15px;
+            border-radius: 8px;
+            transition: transform 0.3s;
+        }
+
+        .step-box:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+        }
+
+        .step-num {
+            background: var(--secondary-color);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .generator-section {
+            background: #111827;
+            border: 1px dashed var(--primary-color);
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .btn-generate {
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+            transition: 0.3s;
+        }
+
+        .btn-generate:hover {
+            letter-spacing: 1px;
+            box-shadow: 0 0 25px rgba(112, 0, 255, 0.8);
+        }
+
+        #mission-result {
+            margin-top: 25px;
+            padding: 20px;
+            background: #1e293b;
+            border-radius: 8px;
+            display: none;
+            border: 1px solid var(--accent-color);
+            text-align: left;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .mission-title {
+            color: var(--accent-color);
+            font-weight: bold;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        footer {
+            margin-top: 40px;
+            color: #64748b;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Hackathon Relâmpago: Indústria 4.0</h1>
+        <p>Unidade Curricular: Indústria 4.0 | Curso: Operador de Computador</p>
+    </header>
+
+    <div class="instruction-card">
+        <h2>🚀 Como vai funcionar a dinâmica?</h2>
+        <p>Como Operadores de Computador, vocês são a ponte entre a tecnologia e a operação. Hoje, vocês se dividirão em <strong>grupos (3 a 5 alunos)</strong> para resolver um desafio industrial real usando tecnologias modernas.</p>
+        
+        <div class="steps-grid">
+            <div class="step-box">
+                <div class="step-num">1</div>
+                <h3>Sorteie a Missão</h3>
+                <p>Use o gerador abaixo para descobrir qual desafio e qual tecnologia a sua equipe vai utilizar.</p>
+            </div>
+            <div class="step-box">
+                <div class="step-num">2</div>
+                <h3>Debate em Grupo</h3>
+                <p>Discutam por 15 minutos: Como essa tecnologia resolve o problema? O que o operador de computador precisa monitorar nessa solução?</p>
+            </div>
+            <div class="step-box">
+                <div class="step-num">3</div>
+                <h3>Apresentação</h3>
+                <p>Cada grupo terá 3 minutos para apresentar a ideia para a turma (como se estivessem vendendo a solução para um diretor de fábrica).</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="generator-section">
+        <h2>🎲 Gerador de Desafios da Indústria 4.0</h2>
+        <p>Clique no botão abaixo para receber o briefing da sua equipe de forma aleatória.</p>
+        <button class="btn-generate" onclick="gerarMissao()">Sortear Nova Missão</button>
+
+        <div id="mission-result">
+            <div class="mission-title" id="out-setor">Setor: </div>
+            <p><strong>🚨 O Problema:</strong> <span id="out-problema"></span></p>
+            <p><strong>🛠️ Tecnologia Obrigatória:</strong> <span id="out-tecnologia"></span></p>
+            <p><strong>💡 Desafio do Grupo:</strong> Criar uma solução onde o <em>Operador de Computador</em> consiga gerenciar ou visualizar esses dados (Ex: uma tela de sistema, um painel de alertas, ou automação de relatórios).</p>
+        </div>
+    </div>
+
+    <footer>
+        SENAI Amapá &copy; 2026 | Tecnologia e Inovação na Prática
+    </footer>
+</div>
+
+<script>
+    const missoes = [
+        {
+            setor: "Fábrica de Alimentos e Bebidas",
+            problema: "Muitas caixas de leite estão estragando no estoque porque a temperatura do galpão varia sem ninguém perceber a tempo.",
+            tecnologia: "Internet das Coisas (Sensores IoT de temperatura conectados à rede) + Painel de Monitoramento Computacional."
+        },
+        {
+            setor: "Indústria Automobilística (Montagem de Carros)",
+            problema: "As máquinas da linha de produção quebram de surpresa, parando toda a fábrica e gerando prejuízos enormes.",
+            tecnologia: "Inteligência Artificial e Big Data (Sensores que prevêem quando a peça vai quebrar antes que aconteça - Manutenção Preditiva)."
+        },
+        {
+            setor: "Logística e Centro de Distribuição",
+            problema: "Os operadores demoram muito tempo procurando caixas específicas no estoque gigante e, às vezes, perdem produtos de validade próxima.",
+            tecnologia: "Etiquetas RFID (Identificação por radiofrequência) e Computação em Nuvem para localização em tempo real."
+        },
+        {
+            setor: "Estação de Tratamento e Reuso de Água Industrial",
+            problema: "Desperdício no fluxo de saída de água condensada dos sistemas de refrigeração por falta de medição precisa e acúmulo diário.",
+            tecnologia: "Sensores de Fluxo Digital integrados a um Banco de Dados em tempo real para controle do operador."
+        },
+        {
+            setor: "Linha de Produção de Eletrodomésticos",
+            problema: "Vários produtos saem com pequenos defeitos de fábrica (riscos, peças soltas) porque o olho humano não consegue revisar 100% das peças na esteira rápida.",
+            tecnologia: "Visão Computacional (Câmeras com IA que detectam defeitos nas peças automaticamente na esteira e alertam o computador central)."
+        }
+    ];
+
+    function gerarMissao() {
+        const randomIndex = Math.floor(Math.random() * missoes.length);
+        const missao = missoes[randomIndex];
+
+        document.getElementById('out-setor').innerText = "📍 Setor Industrial: " + missao.setor;
+        document.getElementById('out-problema').innerText = missao.problema;
+        document.getElementById('out-tecnologia').innerText = missao.tecnologia;
+
+        const resultDiv = document.getElementById('mission-result');
+        resultDiv.style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
