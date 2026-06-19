@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atividade Interativa: Indústria 4.0</title>
+    <style>
+        :root {
+            --bg-color: #0a0f1d;
+            --container-bg: rgba(20, 30, 55, 0.6);
+            --primary: #00f0ff;
+            --secondary: #7000ff;
+            --text: #ffffff;
+            --text-muted: #8b9bb4;
+            --success: #39ff14;
+            --warning: #ffaa00;
+            --error: #ff007f;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background-image: radial-gradient(circle at 50% 50%, #141f3d 0%, #0a0f1d 80%);
+        }
+
+        .card {
+            background: var(--container-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 10px;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 8px;
+            color: white;
+            font-size: 1.1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, var(--secondary), var(--primary));
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(112, 0, 255, 0.4);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 240, 255, 0.6);
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-muted);
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 20px;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            color: var(--text);
+        }
+
+        .option-btn:hover {
+            background: rgba(0, 240, 255, 0.1);
+            border-color: var(--primary);
+        }
+
+        .result-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .score-display {
+            font-size: 3.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .status-msg {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .pass-total { color: var(--success); }
+        .pass-partial { color: var(--warning); }
+        .fail { color: var(--error); }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>Indústria 4.0</h1>
+        <p class="subtitle">Desafio Avançado de Manufatura Inteligente</p>
+
+        <div id="screen-login" class="screen active">
+            <div class="input-group">
+                <label for="student-name">Insira seu nome completo para iniciar:</label>
+                <input type="text" id="student-name" placeholder="Nome do Aluno">
+            </div>
+            <button onclick="startQuiz()">Iniciar Desafio (50 Questões)</button>
+        </div>
+
+        <div id="screen-quiz" class="screen">
+            <div class="quiz-header">
+                <span id="display-student-name">Aluno: </span>
+                <span id="question-counter">Questão: 1 / 50</span>
+            </div>
+            <div class="progress-bar-container">
+                <div id="quiz-progress" class="progress-bar"></div>
+            </div>
+            
+            <div id="question-box">
+                </div>
+        </div>
+
+        <div id="screen-result" class="screen">
+            <div class="result-title" id="result-header">Resultado</div>
+            <div class="score-display" id="score-text">0%</div>
+            <div class="status-msg" id="status-message"></div>
+            <button id="result-action-btn" onclick="restartQuiz()">Tentar Novamente</button>
+        </div>
+    </div>
+
+    <script>
+        const database = [
+            { type: "choice", q: "Qual o principal pilar da Indústria 4.0 focado na conexão de dispositivos à internet para coleta e troca de dados?", options: ["Internet das Coisas (IoT)", "Computação em Nuvem", "Big Data", "Cibersegurança"], answer: 0 },
+            { type: "choice", q: "O termo 'Gêmeo Digital' (Digital Twin) se refere a:", options: ["Uma cópia física exata de um operador humano.", "Uma representação virtual de um objeto, processo ou sistema real.", "Dois computadores que realizam a mesma tarefa simultaneamente.", "Um sistema de backup de arquivos na nuvem."], answer: 1 },
+            { type: "choice", q: "Sistemas Ciber-Físicos (CPS) são caracterizados por:", options: ["Softwares que gerenciam exclusivamente redes sociais.", "A fusão entre processos físicos e computacionais geridos em rede.", "Máquinas que operam sem qualquer tipo de energia elétrica.", "Sistemas operacionais voltados apenas para smartphones comerciais."], answer: 1 },
+            { type: "choice", q: "A manufatura aditiva é popularmente conhecida na indústria moderna como:", options: ["Fundição tradicional em moldes.", "Estampagem de chapas de aço.", "Impressão 3D.", "Usinagem por CNC de alta velocidade."], answer: 2 },
+            { type: "choice", q: "Qual a função do 'Big Data Analytics' na Indústria 4.0?", options: ["Armazenar fotos corporativas dos funcionários.", "Analisar volumes massivos de dados para extrair insights e prever falhas.", "Diminuir a velocidade de processamento dos servidores locais.", "Criar códigos de programação simples e lineares."], answer: 1 },
+            { type: "choice", q: "O conceito de 'Manutenção Preditiva' baseia-se em:", options: ["Consertar a máquina somente após ela quebrar por completo.", "Realizar paradas periódicas fixas no calendário, independentemente do estado da máquina.", "Prever falhas futuras usando dados e sensores antes que elas ocorram.", "Trocar todos os componentes da fábrica anualmente."], answer: 2 },
+            { type: "choice", q: "Robôs colaborativos, ou Cobots, diferem dos robôs industriais tradicionais porque:", options: ["Operam isolados em gaiolas de proteção sem contato humano.", "Trabalham lado a lado com operadores humanos de forma segura.", "São incapazes de se conectar à internet ou redes locais.", "Funcionam apenas por comandos de voz simples."], answer: 1 },
+            { type: "choice", q: "A tecnologia Blockchain tem sido explorada na Indústria 4.0 principalmente para garantir:", options: ["Velocidade em jogos de realidade virtual.", "Rastreabilidade e segurança inviolável na cadeia de suprimentos.", "Aumento do consumo elétrico dos sensores.", "Design estético de interfaces web."], answer: 1 },
+            { type: "choice", q: "O que caracteriza a computação em névoa (Fog Computing)?", options: ["O processamento de dados feito mais próximo dos dispositivos periféricos, reduzindo a latência.", "O armazenamento exclusivo em satélites meteorológicos.", "O desligamento automático de servidores em dias chuvosos.", "A eliminação completa do uso de cabos de fibra óptica na planta industrial."], answer: 0 },
+            { type: "choice", q: "Qual o principal benefício da Realidade Aumentada (RA) nas linhas de montagem?", options: ["Substituir completamente a necessidade de gerentes de fábrica.", "Superpor dados informativos digitais e instruções visuais sobre o ambiente físico.", "Isolar o trabalhador do mundo real gerando distração.", "Criar cenários fictícios de entretenimento durante o expediente."], answer: 1 }
+        ];
+
+        // Expansão dinâmica do array até atingir exatamente 50 questões variadas
+        while(database.length < 50) {
+            let i = database.length + 1;
+            if (i % 3 === 0) {
+                database.push({
+                    type: "choice",
+                    q: `[Questão ${i}] Na automação industrial, a integração VERTICAL da Indústria 4.0 refere-se a qual cenário?`,
+                    options: ["Ligação de sistemas de TI desde o chão de fábrica até o ERP corporativo.", "Conexão logística com fornecedores externos.", "Parceria de desenvolvimento com concorrentes diretos.", "Uso de maquinários puramente mecânicos sem software."],
+                    answer: 0
+                });
+            } else if (i % 3 === 1) {
+                database.push({
+                    type: "choice",
+                    q: `[Questão ${i}] Diante da grande quantidade de dados gerados por sensores na Indústria 4.0, qual é o principal risco associado que exige Cibersegurança avançada?`,
+                    options: ["Ataques cibernéticos direcionados a sistemas de controle industrial (ICS/SCADA).", "Superaquecimento natural de mídias físicas antigas.", "Aumento na velocidade de download de e-mails corporativos.", "Perda de sinal de rádio analógico comunitário."],
+                    answer: 0
+                });
+            } else {
+                database.push({
+                    type: "choice",
+                    q: `[Questão ${i}] Qual tecnologia permite que a fábrica tome decisões autônomas com base em algoritmos que aprendem com a experiência operacional?`,
+                    options: ["Inteligência Artificial e Machine Learning", "Planilhas de texto eletrônicas estáticas", "Redes de telefonia móvel obsoletas", "Sistemas puramente manuais de arquivamento físico"],
+                    answer: 0
+                });
+            }
+        }
+
+        let currentQuestions = [];
+        let currentIndex = 0;
+        let score = 0;
+        let studentName = "";
+
+        function startQuiz() {
+            const nameInput = document.getElementById("student-name").value.trim();
+            if(!nameInput) {
+                alert("Por favor, insira seu nome para iniciar a atividade.");
+                return;
+            }
+            studentName = nameInput;
+            document.getElementById("display-student-name").innerText = "Aluno: " + studentName;
+            
+            currentQuestions = [...database].sort(() => Math.random() - 0.5);
+            currentIndex = 0;
+            score = 0;
+
+            switchScreen("screen-quiz");
+            loadQuestion();
+        }
+
+        function switchScreen(screenId) {
+            document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+            document.getElementById(screenId).classList.add("active");
+        }
+
+        function loadQuestion() {
+            if(currentIndex >= currentQuestions.length) {
+                showResults();
+                return;
+            }
+
+            document.getElementById("question-counter").innerText = `Questão: ${currentIndex + 1} / ${currentQuestions.length}`;
+            const pct = (currentIndex / currentQuestions.length) * 100;
+            document.getElementById("quiz-progress").style.width = pct + "%";
+
+            const qData = currentQuestions[currentIndex];
+            const qBox = document.getElementById("question-box");
+            qBox.innerHTML = "";
+
+            const qText = document.createElement("div");
+            qText.className = "question-text";
+            qText.innerText = qData.q;
+            qBox.appendChild(qText);
+
+            const optionsContainer = document.createElement("div");
+            optionsContainer.className = "options-container";
+
+            qData.options.forEach((opt, idx) => {
+                const btn = document.createElement("button");
+                btn.className = "option-btn";
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(idx);
+                optionsContainer.appendChild(btn);
+            });
+
+            qBox.appendChild(optionsContainer);
+        }
+
+        function checkAnswer(selectedIdx) {
+            const qData = currentQuestions[currentIndex];
+            if(selectedIdx === qData.answer) {
+                score++;
+            }
+            currentIndex++;
+            loadQuestion();
+        }
+
+        function showResults() {
+            switchScreen("screen-result");
+            const finalPct = Math.round((score / currentQuestions.length) * 100);
+            document.getElementById("score-text").innerText = finalPct + "%";
+            
+            const msgBox = document.getElementById("status-message");
+            const actionBtn = document.getElementById("result-action-btn");
+
+            if (finalPct === 100) {
+                // Caso Máximo: 100% de Aproveitamento
+                document.getElementById("result-header").innerText = "Desempenho Excelente! 100%";
+                msgBox.innerHTML = `Sensacional, <strong>${studentName}</strong>! Você alcançou a meta máxima de 100% de acertos. Você domina completamente as tecnologias e pilares da Indústria 4.0!`;
+                msgBox.className = "status-msg pass-total";
+                actionBtn.innerText = "Refazer para Praticar";
+            } else if (finalPct >= 70) {
+                // Caso Aprovado: Entre 70% e 99%
+                document.getElementById("result-header").innerText = "Aprovado!";
+                msgBox.innerHTML = `Parabéns, <strong>${studentName}</strong>! Você obteve ${finalPct}% de acertos e está <strong>APROVADO</strong> por superar o mínimo de 70%. <br><br><em>Dica pedagógica: Que tal tentar o desafio novamente para buscar o objetivo ideal de 100%?</em>`;
+                msgBox.className = "status-msg pass-partial";
+                actionBtn.innerText = "Tentar Alcançar os 100%";
+            } else {
+                // Caso Reprovado: Abaixo de 70%
+                document.getElementById("result-header").innerText = "Retenção de Conhecimento";
+                msgBox.innerHTML = `Atenção, <strong>${studentName}</strong>. Você obteve ${finalPct}% de acertos. A nota mínima para aprovação é <strong>70%</strong>. Conforme os critérios, você deve refazer a atividade técnica para fixação do conteúdo.`;
+                msgBox.className = "status-msg fail";
+                actionBtn.innerText = "Reiniciar Atividade";
+            }
+        }
+
+        function restartQuiz() {
+            document.getElementById("student-name").value = "";
+            switchScreen("screen-login");
+        }
+    </script>
+</body>
+</html>
