@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAFETY QUEST // PS5 Icon Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ps5-blue: #00439c;
+            --ps5-orange: #ff6b00;
+            --ps5-light-blue: #00b2fe;
+            --ps5-white: #ffffff;
+            --ps5-black: #0a0e17;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --text-dark: #1e293b;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0e17 0%, #00439c 35%, #ff6b00 70%, #ffffff 100%);
+            background-attachment: fixed;
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--text-dark);
+            min-height: 100vh;
+        }
+
+        header {
+            padding: 50px 20px 20px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+            font-size: 3rem;
+            margin: 0;
+            color: var(--ps5-white);
+            letter-spacing: 6px;
+            text-shadow: 2px 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .instructor-tag {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.95rem;
+            color: #ffffff;
+            background: var(--ps5-black);
+            display: inline-block;
+            padding: 6px 20px;
+            border-radius: 50px;
+            letter-spacing: 2px;
+            margin-top: 15px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 0 auto 60px auto;
+            padding: 0 20px;
+        }
+
+        .console-panel {
+            background: var(--ps5-black);
+            color: var(--ps5-white);
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            margin-bottom: 40px;
+            border-left: 6px solid var(--ps5-orange);
+            border-right: 6px solid var(--ps5-light-blue);
+        }
+
+        .player-identity label {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--ps5-white);
+            font-size: 1rem;
+            display: block;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+
+        .input-player {
+            width: 100%;
+            padding: 16px;
+            font-size: 1.2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            box-sizing: border-box;
+            font-weight: bold;
+            color: var(--ps5-white);
+            transition: all 0.3s ease;
+        }
+
+        .input-player:focus {
+            border-color: var(--ps5-light-blue);
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+        }
+
+        .system-status {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .system-status span {
+            color: var(--ps5-orange);
+            font-weight: bold;
+        }
+
+        /* Cards de Missão */
+        .mission-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 24px;
+            margin-bottom: 35px;
+            overflow: hidden;
+            border: 2px solid var(--ps5-white);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+        }
+
+        .mission-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+            border-color: var(--ps5-blue);
+        }
+
+        .mission-header {
+            padding: 25px 30px;
+            background: linear-gradient(90deg, var(--ps5-black) 0%, var(--ps5-blue) 100%);
+            color: var(--ps5-white);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mission-title-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .mission-icon {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+        }
+
+        .mission-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .mission-badge {
+            font-family: 'Orbitron', sans-serif;
+            background: var(--ps5-orange);
+            padding: 6px 18px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--ps5-white);
+        }
+
+        .mission-body { padding: 30px; }
+
+        /* Blocos de Questões */
+        .question-box {
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 20px;
+            border-radius: 16px;
+            border-left: 5px solid var(--ps5-blue);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .question-box label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--ps5-black);
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+
+        .concept-tag {
+            display: inline-block;
+            font-family: 'Orbitron', sans-serif;
+            background: var(--ps5-black);
+            color: var(--ps5-white);
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            background: var(--ps5-white);
+            border: 2px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 14px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.95rem;
+            color: var(--ps5-black);
+            resize: vertical;
+            box-sizing: border-box;
+            transition: all 0.3s;
+        }
+
+        textarea:focus {
+            border-color: var(--ps5-orange);
+            box-shadow: 0 0 10px rgba(255, 107, 0, 0.2);
+            outline: none;
+        }
+
+        .btn-ps5 {
+            background: var(--ps5-black);
+            color: var(--ps5-white);
+            border: none;
+            padding: 22px 40px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            border-radius: 50px;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            border: 2px solid var(--ps5-white);
+        }
+
+        .btn-ps5:hover {
+            background: var(--ps5-orange);
+            box-shadow: 0 12px 25px rgba(255, 107, 0, 0.4);
+            transform: scale(1.01);
+        }
+
+        #tokenPanel {
+            display: none;
+            background: var(--ps5-black);
+            color: var(--ps5-white);
+            border: 3px solid var(--ps5-orange);
+            border-radius: 24px;
+            padding: 40px;
+            margin-top: 30px;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            animation: fadeIn 0.5s ease;
+        }
+
+        #tokenPanel h2 {
+            font-family: 'Orbitron', sans-serif;
+            margin-top: 0;
+            letter-spacing: 3px;
+            color: var(--ps5-white);
+        }
+
+        .token-display {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px dashed var(--ps5-light-blue);
+            padding: 20px;
+            font-family: 'Orbitron', monospace;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--ps5-light-blue);
+            word-break: break-all;
+            margin: 30px 0;
+            border-radius: 12px;
+            letter-spacing: 2px;
+        }
+
+        .btn-copy {
+            background: var(--ps5-orange);
+            color: var(--ps5-white);
+            border: none;
+            padding: 14px 35px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-copy:hover {
+            background: var(--ps5-white);
+            color: var(--ps5-black);
+        }
+
+        footer {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--ps5-white);
+            font-size: 0.85rem;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+            text-shadow: 1px 2px 4px rgba(0,0,0,0.8);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>SAFETY QUEST</h1>
+    <div class="instructor-tag">SISTEMA ATIVADO POR: INSTRUTOR ELIELSON MOURÃO</div>
+</header>
+
+<div class="container">
+    
+    <div class="console-panel">
+        <div class="player-identity">
+            <label for="playerName">🎮 REGISTRAR NOVO JOGADOR (NOME COMPLETO):</label>
+            <input type="text" id="playerName" class="input-player" required placeholder="DIGITE SEU NOME COMPLETO">
+        </div>
+        <div class="system-status">
+            <div>PLATAFORMA: <span>WEB / MOBILE</span></div>
+            <div>SEGURANÇA: <span>ANTI-IA ATIVO</span></div>
+            <div>FASE: <span>05 NRs</span></div>
+        </div>
+    </div>
+
+    <form id="gameForm">
+        
+        <!-- NR 01 -->
+        <div class="mission-card">
+            <div class="mission-header">
+                <div class="mission-title-container">
+                    <!-- Ícone Vetorial NR 01: Botão Power/Inicialização -->
+                    <svg class="mission-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2V12" stroke="#00b2fe" stroke-width="2.5" stroke-linecap="round"/>
+                        <path d="M18.36 6.64001C19.97 8.25001 20.97 10.51 20.97 13C20.97 17.95 16.95 21.97 12 21.97C7.05 21.97 3.03 17.95 3.03 13C3.03 10.51 4.03 8.25001 5.64 6.64001" stroke="#ff6b00" stroke-width="2.5" stroke-linecap="round"/>
+                    </svg>
+                    <div class="mission-title">FASE 01 // ORDEM DE INICIALIZAÇÃO</div>
+                </div>
+                <div class="mission-badge">NR 01</div>
+            </div>
+            <div class="mission-body">
+                <div class="question-box">
+                    <span class="concept-tag">CONCEITO DO DIRETÓRIO</span>
+                    <label>1.1 - Se você tivesse que explicar o objetivo principal da NR 01 para uma criança de 8 anos de idade, como você resumiria essa norma usando termos simples?</label>
+                    <textarea class="nr-answer" required placeholder="Sua resposta..."></textarea>
+                </div>
+                <div class="question-box">
+                    <label>1.2 - O "Direito de Recusa" permite que você não faça algo perigoso. Se você fosse o patrão, como convenceria seu funcionário de que ele não precisa usar esse direito na sua empresa?</label>
+                    <textarea class="nr-answer" required placeholder="Sua resposta..."></textarea>
+                </div>
+                <div class="question-box">
+                    <label>1.3 - A NR 01 fala sobre Ordens de Serviço. Escreva aqui uma "Ordem de Serviço" curta (3 regras) para alguém que vai usar o celular enquanto caminha na escada da escola.</label>
+                    <textarea class="nr-answer" required placeholder="Sua resposta..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- NR 05 -->
+        <div class="mission-card">
+            <div class="mission-header">
+                <div class="mission-title-container">
+                    <!-- Ícone Vetorial NR 05: Escudo de Defesa de Corporação -->
+                    <svg class="mission-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z" stroke="#ff6b00" stroke-width="2.5" stroke-linejoin="round"/>
+                        <path d="M9 12L11 14L15 10" stroke="#00b2fe" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <div class="mission-title">FASE 02 // SINDICATO DE DEFESA INTERNA</div>
+                </div>
+                <div class="mission-badge">NR 05</div>
+            </div>
+            <div class="mission-body">
+                <div class="question-box">
+                    <span class="concept-tag">CONCEITO DO DIRETÓRIO</span>
+                    <label>2.1 - Qual é o verdadeiro papel da CIPA dentro de uma empresa? Em vez de dar uma definição técnica, use a metáfora de um time de futebol ou de um jogo para explicar o papel deles.</label>
+                    <textarea class="nr-answer" required placeholder="Sua resposta..."></textarea>
+                </div>
+                <div class="question-box">
+                    <label>2.2 - O Mapa de Riscos usa cores. Se você tivesse que inventar uma NOVA COR para o risco "Falta de Internet ou Bateria Fraca", qual cor seria e que símbolo ela teria no mapa?</label>
+                    <textarea class="nr-answer" required placeholder="Sua resposta..."></textarea>
+                </div>
+                <div class="question-box">
+                    <label>2.3 - A CIPA é formada por empregados e empregador. Por que você acha que é importante ter "peões" e "chefes" no mesmo grupo de segurança? Explique do seu jeito.</label>
+                    <textarea class="nr-answer" required placeholder="Sua resposta..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- NR 06 -->
+        <div class="mission-card">
+            <div class="mission-header">
+                <div class="mission-title-container">
+                    <!-- Ícone Vetorial NR 06: Capacete/Upgrade de Armadura -->
+                    <svg class="mission-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" stroke="#00b2fe" stroke-width="2"/>
+                        <path d="M7 11H17M9 15H15M12 3V8" stroke="#ff6b00" stroke-width="2.5" stroke-linecap="round"/>
+                    </svg>
+                    <div class="mission-title">FASE 03 // UPGRADE DE ARMADURA</div>
+                </div>
+                <div class="mission-badge">NR 06</div>
+            </div>
+            <div class="mission-body">
+                <div class="question-box">
+                    <span class="concept-tag">CONCEITO DO DIRETÓRIO</span>
+                    <label>3.1 - O que define se um equipamento é considerado um EPI de verdade pela NR 06 ou apenas um acessório comum? Como o trabalhador sabe que aquele item é seguro?</label>
+                    <textarea class="nr-answer" required placeholder="Sua resposta..."></textarea>
+                </div>
+                <div class="question-box">
+                    <label>3.2 - O EPI é a última barreira. Se você pudesse criar um "EPI Futurista" para um estudante não cansar a mente, como ele seria e do que protegeria?</label>
+                    <textarea class="nr-answer" required placeholder="Sua resposta..."></textarea>
+                </div>
+                <div class="question-box">
+                    <label>3.3 - Quem paga pelo EPI é a empresa. Mas se o funcionário perder o EPI por descuido todo dia, o que você faria se fosse o encarregado de segurança?</label>
+                    <textarea class="nr-answer" required placeholder="Sua resposta..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- NR 09 -->
+        <div class="mission-card">
+            <div class="mission-header">
+                <div class="mission-title-container">
+                    <!-- Ícone Vetorial NR 09: Radar/Escanear Perigos -->
+                    <svg class="mission-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="9" stroke="#ff6b00" stroke-width="2"/>
+                        <circle cx="12" cy="12" r="5" stroke="#00b2fe" stroke-width="2" stroke-dasharray="3 3"/>
+                        <path d="M12 12L16 8" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
+                    </svg>
+                    <div class="mission-title">FASE 04 // ESCANEAR PERIGOS AMBIENTAIS</div>
+                </div>
+                <div class="mission-badge">NR 09</div>
+            </div>
+            <div class="mission-body">
+                <div class="question-box">
+                    <span class="concept-tag">CONCEITO DO DIRETÓRIO</span>
+                    <label>4.1 - A NR 09 trata da avaliação e controle de riscos ambientais. Qual é a diferença prática entre "identificar um perigo" no ambiente e "controlar esse risco" antes que alguém se machuque?</label>
+                    <textarea class="nr-answer" required placeholder="Sua resposta..."></textarea>
+                </div>
+                <div class="question-box">
+                    <label>4.2 - A NR 09 foca em riscos Ambientais (Físico, Químico e Biológico). Qual desses três você acha mais "traiçoeiro" e por quê? Dê um exemplo que você já viu na vida real.</label>
+                    <textarea class="nr-answer" required placeholder="Sua resposta..."></textarea>
+                </div>
+                <div class="question-box">
+                    <label>4.3 - Imagine que há um vazamento de produto químico no corredor. Segundo a lógica de prevenção, o que é melhor: dar uma máscara para todos ou fechar o vazamento com uma barreira? Justifique.</label>
+                    <textarea class="nr-answer" required placeholder="Sua resposta..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- NR 17 -->
+        <div class="mission-card">
+            <div class="mission-header">
+                <div class="mission-title-container">
+                    <!-- Ícone Vetorial NR 17: Sincronia/Interface Humana -->
+                    <svg class="mission-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="7" r="3" stroke="#00b2fe" stroke-width="2.5"/>
+                        <path d="M5 20C5 16.5 8 14 12 14C16 14 19 16.5 19 20" stroke="#ff6b00" stroke-width="2.5" stroke-linecap="round"/>
+                        <path d="M2 12H4M20 12H22" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <div class="mission-title">FASE 05 // CALIBRAÇÃO DE INTERFACE HUMANA</div>
+                </div>
+                <div class="mission-badge">NR 17</div>
+            </div>
+            <div class="mission-body">
+                <div class="question-box">
+                    <span class="concept-tag">CONCEITO DO DIRETÓRIO</span>
+                    <label>5.1 - O que estuda a Ergonomia (NR 17)? Em vez de copiar a definição do livro, explique como a falta de ergonomia sabota a produtividade de um trabalhador ao longo de um mês de trabalho.</label>
+                    <textarea class="nr-answer" required placeholder="Sua resposta..."></textarea>
+                </div>
+                <div class="question-box">
+                    <label>5.2 - Ergonomia não é só cadeira. É também organização do trabalho. O que mais te estressa na rotina de estudos hoje e como a "ergonomia mental" poderia ajudar?</label>
+                    <textarea class="nr-answer" required placeholder="Sua resposta..."></textarea>
+                </div>
+                <div class="question-box">
+                    <label>5.3 - Faça um rápido "Checklist Ergonômico" da sua posição agora: Pés no chão? Coluna reta? Altura do braço? O que está mais errado aí no seu setup agora?</label>
+                    <textarea class="nr-answer" required placeholder="Sua resposta..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <button type="button" class="btn-ps5" onclick="validarConsole()">Sincronizar Troféu & Gerar Código</button>
+    </form>
+
+    <div id="tokenPanel">
+        <h2>🏆 TROFÉU DE PLATINA OBTIDO!</h2>
+        <p style="color: #cbd5e1;">Missão concluída. Envie o código abaixo no grupo do WhatsApp da turma.</p>
+        <div class="token-display" id="tokenOutput"></div>
+        <button class="btn-copy" onclick="copiarToken()">Copiar Código de Validação</button>
+    </div>
+</div>
+
+<footer>
+    ATIVIDADE PEDAGÓGICA INTEGRADA // INSTRUTOR ELIELSON MOURÃO &copy; 2026<br>
+    <span style="font-size: 0.75rem; color: #ff6b00; font-weight: bold;">SISTEMA DE VERIFICAÇÃO DE CÓDIGO ATIVADO</span>
+</footer>
+
+<script>
+    function validarConsole() {
+        const nameField = document.getElementById('playerName');
+        const name = nameField.value.trim();
+        
+        if(!name) {
+            alert('AÇÃO BLOQUEADA: Digite seu Nome Completo para gerar os dados de validação.');
+            nameField.focus();
+            return;
+        }
+
+        const answers = document.querySelectorAll('.nr-answer');
+        let totalLength = 0;
+        let invalid = false;
+
+        answers.forEach((el) => {
+            const val = el.value.trim();
+            if (val.length < 15) { invalid = true; }
+            totalLength += val.length;
+        });
+
+        if (invalid) {
+            alert('SISTEMA AVISA: Respostas muito curtas detectadas. Escreva pelo menos 15 caracteres por bloco para provar sua autenticidade.');
+            return;
+        }
+
+        const token = generatePS5Token(name, totalLength);
+        
+        document.getElementById('gameForm').style.display = 'none';
+        document.getElementById('tokenPanel').style.display = 'block';
+        document.getElementById('tokenOutput').innerText = token;
+    }
+
+    function generatePS5Token(nome, tamanho) {
+        const iniciais = nome.split(' ').map(n => n[0]).join('').toUpperCase();
+        let hash = 0;
+        const salt = nome + tamanho + "PS5_ELIELSON_MOURAO_2026";
+        for (let i = 0; i < salt.length; i++) {
+            hash = (hash << 5) - hash + salt.charCodeAt(i);
+            hash |= 0;
+        }
+        const hexHash = Math.abs(hash).toString(16).toUpperCase().substring(0, 6);
+        return `PS5-${iniciais}-${tamanho}-${hexHash}`;
+    }
+
+    function copiarToken() {
+        const t = document.getElementById('tokenOutput').innerText;
+        navigator.clipboard.writeText(t);
+        alert('Código copiado! Cole direto no WhatsApp.');
+    }
+</script>
+
+</body>
+</html>
