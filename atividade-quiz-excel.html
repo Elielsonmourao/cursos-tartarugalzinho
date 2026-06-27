@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Interativo de Excel - Fórmulas Básicas</title>
+    <!-- Tailwind CSS para design moderno e responsivo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilos customizados para transição suave e toque móvel */
+        .option-card {
+            transition: all 0.2s ease-in-out;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .option-card:active {
+            transform: scale(0.98);
+        }
+        /* Custom scrollbar para melhor estética */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #10b981;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+
+    <!-- Header Principal -->
+    <header class="bg-emerald-700 text-white shadow-md py-4 px-6 sticky top-0 z-40">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <!-- Gatilho Secreto: Adicionado cursor-pointer, select-none e onclick para liberar o portal do professor -->
+            <div class="flex items-center space-x-2 cursor-pointer select-none" onclick="handleSecretClick()" title="Área de Conhecimento">
+                <!-- Ícone SVG de planilha -->
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                <h1 class="text-xl font-bold tracking-tight">Quiz de Excel Básico</h1>
+            </div>
+            <!-- Alternador de Abas (Aluno / Professor) -->
+            <nav class="flex space-x-1 bg-emerald-800 p-1 rounded-lg">
+                <button id="btn-tab-aluno" onclick="switchTab('aluno')" class="px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium bg-emerald-600 text-white shadow">
+                    Área do Aluno
+                </button>
+                <!-- O botão do professor inicia oculto usando a classe "hidden" -->
+                <button id="btn-tab-professor" onclick="switchTab('professor')" class="px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium text-emerald-100 hover:bg-emerald-600/50 hidden">
+                    Validador (Professor)
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl w-full mx-auto p-4 sm:p-6">
+
+        <!-- ================= ABA DO ALUNO ================= -->
+        <section id="tab-aluno" class="space-y-6">
+
+            <!-- Tela 1: Identificação do Aluno -->
+            <div id="screen-setup" class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 space-y-6">
+                <div class="text-center space-y-2">
+                    <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Atividade Avaliativa</span>
+                    <h2 class="text-2xl font-extrabold text-slate-800">Pronto para testar seus conhecimentos?</h2>
+                    <p class="text-slate-500 max-w-lg mx-auto text-sm">Responda com atenção às 30 questões de múltipla escolha. Ao final, você receberá um código de conclusão para enviar no grupo.</p>
+                </div>
+
+                <div class="max-w-md mx-auto space-y-4">
+                    <div>
+                        <label for="student-name" class="block text-sm font-semibold text-slate-700 mb-1">Seu Nome Completo:</label>
+                        <input type="text" id="student-name" placeholder="Digite seu nome para iniciar" 
+                               class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition text-base">
+                    </div>
+                    <button onclick="startQuiz()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-6 rounded-xl transition duration-200 shadow-lg shadow-emerald-600/20 flex items-center justify-center space-x-2">
+                        <span>Iniciar Atividade</span>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tela 2: O Quiz de Questões -->
+            <div id="screen-quiz" class="hidden space-y-6">
+                <!-- Barra de Progresso e Indicadores -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-sm font-bold text-slate-400">Aluno:</span>
+                        <span id="display-student-name" class="text-sm font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg">Carregando...</span>
+                    </div>
+                    <div class="flex items-center justify-between sm:justify-end gap-4 flex-grow">
+                        <div class="w-full sm:max-w-xs bg-slate-100 rounded-full h-2.5">
+                            <div id="progress-bar" class="bg-emerald-600 h-2.5 rounded-full" style="width: 0%"></div>
+                        </div>
+                        <span id="question-counter" class="text-sm font-bold text-slate-600 shrink-0">Questão 1 de 30</span>
+                    </div>
+                </div>
+
+                <!-- Card da Questão Atual -->
+                <div class="bg-white rounded-2xl p-6 shadow-md border border-slate-100 space-y-6">
+                    <div class="space-y-2">
+                        <span id="question-category" class="bg-slate-100 text-slate-600 text-xs font-semibold px-2.5 py-1 rounded-md uppercase tracking-wider">Categoria</span>
+                        <h3 id="question-text" class="text-lg sm:text-xl font-bold text-slate-800 leading-snug">Texto da questão aqui?</h3>
+                    </div>
+
+                    <!-- Lista de Opções -->
+                    <div id="options-container" class="grid grid-cols-1 gap-3">
+                        <!-- Gerado dinamicamente via JS -->
+                    </div>
+                </div>
+
+                <!-- Controles de Navegação -->
+                <div class="flex items-center justify-between gap-4">
+                    <button id="btn-prev" onclick="prevQuestion()" class="flex items-center space-x-2 text-slate-600 hover:text-slate-900 bg-white border border-slate-200 hover:bg-slate-50 font-semibold py-3 px-6 rounded-xl transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l-7-7m7 7h18"></path></svg>
+                        <span>Anterior</span>
+                    </button>
+                    <button id="btn-next" onclick="nextQuestion()" class="flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-xl transition shadow-lg shadow-emerald-600/10">
+                        <span id="btn-next-text">Próxima</span>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tela 3: Resultados e Geração do Código -->
+            <div id="screen-result" class="hidden bg-white rounded-2xl p-6 sm:p-8 shadow-md border border-slate-100 text-center space-y-8">
+                <div class="space-y-3">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 mb-2">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <h2 class="text-3xl font-extrabold text-slate-800">Parabéns, atividade concluída!</h2>
+                    <p class="text-slate-500 max-w-md mx-auto text-sm">Agora você precisa gerar seu código de validação para comprovar a conclusão e enviar no WhatsApp do grupo.</p>
+                </div>
+
+                <!-- Score Circle -->
+                <div class="inline-flex flex-col items-center justify-center p-6 bg-slate-50 rounded-2xl border border-slate-100">
+                    <span class="text-sm font-bold text-slate-400 uppercase tracking-wider">Seu Desempenho</span>
+                    <div class="text-4xl font-extrabold text-emerald-600 mt-1" id="display-score">28 / 30</div>
+                    <div class="text-xs text-slate-500 mt-1" id="display-percentage">93% de acertos</div>
+                </div>
+
+                <!-- Seção de Cópia do Código -->
+                <div class="max-w-md mx-auto bg-emerald-50 rounded-xl p-5 border border-emerald-200 space-y-4 text-left">
+                    <div>
+                        <h4 class="text-sm font-bold text-emerald-800 uppercase tracking-wider mb-1">Seu Código de Validação Único:</h4>
+                        <p class="text-xs text-emerald-600 mb-2">Este código contém sua nota e nome de forma segura contra fraudes.</p>
+                        <div class="flex">
+                            <input type="text" id="validation-code-input" readonly 
+                                   class="w-full px-3 py-2.5 rounded-l-lg bg-white border border-emerald-300 font-mono text-xs sm:text-sm text-slate-800 focus:outline-none">
+                            <button onclick="copyValidationCode()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 rounded-r-lg text-sm flex items-center shrink-0 transition">
+                                <span id="copy-btn-text">Copiar</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Botão WhatsApp Integrado -->
+                    <button onclick="shareOnWhatsApp()" class="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold py-3 px-4 rounded-xl transition flex items-center justify-center space-x-2 shadow-lg shadow-green-600/20">
+                        <!-- Ícone do WhatsApp -->
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.455 5.703 1.456h.004c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path>
+                        </svg>
+                        <span>Enviar no WhatsApp</span>
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- ================= ABA DO PROFESSOR (VALIDADOR) ================= -->
+        <section id="tab-professor" class="hidden space-y-6">
+            <div class="bg-white rounded-2xl p-6 shadow-md border border-slate-100 space-y-6">
+                <div class="text-center space-y-2">
+                    <span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Painel do Docente</span>
+                    <h2 class="text-2xl font-bold text-slate-800">Verificar Código do WhatsApp</h2>
+                    <p class="text-slate-500 text-sm max-w-md mx-auto">Cole o código estranho enviado pelo aluno no grupo para descriptografar os dados e validar se ele realmente fez a atividade.</p>
+                </div>
+
+                <div class="max-w-xl mx-auto space-y-4">
+                    <div>
+                        <label for="code-verifier-input" class="block text-sm font-semibold text-slate-700 mb-1">Cole o código recebido aqui:</label>
+                        <textarea id="code-verifier-input" rows="3" placeholder="Exemplo: EXCEL-S0FSTU8=-15-3A2F4B-9B2F" 
+                                  class="w-full px-4 py-3 rounded-xl border border-slate-200 font-mono text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"></textarea>
+                    </div>
+
+                    <button onclick="validateStudentCode()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-6 rounded-xl transition shadow-lg shadow-indigo-600/20 flex items-center justify-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        <span>Validar e Analisar Código</span>
+                    </button>
+                </div>
+
+                <!-- Div de Resultado da Validação -->
+                <div id="validation-result-card" class="hidden max-w-xl mx-auto rounded-xl p-6 border transition">
+                    <!-- Conteúdo dinâmico via JS -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="bg-slate-800 text-slate-400 py-4 text-center text-xs mt-8">
+        <p>© 2026 Atividade de Excel Básico. Desenvolvido para máxima interatividade escolar.</p>
+    </footer>
+
+    <!-- Script principal com perguntas, lógica e criptografia leve -->
+    <script>
+        // Chave "Salt" de segurança para impedir fraudes manuais (criação de código fictício)
+        const CRYPTO_SALT = "EXCEL_SUPER_VALIDATOR_SALT_2026";
+
+        // Banco de Dados com as 30 Questões
+        const questions = [
+            {
+                category: "Conceitos Básicos",
+                question: "1. Qual caractere avisa ao Excel que você vai escrever uma fórmula?",
+                options: [
+                    { text: "O sinal de adição (+)", correct: false },
+                    { text: "O sinal de igual (=)", correct: true },
+                    { text: "A arroba (@)", correct: false },
+                    { text: "O cifrão ($)", correct: false }
+                ]
+            },
+            {
+                category: "Matemática Básica",
+                question: "2. Qual operador aritmético é utilizado para realizar a divisão de valores?",
+                options: [
+                    { text: "A barra inclinada para a direita (/)", correct: true },
+                    { text: "O sinal de porcentagem (%)", correct: false },
+                    { text: "O sinal de dois pontos (:)", correct: false },
+                    { text: "A barra invertida (\\)", correct: false }
+                ]
+            },
+            {
+                category: "Matemática Básica",
+                question: "3. Se você precisar multiplicar o valor de duas células, qual caractere utilizará?",
+                options: [
+                    { text: "A letra X maiúscula ou minúscula (x)", correct: false },
+                    { text: "O ponto simples (.)", correct: false },
+                    { text: "O caractere asterisco (*)", correct: true },
+                    { text: "O sinal de maior (>)", correct: false }
+                ]
+            },
+            {
+                category: "Regras de Precedência",
+                question: "4. Qual operação será executada primeiro na fórmula: `=10+5*2`?",
+                options: [
+                    { text: "A soma de 10 com 5, pois vem antes da esquerda para a direita.", correct: false },
+                    { text: "A multiplicação de 5 por 2, pois possui maior prioridade matemática.", correct: true },
+                    { text: "Ambas as operações de forma simultânea.", correct: false },
+                    { text: "A operação que estiver em células formatadas como texto.", correct: false }
+                ]
+            },
+            {
+                category: "Sintaxe de Funções",
+                question: "5. Na fórmula `=SOMA(A1:A5)`, o operador de dois pontos (:) significa:",
+                options: [
+                    { text: "Somar apenas as células A1 e A5.", correct: false },
+                    { text: "Dividir o valor de A1 pelo valor de A5.", correct: false },
+                    { text: "Somar todo o intervalo de A1 'até' A5.", correct: true },
+                    { text: "Excluir as células que estiverem no meio de A1 e A5.", correct: false }
+                ]
+            },
+            {
+                category: "Sintaxe de Funções",
+                question: "6. Na fórmula `=SOMA(A1;A5)`, o operador ponto e vírgula (;) significa:",
+                options: [
+                    { text: "Somar apenas as células A1 'e' A5 individualmente.", correct: true },
+                    { text: "Somar todo o intervalo entre A1 e A5.", correct: false },
+                    { text: "Que a fórmula possui um erro de sintaxe.", correct: false },
+                    { text: "Que a célula A1 deve ser multiplicada por A5.", correct: false }
+                ]
+            },
+            {
+                category: "Estatística Básica",
+                question: "7. Como se calcula corretamente a média aritmética simples das células A1, B1 e C1 usando operadores básicos?",
+                options: [
+                    { text: "`=A1+B1+C1/3`", correct: false },
+                    { text: "`=(A1+B1+C1)/3`", correct: true },
+                    { text: "`=A1+B1+(C1/3)`", correct: false },
+                    { text: "`=A1*B1*C1/3`", correct: false }
+                ]
+            },
+            {
+                category: "Estatística Básica",
+                question: "8. Qual é a função correta para obter a média aritmética de um intervalo?",
+                options: [
+                    { text: "`=MEDIALIST(A1:A10)`", correct: false },
+                    { text: "`=AVERAGE_PT(A1:A10)`", correct: false },
+                    { text: "`=MÉDIA(A1:A10)`", correct: true },
+                    { text: "`=MEDIANO(A1:A10)`", correct: false }
+                ]
+            },
+            {
+                category: "Regras de Precedência",
+                question: "9. Qual é o resultado correto para a fórmula `=12-4/2`?",
+                options: [
+                    { text: "4", correct: false },
+                    { text: "10", correct: true },
+                    { text: "8", correct: false },
+                    { text: "6", correct: false }
+                ]
+            },
+            {
+                category: "Estatística Básica",
+                question: "10. Se a sua lista de preços está na coluna B (linhas 2 a 15) e você quer achar o menor preço, qual fórmula usará?",
+                options: [
+                    { text: "`=MENORVALOR(B2:B15)`", correct: false },
+                    { text: "`=MÍNIMO(B2:B15)`", correct: true },
+                    { text: "`=MÁXIMO(B2:B15)`", correct: false },
+                    { text: "`=MINIMIZAR(B2:B15)`", correct: false }
+                ]
+            },
+            {
+                category: "Estatística Básica",
+                question: "11. Qual função retorna o maior valor em um grupo selecionado de dados?",
+                options: [
+                    { text: "`=MAXIMIZAR(C1:C100)`", correct: false },
+                    { text: "`=MÁXIMO(C1:C100)`", correct: true },
+                    { text: "`=ALTOVALOR(C1:C100)`", correct: false },
+                    { text: "`=MAIORQUE(C1:C100)`", correct: false }
+                ]
+            },
+            {
+                category: "Funções Lógicas",
+                question: "12. Qual a estrutura correta (argumentos) da função lógica SE?",
+                options: [
+                    { text: "`=SE(teste_lógico; valor_se_verdadeiro; valor_se_falso)`", correct: true },
+                    { text: "`=SE(valor_se_verdadeiro; valor_se_falso; teste_lógico)`", correct: false },
+                    { text: "`=SE(pergunta; resposta)`", correct: false },
+                    { text: "`=SE(teste_lógico; valor_se_falso)`", correct: false }
+                ]
+            },
+            {
+                category: "Funções Lógicas",
+                question: "13. O que acontece na função SE se o teste lógico avaliado for FALSO?",
+                options: [
+                    { text: "O Excel dá um erro e trava a tela.", correct: false },
+                    { text: "A fórmula retorna o valor definido no segundo argumento.", correct: false },
+                    { text: "A fórmula pula para o terceiro argumento e retorna o 'valor_se_falso'.", correct: true },
+                    { text: "O Excel apaga o conteúdo de toda a planilha.", correct: false }
+                ]
+            },
+            {
+                category: "Funções Lógicas",
+                question: "14. Na função SE, por que usamos aspas em argumentos como \"Aprovado\" ou \"Recuperação\"?",
+                options: [
+                    { text: "Apenas por questão estética recomendada.", correct: false },
+                    { text: "Para indicar ao Excel que se trata de um texto literal, e não de uma fórmula ou nome de célula.", correct: true },
+                    { text: "Para formatar o texto em negrito.", correct: false },
+                    { text: "Para realizar operações matemáticas com as palavras.", correct: false }
+                ]
+            },
+            {
+                category: "Funções Lógicas",
+                question: "15. Se a célula A1 tem o número 15, qual o resultado de `=SE(A1>=10; \"Acima ou igual\"; \"Menor\")`?",
+                options: [
+                    { text: "Menor", correct: false },
+                    { text: "Acima ou igual", correct: true },
+                    { text: "15", correct: false },
+                    { text: "FALSO", correct: false }
+                ]
+            },
+            {
+                category: "Funções Lógicas",
+                question: "16. Se a célula B2 tem o valor 50, qual o resultado de `=SE(B2<50; \"Em falta\"; \"Estoque OK\")`?",
+                options: [
+                    { text: "Em falta", correct: false },
+                    { text: "Estoque OK", correct: true },
+                    { text: "50", correct: false },
+                    { text: "Erro #VALOR!", correct: false }
+                ]
+            },
+            {
+                category: "Sintaxe de Funções",
+                question: "17. O que acontece se o usuário esquecer de colocar o sinal de igual (=) antes de digitar 'SOMA(A1:B10)'?",
+                options: [
+                    { text: "O Excel entende e executa o cálculo mesmo assim.", correct: false },
+                    { text: "O Excel mostra uma tela vermelha de erro estrutural.", correct: false },
+                    { text: "O Excel trata aquilo apenas como um texto estático e não calcula nada.", correct: true },
+                    { text: "Os valores das células A1 a B10 são apagados do sistema.", correct: false }
+                ]
+            },
+            {
+                category: "Matemática Básica",
+                question: "18. Para que serve o operador de subtração (-) no Excel?",
+                options: [
+                    { text: "Excluir uma linha ou coluna inteira.", correct: false },
+                    { text: "Reduzir e subtrair o valor de uma célula em relação a outra.", correct: true },
+                    { text: "Mesclar duas ou mais células.", correct: false },
+                    { text: "Ocultar dados confidenciais.", correct: false }
+                ]
+            },
+            {
+                category: "Regras de Precedência",
+                question: "19. Qual o resultado final de `=(10-2)*3` calculado pelo Excel?",
+                options: [
+                    { text: "24", correct: true },
+                    { text: "4", correct: false },
+                    { text: "16", correct: false },
+                    { text: "30", correct: false }
+                ]
+            },
+            {
+                category: "Estatística Básica",
+                question: "20. Imagine que temos nas células: A1=10, A2=20, A3=30. Qual o resultado de `=MÉDIA(A1:A3)`?",
+                options: [
+                    { text: "60", correct: false },
+                    { text: "20", correct: true },
+                    { text: "30", correct: false },
+                    { text: "15", correct: false }
+                ]
+            },
+            {
+                category: "Funções Lógicas",
+                question: "21. Qual o resultado de `=SE(5>10; \"Verdadeiro\"; \"Falso\")`?",
+                options: [
+                    { text: "Verdadeiro", correct: false },
+                    { text: "Falso", correct: true },
+                    { text: "5", correct: false },
+                    { text: "10", correct: false }
+                ]
+            },
+            {
+                category: "Estatística Básica",
+                question: "22. Qual é a utilidade prática da função `=MÍNIMO` no mundo profissional?",
+                options: [
+                    { text: "Descobrir o maior faturamento de uma equipe de vendas.", correct: false },
+                    { text: "Encontrar o menor preço de um insumo em uma cotação com fornecedores.", correct: true },
+                    { text: "Saber a soma total de horas trabalhadas pelos funcionários.", correct: false },
+                    { text: "Calcular o imposto médio sobre a folha de pagamento.", correct: false }
+                ]
+            },
+            {
+                category: "Matemática Básica",
+                question: "23. Se A1 = 100 e B1 = 20, qual fórmula dividirá o valor de A1 pelo de B1?",
+                options: [
+                    { text: "`=A1/B1`", correct: true },
+                    { text: "`=DIVIDE(A1:B1)`", correct: false },
+                    { text: "`=A1*B1`", correct: false },
+                    { text: "`=A1%B1`", correct: false }
+                ]
+            },
+            {
+                category: "Funções Lógicas",
+                question: "24. O que causará um erro na fórmula `=SE(C1>10; Sim; Não)`?",
+                options: [
+                    { text: "A falta de aspas nas palavras de retorno textuais Sim e Não.", correct: true },
+                    { text: "O uso do operador maior que (>).", correct: false },
+                    { text: "A falta de parênteses extras no meio.", correct: false },
+                    { text: "O número 10 não pode ser comparado diretamente.", correct: false }
+                ]
+            },
+            {
+                category: "Sintaxe de Funções",
+                question: "25. Quantos argumentos obrigatórios possui, no mínimo, a função MÁXIMO?",
+                options: [
+                    { text: "Nenhum.", correct: false },
+                    { text: "Pelo menos 1 argumento contendo o intervalo ou lista de números.", correct: true },
+                    { text: "Sempre 3 argumentos.", correct: false },
+                    { text: "No mínimo 5 argumentos.", correct: false }
+                ]
+            },
+            {
+                category: "Conceitos Básicos",
+                question: "26. O que acontece se digitarmos `=SOMA(10+20)` na célula?",
+                options: [
+                    { text: "Dará erro porque somamos números direto sem células.", correct: false },
+                    { text: "O Excel calcula e exibe o resultado final de 30.", correct: true },
+                    { text: "A célula exibe apenas texto literal.", correct: false },
+                    { text: "A planilha é limpa por comando inválido.", correct: false }
+                ]
+            },
+            {
+                category: "Matemática Básica",
+                question: "27. Como calcular a metade do valor presente na célula D5?",
+                options: [
+                    { text: "`=D5/2`", correct: true },
+                    { text: "`=D5*2`", correct: false },
+                    { text: "`=D5-2`", correct: false },
+                    { text: "`=METADE(D5)`", correct: false }
+                ]
+            },
+            {
+                category: "Regras de Precedência",
+                question: "28. De acordo com as prioridades matemáticas do Excel, qual operador é computado por último?",
+                options: [
+                    { text: "Multiplicação (*)", correct: false },
+                    { text: "Divisão (/)", correct: false },
+                    { text: "Subtração (-)", correct: true },
+                    { text: "Parênteses ()", correct: false }
+                ]
+            },
+            {
+                category: "Estatística Básica",
+                question: "29. Se na planilha de vendas você quer saber a soma total, o maior preço, e a média de vendas de um mês, respectivamente, quais funções usará?",
+                options: [
+                    { text: "`=SOMA`, `=MÁXIMO` e `=MÉDIA`", correct: true },
+                    { text: "`=SOMA`, `=MÍNIMO` e `=MÉDIA`", correct: false },
+                    { text: "`=MÉDIA`, `=MÁXIMO` e `=SOMA`", correct: false },
+                    { text: "`=SOMA`, `=MAIOR` e `=DIVIDIR`", correct: false }
+                ]
+            },
+            {
+                category: "Funções Lógicas",
+                question: "30. Na fórmula `=SE(E3>=6; \"Média Azul\"; \"Média Vermelha\")`, qual será o resultado se o valor de E3 for 6?",
+                options: [
+                    { text: "Média Vermelha", correct: false },
+                    { text: "Média Azul", correct: true },
+                    { text: "6", correct: false },
+                    { text: "FALSO", correct: false }
+                ]
+            }
+        ];
+
+        // Estado do Jogo (Quiz)
+        let currentQuestionIndex = 0;
+        let studentName = "";
+        let studentAnswers = new Array(questions.length).fill(null); // Armazena as opções de resposta escolhidas
+        let activeTab = 'aluno';
+        let secretClickCount = 0; // Contador de cliques secretos para o professor
+
+        // Inicialização no carregamento
+        window.onload = function() {
+            renderSetupScreen();
+        };
+
+        // Tratamento de Cliques Secretos no Título
+        function handleSecretClick() {
+            secretClickCount++;
+            if (secretClickCount >= 5) {
+                const btnProfessor = document.getElementById('btn-tab-professor');
+                if (btnProfessor.classList.contains('hidden')) {
+                    btnProfessor.classList.remove('hidden');
+                    showSecretNotification();
+                }
+                secretClickCount = 0; // Reseta o contador
+            }
+        }
+
+        // Exibe uma notificação temporária discreta
+        function showSecretNotification() {
+            const notification = document.createElement('div');
+            notification.className = "fixed bottom-4 right-4 bg-indigo-600 text-white px-4 py-2.5 rounded-xl shadow-lg z-50 text-xs font-bold transition-all duration-500 ease-in-out transform translate-y-0 opacity-100";
+            notification.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    <span>Modo Professor Habilitado!</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            // Remove o elemento suavemente após 3 segundos
+            setTimeout(() => {
+                notification.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => notification.remove(), 500);
+            }, 3000);
+        }
+
+        // Alternador de Abas - Refatorado para manter a classe 'hidden' do validador quando inativo
+        function switchTab(tab) {
+            activeTab = tab;
+            const tabAluno = document.getElementById('tab-aluno');
+            const tabProfessor = document.getElementById('tab-professor');
+            const btnAluno = document.getElementById('btn-tab-aluno');
+            const btnProfessor = document.getElementById('btn-tab-professor');
+
+            if (tab === 'aluno') {
+                tabAluno.classList.remove('hidden');
+                tabProfessor.classList.add('hidden');
+                
+                // Estilo ativo para o Aluno
+                btnAluno.classList.add('bg-emerald-600', 'text-white', 'shadow');
+                btnAluno.classList.remove('text-emerald-100', 'hover:bg-emerald-600/50');
+                
+                // Estilo inativo para o Professor (caso esteja visível)
+                btnProfessor.classList.add('text-emerald-100', 'hover:bg-emerald-600/50');
+                btnProfessor.classList.remove('bg-indigo-600', 'text-white', 'shadow');
+            } else {
+                tabAluno.classList.add('hidden');
+                tabProfessor.classList.remove('hidden');
+                
+                // Estilo inativo para o Aluno
+                btnAluno.classList.remove('bg-emerald-600', 'text-white', 'shadow');
+                btnAluno.classList.add('text-emerald-100', 'hover:bg-emerald-600/50');
+                
+                // Estilo ativo para o Professor
+                btnProfessor.classList.remove('text-emerald-100', 'hover:bg-emerald-600/50');
+                btnProfessor.classList.add('bg-indigo-600', 'text-white', 'shadow');
+            }
+        }
+
+        // Configura Tela Inicial
+        function renderSetupScreen() {
+            document.getElementById('screen-setup').classList.remove('hidden');
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('screen-result').classList.add('hidden');
+        }
+
+        // Valida Nome e Começa Quiz
+        function startQuiz() {
+            const nameInput = document.getElementById('student-name');
+            const nameVal = nameInput.value.trim();
+
+            if (nameVal.length < 3) {
+                alert("Por favor, digite seu nome completo (mínimo 3 letras) antes de começar.");
+                nameInput.focus();
+                return;
+            }
+
+            studentName = nameVal;
+            document.getElementById('display-student-name').innerText = studentName;
+            
+            // Troca de tela
+            document.getElementById('screen-setup').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.remove('hidden');
+            
+            currentQuestionIndex = 0;
+            studentAnswers.fill(null);
+            loadQuestion();
+        }
+
+        // Carrega Questão Atual
+        function loadQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            
+            // Atualiza Categoria, Número e Pergunta
+            document.getElementById('question-category').innerText = currentQuestion.category;
+            document.getElementById('question-counter').innerText = `Questão ${currentQuestionIndex + 1} de ${questions.length}`;
+            document.getElementById('question-text').innerText = currentQuestion.question;
+
+            // Atualiza Barra de Progresso
+            const percent = ((currentQuestionIndex) / questions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${percent}%`;
+
+            // Renderiza Opções
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            currentQuestion.options.forEach((opt, idx) => {
+                const isSelected = studentAnswers[currentQuestionIndex] === idx;
+                
+                const card = document.createElement('button');
+                card.onclick = () => selectOption(idx);
+                card.className = `option-card text-left p-4 rounded-xl border-2 transition flex items-center justify-between w-full focus:outline-none ${
+                    isSelected 
+                        ? 'border-emerald-600 bg-emerald-50 text-emerald-900 font-semibold' 
+                        : 'border-slate-200 hover:border-slate-300 bg-slate-50 text-slate-700'
+                }`;
+
+                const letter = String.fromCharCode(65 + idx); // A, B, C, D
+                
+                card.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="w-8 h-8 flex items-center justify-center rounded-lg font-bold text-sm ${
+                            isSelected ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-600'
+                        }">${letter}</span>
+                        <span class="text-sm sm:text-base">${opt.text}</span>
+                    </div>
+                    <div>
+                        <span class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                            isSelected ? 'border-emerald-600 bg-emerald-600' : 'border-slate-300'
+                        }">
+                            ${isSelected ? '<svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>' : ''}
+                        </span>
+                    </div>
+                `;
+                optionsContainer.appendChild(card);
+            });
+
+            // Atualiza botões do controle
+            const btnPrev = document.getElementById('btn-prev');
+            if (currentQuestionIndex === 0) {
+                btnPrev.classList.add('opacity-40', 'pointer-events-none');
+            } else {
+                btnPrev.classList.remove('opacity-40', 'pointer-events-none');
+            }
+
+            const btnNextText = document.getElementById('btn-next-text');
+            if (currentQuestionIndex === questions.length - 1) {
+                btnNextText.innerText = "Finalizar";
+            } else {
+                btnNextText.innerText = "Próxima";
+            }
+        }
+
+        // Armazena a opção clicada
+        function selectOption(index) {
+            studentAnswers[currentQuestionIndex] = index;
+            loadQuestion(); // Re-renderiza para destacar o item ativo
+        }
+
+        // Voltar questão
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        }
+
+        // Avançar questão ou finalizar
+        function nextQuestion() {
+            // Valida se respondeu à pergunta atual
+            if (studentAnswers[currentQuestionIndex] === null) {
+                alert("Por favor, selecione uma das opções de resposta para prosseguir.");
+                return;
+            }
+
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        // Finaliza o Quiz e gera o código de verificação seguro
+        function finishQuiz() {
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('screen-result').classList.remove('hidden');
+
+            // Calcula pontuação e gera mapa de acertos
+            let score = 0;
+            let bitmask = ""; // Gerará 30 caracteres '1' (acertou) ou '0' (errou)
+
+            questions.forEach((q, qIdx) => {
+                const chosenIdx = studentAnswers[qIdx];
+                const isCorrect = q.options[chosenIdx].correct;
+                if (isCorrect) {
+                    score++;
+                    bitmask += "1";
+                } else {
+                    bitmask += "0";
+                }
+            });
+
+            const percentage = Math.round((score / questions.length) * 100);
+            document.getElementById('display-score').innerText = `${score} / ${questions.length}`;
+            document.getElementById('display-percentage').innerText = `${percentage}% de acertos`;
+
+            // Cria o código exclusivo criptografado/ofuscado
+            const validationCode = generateSecurityCode(studentName, score, bitmask);
+            document.getElementById('validation-code-input').value = validationCode;
+        }
+
+        // Sistema de Criptografia Leve e Validação Matemática
+        // Cria uma string no formato: EXCEL-[NOME_B64]-[NOTA]-[BITMASK_HEX]-[CHECKSUM_HEX]
+        function generateSecurityCode(name, score, bitmaskBin) {
+            // 1. Limpa o nome (remove espaços extras) e converte em Base64 para ocultá-lo visualmente
+            const nameBase64 = btoa(unescape(encodeURIComponent(name.trim()))).replace(/=/g, ''); // Sem padding '='
+
+            // 2. Converte os 30 bits binários de acertos em hexadecimal para encurtar o código
+            const bitmaskHex = parseInt(bitmaskBin, 2).toString(16).toUpperCase();
+
+            // 3. Cria um Checksum único de segurança (mistura nome + nota + bitmask + salt com hash de somatório)
+            const inputForHash = `${name.trim().toLowerCase()}-${score}-${bitmaskHex}-${CRYPTO_SALT}`;
+            const checksum = generateSimpleHash(inputForHash);
+
+            return `EXCEL-${nameBase64}-${score}-${bitmaskHex}-${checksum}`;
+        }
+
+        // Algoritmo simples de hash numérico convertido em Hexadecimal de 4 dígitos
+        function generateSimpleHash(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Converte para inteiro de 32 bits
+            }
+            return Math.abs(hash).toString(16).toUpperCase().substring(0, 4);
+        }
+
+        // Função do Aluno para Copiar Código
+        function copyValidationCode() {
+            const codeField = document.getElementById('validation-code-input');
+            codeField.select();
+            codeField.setSelectionRange(0, 99999); // Para telas de celular
+
+            // Tenta usar execCommand para máxima compatibilidade dentro de frames
+            try {
+                const successful = document.execCommand('copy');
+                const copyBtnText = document.getElementById('copy-btn-text');
+                if (successful) {
+                    copyBtnText.innerText = "Copiado!";
+                    setTimeout(() => {
+                        copyBtnText.innerText = "Copiar";
+                    }, 2000);
+                } else {
+                    alert("Por favor, selecione o código e copie manualmente.");
+                }
+            } catch (err) {
+                alert("Selecione e copie o texto diretamente do campo.");
+            }
+        }
+
+        // Redireciona para o WhatsApp compartilhando o código com template amigável
+        function shareOnWhatsApp() {
+            const code = document.getElementById('validation-code-input').value;
+            const message = `Olá, finalizei a atividade de Excel! Segue meu código único de verificação:\n\n*Nome:* ${studentName.trim()}\n*Código:* ${code}`;
+            const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+        }
+
+
+        // ================= SISTEMA DO PROFESSOR (VALIDADOR) =================
+
+        function validateStudentCode() {
+            const rawInput = document.getElementById('code-verifier-input').value.trim();
+            const resultCard = document.getElementById('validation-result-card');
+
+            resultCard.classList.remove('hidden');
+
+            // Limpa formatações e quebras de linha caso colado incorretamente
+            // Procura o padrão EXCEL-XYZ
+            const regex = /EXCEL-([A-Za-z0-9+/=]+)-(\d+)-([A-Fa-f0-9]+)-([A-Fa-f0-9]+)/;
+            const match = rawInput.match(regex);
+
+            if (!match) {
+                showValidationError("Código de validação inválido ou danificado! Certifique-se de colar o código completo exatamente como gerado.");
+                return;
+            }
+
+            const [fullMatch, nameB64, scoreStr, bitmaskHex, checksum] = match;
+            const score = parseInt(scoreStr, 10);
+
+            // 1. Tenta decodificar o nome do aluno em Base64
+            let decodedName = "";
+            try {
+                // Readiciona padding '=' se estiver faltando na decodificação base64
+                let paddedB64 = nameB64;
+                while (paddedB64.length % 4 !== 0) {
+                    paddedB64 += '=';
+                }
+                decodedName = decodeURIComponent(escape(atob(paddedB64)));
+            } catch (e) {
+                showValidationError("O nome do aluno contido no código parece estar corrompido.");
+                return;
+            }
+
+            // 2. Converte Hex de volta para a string de bits binária de 30 posições
+            let bitmaskBin = parseInt(bitmaskHex, 16).toString(2);
+            // Garante preenchimento de zeros à esquerda se necessário para completar as 30 questões
+            while (bitmaskBin.length < questions.length) {
+                bitmaskBin = "0" + bitmaskBin;
+            }
+
+            // 3. Recalcula o Hash de Integridade
+            const expectedInput = `${decodedName.trim().toLowerCase()}-${score}-${bitmaskHex}-${CRYPTO_SALT}`;
+            const expectedHash = generateSimpleHash(expectedInput);
+
+            // 4. Validação de Segurança contra modificações
+            if (expectedHash !== checksum) {
+                showValidationError(`ALERTA DE SEGURANÇA: Este código foi forjado ou alterado de forma manual! O nome ou a pontuação não coincidem com o hash original.`);
+                return;
+            }
+
+            // Código válido! Mostra o resultado detalhado
+            showValidationSuccess(decodedName, score, bitmaskBin);
+        }
+
+        // Exibe erro na validação
+        function showValidationError(message) {
+            const card = document.getElementById('validation-result-card');
+            card.className = "max-w-xl mx-auto rounded-xl p-6 border bg-red-50 border-red-200 text-red-900 space-y-3";
+            card.innerHTML = `
+                <div class="flex items-start space-x-3">
+                    <svg class="w-6 h-6 text-red-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    <div>
+                        <h3 class="font-bold text-base">Falha na Verificação!</h3>
+                        <p class="text-sm text-red-700">${message}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Exibe sucesso na validação com o mapa detalhado de acertos/erros
+        function showValidationSuccess(studentName, score, bitmaskBin) {
+            const card = document.getElementById('validation-result-card');
+            card.className = "max-w-xl mx-auto rounded-xl p-6 border bg-emerald-50 border-emerald-200 text-slate-800 space-y-6";
+
+            const percentage = Math.round((score / questions.length) * 100);
+
+            // Cria o mapa visual de acertos (grid de bolinhas verdes e vermelhas)
+            let gridHTML = "";
+            for (let i = 0; i < questions.length; i++) {
+                const wasCorrect = bitmaskBin[i] === "1";
+                const colorClass = wasCorrect ? "bg-emerald-600 text-white" : "bg-red-500 text-white";
+                const titleText = `Questão ${i + 1}: ${wasCorrect ? 'Acertou' : 'Errou'}`;
+                
+                gridHTML += `
+                    <div title="${titleText}" class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold ${colorClass} shadow-sm">
+                        ${i + 1}
+                    </div>
+                `;
+            }
+
+            card.innerHTML = `
+                <div class="flex items-center justify-between border-b border-emerald-200 pb-3">
+                    <div class="flex items-center space-x-3">
+                        <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <h3 class="font-bold text-lg text-emerald-900">Código Autêntico e Confirmado!</h3>
+                    </div>
+                    <span class="bg-emerald-600 text-white text-xs font-bold px-2 py-1 rounded">Válido</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                    <div class="space-y-1">
+                        <span class="text-xs text-slate-400 font-bold uppercase">Nome do Aluno</span>
+                        <p class="font-bold text-slate-800 text-base">${studentName}</p>
+                    </div>
+                    <div class="space-y-1">
+                        <span class="text-xs text-slate-400 font-bold uppercase">Resultado do Quiz</span>
+                        <p class="font-bold text-slate-800 text-base">${score} de 30 acertos (${percentage}%)</p>
+                    </div>
+                </div>
+
+                <div class="space-y-2.5">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs text-slate-500 font-bold uppercase tracking-wider">Mapa de Respostas do Aluno:</span>
+                        <div class="flex space-x-3 text-[10px]">
+                            <span class="flex items-center"><span class="w-2.5 h-2.5 rounded bg-emerald-600 inline-block mr-1"></span>Acerto</span>
+                            <span class="flex items-center"><span class="w-2.5 h-2.5 rounded bg-red-500 inline-block mr-1"></span>Erro</span>
+                        </div>
+                    </div>
+                    <!-- Grid responsivo para as 30 perguntas -->
+                    <div class="grid grid-cols-6 sm:grid-cols-10 gap-2 p-3 bg-white rounded-lg border border-emerald-100">
+                        ${gridHTML}
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
