@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atividade Prática: Criando sua Primeira Planilha</title>
+    <style>
+        :root {
+            --primary: #2b6cb0;
+            --primary-hover: #1e4e8c;
+            --bg: #f7fafc;
+            --card-bg: #ffffff;
+            --text: #2d3748;
+            --text-light: #718096;
+            --border: #e2e8f0;
+            --accent: #dd6b20;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 2.2rem;
+            border-bottom: 3px solid var(--border);
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+
+        h2 {
+            color: var(--primary-hover);
+            font-size: 1.5rem;
+            margin-top: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        p {
+            font-size: 1.1rem;
+        }
+
+        .instructions {
+            background-color: #ebf8ff;
+            border-left: 4px solid var(--primary);
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+        }
+
+        .tip {
+            background-color: #fffaf0;
+            border-left: 4px solid var(--accent);
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+            font-style: italic;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 1rem;
+        }
+
+        th, td {
+            border: 1px solid var(--border);
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #edf2f7;
+            color: var(--text);
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #f8fafc;
+        }
+
+        .formula {
+            background-color: #edf2f7;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            color: #c53030;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .btn-print {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        .btn-print:hover {
+            background-color: var(--primary-hover);
+        }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .container { box-shadow: none; padding: 0; }
+            .btn-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📝 Atividade Prática: Planilha de Curso</h1>
+    
+    <p><strong>Contexto:</strong> Imagine que você recebeu a missão de organizar as finanças de um pequeno curso ou projeto escolar. Para que tudo funcione bem, precisamos registrar as entradas de dinheiro, os gastos e o saldo final usando o Excel ou Google Planilhas.</p>
+
+    <div class="instructions">
+        <strong>🎯 O Desafio:</strong> Você deve montar a tabela abaixo exatamente como instruído e aplicar as fórmulas matemáticas de <strong>Soma, Subtração, Multiplicação e Divisão</strong>. Não vale digitar os resultados manualmente!
+    </div>
+
+    <h2>📋 Estrutura da Planilha (O que inserir)</h2>
+    <p>Configure sua planilha utilizando as colunas de <strong>A até D</strong> e as linhas de <strong>1 até 11</strong> conforme o modelo abaixo:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Linha</th>
+                <th>A (Item / Descrição)</th>
+                <th>B (Quantidade)</th>
+                <th>C (Valor Unitário)</th>
+                <th>D (Valor Total)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>1</strong></td>
+                <td><strong>Item / Descrição</strong></td>
+                <td><strong>Quantidade</strong></td>
+                <td><strong>Valor Unitário</strong></td>
+                <td><strong>Valor Total</strong></td>
+            </tr>
+            <tr>
+                <td><strong>2</strong></td>
+                <td>Inscrição dos Alunos</td>
+                <td>20</td>
+                <td>R$ 50,00</td>
+                <td><span class="formula">=B2*C2</span> <em>(Multiplicação)</em></td>
+            </tr>
+            <tr>
+                <td><strong>3</strong></td>
+                <td>Apostilas Impressas</td>
+                <td>20</td>
+                <td>R$ 15,00</td>
+                <td><span class="formula">=B3*C3</span></td>
+            </tr>
+            <tr>
+                <td><strong>4</strong></td>
+                <td>Salgados para o Coffee Break</td>
+                <td>5</td>
+                <td>R$ 40,00</td>
+                <td><span class="formula">=B4*C4</span></td>
+            </tr>
+            <tr>
+                <td><strong>5</strong></td>
+                <td>Refrigerantes 2L</td>
+                <td>12</td>
+                <td>R$ 8,50</td>
+                <td><span class="formula">=B5*C5</span></td>
+            </tr>
+            <tr>
+                <td><strong>6</strong></td>
+                <td>Papel para Certificados</td>
+                <td>2</td>
+                <td>R$ 25,00</td>
+                <td><span class="formula">=B6*C6</span></td>
+            </tr>
+            <tr>
+                <td><strong>7</strong></td>
+                <td colspan="4" style="background: #eee; text-align: center; font-size: 0.9rem; color: #666;">[ Linha em branco para separação ]</td>
+            </tr>
+            <tr>
+                <td><strong>8</strong></td>
+                <td><strong>Total Arrecadado (Entradas)</strong></td>
+                <td></td>
+                <td></td>
+                <td><span class="formula">=D2</span></td>
+            </tr>
+            <tr>
+                <td><strong>9</strong></td>
+                <td><strong>Total de Custos (Saídas)</strong></td>
+                <td></td>
+                <td></td>
+                <td><span class="formula">=SOMA(D3:D6)</span> <em>(Soma)</em></td>
+            </tr>
+            <tr>
+                <td><strong>10</strong></td>
+                <td><strong>Saldo Final do Curso</strong></td>
+                <td></td>
+                <td></td>
+                <td><span class="formula">=D8-D9</span> <em>(Subtração)</em></td>
+            </tr>
+            <tr>
+                <td><strong>11</strong></td>
+                <td><strong>Custo por Aluno</strong></td>
+                <td></td>
+                <td></td>
+                <td><span class="formula">=D9/B2</span> <em>(Divisão)</em></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>⚙️ Critérios de Avaliação</h2>
+    <ul>
+        <li><strong>Formatação:</strong> As colunas C e D precisam estar formatadas como <strong>Moeda (R$)</strong>.</li>
+        <li><strong>Design:</strong> O cabeçalho (Linha 1) e os resumos (Linhas 8 a 11) devem estar em <strong>negrito</strong>.</li>
+        <li><strong>Automatização:</strong> Todas as células da coluna D devem conter as fórmulas indicadas. Se você alterar a quantidade de inscrições, o saldo final deve recalcular sozinho!</li>
+    </ul>
+
+    <div class="tip">
+        <strong>💡 Dica do Professor:</strong> Comece sempre as suas fórmulas com o sinal de igual (<span class="formula">=</span>), caso contrário o Excel/Google Planilhas vai entender o seu comando apenas como um texto comum!
+    </div>
+
+    <button class="btn-print" onclick="window.print()">🖨️ Imprimir ou Salvar em PDF</button>
+</div>
+
+</body>
+</html>
