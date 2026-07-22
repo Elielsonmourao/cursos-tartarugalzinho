@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atividade Prática de Excel - Controle de Estoque</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .print-shadow-none {
+                box-shadow: none !important;
+                border: 1px solid #e2e8f0 !important;
+            }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen pb-12">
+
+    <!-- Top Header Navigation -->
+    <header class="bg-gradient-to-r from-pink-600 via-rose-500 to-purple-600 text-white shadow-lg no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="p-3 bg-white/10 rounded-xl backdrop-blur-md">
+                    <i class="fa-solid fa-file-excel text-2xl text-emerald-300"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight">Atividade Prática: Excel & SE()</h1>
+                    <p class="text-xs text-pink-100">Gestão de Estoque - Loja Glamour Maquiagens</p>
+                </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+                <button onclick="generateRandomStock()" class="bg-white/20 hover:bg-white/30 text-white text-xs font-semibold py-2 px-3 rounded-lg transition flex items-center gap-2 backdrop-blur-sm">
+                    <i class="fa-solid fa-dice"></i> Gerar Novos Valores
+                </button>
+                <button onclick="copyTableForExcel()" class="bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold py-2 px-3 rounded-lg shadow-sm transition flex items-center gap-2">
+                    <i class="fa-solid fa-copy"></i> Copiar p/ Excel
+                </button>
+                <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold py-2 px-3 rounded-lg shadow-sm transition flex items-center gap-2">
+                    <i class="fa-solid fa-print"></i> Imprimir / PDF
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+
+        <!-- Toast Notification Box -->
+        <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl transition-all duration-300 opacity-0 pointer-events-none translate-y-4 flex items-center gap-3 z-50">
+            <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400"></i>
+            <span id="toast-message" class="text-sm font-medium">Notificação</span>
+        </div>
+
+        <!-- Instructions Banner -->
+        <section class="mb-8 bg-white rounded-2xl p-6 shadow-sm border border-slate-200 print-shadow-none">
+            <div class="flex items-start gap-4">
+                <div class="p-3 bg-rose-50 text-rose-600 rounded-xl hidden sm:block">
+                    <i class="fa-solid fa-graduation-cap text-xl"></i>
+                </div>
+                <div class="space-y-3 w-full">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-lg font-bold text-slate-900">Orientações para o Aluno</h2>
+                        <span class="bg-pink-100 text-pink-700 text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">Exercício Individual</span>
+                    </div>
+                    <p class="text-sm text-slate-600">
+                        Sua missão é criar uma planilha profissional para a loja <strong>Glamour Maquiagens</strong>. Copie ou digite os dados da tabela abaixo no Excel (ou Google Sheets) e aplique as fórmulas exigidas.
+                    </p>
+                    
+                    <!-- Steps Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                            <div class="flex items-center gap-2 font-semibold text-slate-800 text-sm mb-1">
+                                <span class="w-5 h-5 rounded-full bg-pink-600 text-white text-xs flex items-center justify-center">1</span>
+                                Montar a Tabela
+                            </div>
+                            <p class="text-xs text-slate-500">Copie os dados abaixo e cole na célula <code class="bg-slate-200 px-1 py-0.5 rounded text-slate-800">A1</code> do seu Excel.</p>
+                        </div>
+
+                        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                            <div class="flex items-center gap-2 font-semibold text-slate-800 text-sm mb-1">
+                                <span class="w-5 h-5 rounded-full bg-pink-600 text-white text-xs flex items-center justify-center">2</span>
+                                Aplicar a Fórmula =SE()
+                            </div>
+                            <p class="text-xs text-slate-500">Na coluna <strong>Status do Estoque</strong>, crie uma função <code class="bg-slate-200 px-1 py-0.5 rounded text-slate-800">=SE</code> para comparar o Estoque Atual com o Mínimo.</p>
+                        </div>
+
+                        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                            <div class="flex items-center gap-2 font-semibold text-slate-800 text-sm mb-1">
+                                <span class="w-5 h-5 rounded-full bg-pink-600 text-white text-xs flex items-center justify-center">3</span>
+                                Regra de Negócio
+                            </div>
+                            <p class="text-xs text-slate-500">
+                                Se a <strong>Qtd. em Estoque</strong> for menor que o <strong>Estoque Mínimo</strong>, deve exibir <span class="text-rose-600 font-medium">"Repor Estoque"</span>, caso contrário <span class="text-emerald-600 font-medium">"Estoque OK"</span>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Data Table Container -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden print-shadow-none">
+            <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50">
+                <div>
+                    <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2">
+                        <i class="fa-solid fa-boxes-stacked text-pink-500"></i>
+                        Tabela de Controle de Estoque
+                    </h3>
+                    <p class="text-xs text-slate-500">15 itens cadastrados na categoria de maquiagem e cosméticos</p>
+                </div>
+                <div class="text-xs font-mono text-slate-500 bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm no-print">
+                    Dica: Use a tecla <kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-300 rounded text-slate-700">Tab</kbd> no Excel para navegar rápido
+                </div>
+            </div>
+
+            <!-- Responsive Table -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm" id="excel-table">
+                    <thead class="bg-slate-100/80 text-slate-700 uppercase font-semibold text-[11px] tracking-wider border-b border-slate-200">
+                        <tr>
+                            <th class="py-3 px-4 w-12 text-center">#</th>
+                            <th class="py-3 px-4">Código</th>
+                            <th class="py-3 px-4">Produto</th>
+                            <th class="py-3 px-4">Categoria</th>
+                            <th class="py-3 px-4 text-center bg-pink-50/50 text-pink-900">Qtd. Em Estoque</th>
+                            <th class="py-3 px-4 text-center bg-slate-200/50">Estoque Mínimo</th>
+                            <th class="py-3 px-4 text-center bg-amber-50/50 text-amber-900">Status do Estoque (Fórmula)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-slate-700" id="table-body">
+                        <!-- Content dynamically rendered via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Interactive Formula Practice & Extra Challenge -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8 no-print">
+            
+            <!-- Interactive Simulator -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <div class="flex items-center gap-2 font-bold text-slate-900 mb-2">
+                    <i class="fa-solid fa-vial text-purple-600"></i>
+                    Simulador de Validação da Fórmula
+                </div>
+                <p class="text-xs text-slate-500 mb-4">
+                    Digite abaixo a fórmula do Excel exatamente como você colocaria na célula <code class="bg-slate-100 px-1 font-bold text-purple-700">F2</code> para testar se sua lógica está certa!
+                </p>
+
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Sua Fórmula no Excel:</label>
+                        <div class="relative">
+                            <input type="text" id="user-formula" placeholder='=SE(D2 < E2; "Repor Estoque"; "Estoque OK")' 
+                                class="w-full text-sm font-mono bg-slate-50 border border-slate-300 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:bg-white transition">
+                            <button onclick="testFormula()" class="absolute right-1.5 top-1.5 bg-pink-600 hover:bg-pink-700 text-white text-xs font-medium px-3 py-1.5 rounded-md transition">
+                                Testar Fórmula
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="formula-feedback" class="hidden p-3 rounded-xl text-xs flex items-start gap-2.5">
+                        <i id="feedback-icon" class="fa-solid text-sm mt-0.5"></i>
+                        <span id="feedback-text"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Extra Challenge -->
+            <div class="bg-gradient-to-br from-slate-900 to-indigo-950 p-6 rounded-2xl text-white shadow-sm flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center gap-2 font-bold text-amber-400 mb-2">
+                        <i class="fa-solid fa-star"></i>
+                        Desafio Extra (Nota 10)
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed mb-3">
+                        Depois de aplicar a fórmula `=SE()` para todos os produtos:
+                    </p>
+                    <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside">
+                        <li>Aplique <strong>Formatação Condicional</strong> na coluna de Status: vermelho para <em class="text-pink-300">"Repor Estoque"</em> e verde para <em class="text-emerald-300">"Estoque OK"</em>.</li>
+                        <li>Calcule a <strong>Soma Total</strong> de itens em estoque usando a função <code class="bg-white/10 px-1 py-0.5 rounded text-amber-200">=SOMA()</code>.</li>
+                        <li>Descubra a <strong>Média</strong> do estoque mínimo usando <code class="bg-white/10 px-1 py-0.5 rounded text-amber-200">=MÉDIA()</code>.</li>
+                    </ul>
+                </div>
+                <div class="mt-4 pt-3 border-t border-white/10 text-[11px] text-slate-400 flex justify-between items-center">
+                    <span>Lembre-se do uso dos ponto e vírgula (;) no Excel em Português.</span>
+                    <i class="fa-solid fa-lightbulb text-amber-400"></i>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+        // Base makeup products list
+        const makeupProducts = [
+            { code: "MQ-01", name: "Base Líquida Matte", category: "Rosto" },
+            { code: "MQ-02", name: "Corretivo Alta Cobertura", category: "Rosto" },
+            { code: "MQ-03", name: "Pó Compacto Translúcido", category: "Rosto" },
+            { code: "MQ-04", name: "Batom Matte Lança-Tendência", category: "Lábios" },
+            { code: "MQ-05", name: "Gloss Labial Incolor", category: "Lábios" },
+            { code: "MQ-06", name: "Lápis de Boca Nude", category: "Lábios" },
+            { code: "MQ-07", name: "Máscara de Cílios Volume", category: "Olhos" },
+            { code: "MQ-08", name: "Caneta Delineadora Preta", category: "Olhos" },
+            { code: "MQ-09", name: "Paleta de Sombras 12 Cores", category: "Olhos" },
+            { code: "MQ-10", name: "Gel para Sobrancelha", category: "Olhos" },
+            { code: "MQ-11", name: "Blush em Bastão Rose", category: "Rosto" },
+            { code: "MQ-12", name: "Iluminador Líquido", category: "Rosto" },
+            { code: "MQ-13", name: "Bruma Fixadora Iluminadora", category: "Rosto" },
+            { code: "MQ-14", name: "Demaquilante Bifásico", category: "Cuidados" },
+            { code: "MQ-15", name: "Kit de Pincéis Profissionais", category: "Acessórios" }
+        ];
+
+        let currentData = [];
+
+        // Generates random stock and min stock values
+        function generateRandomStock() {
+            currentData = makeupProducts.map(prod => {
+                const minStock = Math.floor(Math.random() * 12) + 5; // 5 to 16
+                // Random stock created to force both positive and negative stock statuses
+                const currentStock = Math.floor(Math.random() * 25); 
+                return {
+                    ...prod,
+                    currentStock,
+                    minStock
+                };
+            });
+            renderTable();
+            showToast("Novos estoques gerados aleatoriamente!", "success");
+        }
+
+        // Renders table content
+        function renderTable() {
+            const tbody = document.getElementById("table-body");
+            tbody.innerHTML = "";
+
+            currentData.forEach((item, index) => {
+                const rowNum = index + 2; // Row number in Excel (header is row 1)
+                const tr = document.createElement("tr");
+                tr.className = "hover:bg-slate-50 transition border-b border-slate-100";
+                tr.innerHTML = `
+                    <td class="py-3 px-4 text-center font-mono text-xs text-slate-400">${rowNum}</td>
+                    <td class="py-3 px-4 font-mono font-semibold text-xs text-pink-600">${item.code}</td>
+                    <td class="py-3 px-4 font-medium text-slate-800">${item.name}</td>
+                    <td class="py-3 px-4 text-slate-500">
+                        <span class="inline-block px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-xs">${item.category}</span>
+                    </td>
+                    <td class="py-3 px-4 text-center font-bold text-slate-900 bg-pink-50/30">${item.currentStock}</td>
+                    <td class="py-3 px-4 text-center font-semibold text-slate-600 bg-slate-50/80">${item.minStock}</td>
+                    <td class="py-3 px-4 text-center text-slate-400 bg-amber-50/20 italic font-mono text-xs">
+                        [ Digitar Fórmula =SE ]
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Copies formatted TSV for Excel pasting
+        function copyTableForExcel() {
+            let tsvContent = "Código\tProduto\tCategoria\tQtd. Em Estoque\tEstoque Mínimo\tStatus do Estoque\n";
+            
+            currentData.forEach(item => {
+                tsvContent += `${item.code}\t${item.name}\t${item.category}\t${item.currentStock}\t${item.minStock}\t\n`;
+            });
+
+            // Create temporary textarea for copying to clipboard securely
+            const textarea = document.createElement("textarea");
+            textarea.value = tsvContent;
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                document.execCommand('copy');
+                showToast("Tabela copiada! Abra o Excel e pressione Ctrl + V.", "success");
+            } catch (err) {
+                showToast("Erro ao copiar. Tente selecionar manualmente.", "error");
+            }
+            
+            document.body.removeChild(textarea);
+        }
+
+        // Simple formula validation simulator for students
+        function testFormula() {
+            const formulaInput = document.getElementById("user-formula").value.trim().toUpperCase();
+            const feedbackBox = document.getElementById("formula-feedback");
+            const feedbackIcon = document.getElementById("feedback-icon");
+            const feedbackText = document.getElementById("feedback-text");
+
+            feedbackBox.classList.remove("hidden", "bg-emerald-50", "text-emerald-800", "bg-rose-50", "text-rose-800", "bg-amber-50", "text-amber-800");
+
+            if (!formulaInput.startsWith("=")) {
+                feedbackBox.classList.add("bg-rose-50", "text-rose-800");
+                feedbackIcon.className = "fa-solid fa-circle-xmark text-rose-600 text-sm mt-0.5";
+                feedbackText.innerHTML = "<strong>Falta o sinal de igual!</strong> Toda fórmula no Excel deve começar com <code>=</code>.";
+                return;
+            }
+
+            if (!formulaInput.includes("SE(")) {
+                feedbackBox.classList.add("bg-rose-50", "text-rose-800");
+                feedbackIcon.className = "fa-solid fa-circle-xmark text-rose-600 text-sm mt-0.5";
+                feedbackText.innerHTML = "<strong>Função incorreta.</strong> Você deve utilizar a função <code>=SE(...)</code>.";
+                return;
+            }
+
+            // Verify if references D2 and E2 or correct condition operators exist
+            const hasD2 = formulaInput.includes("D2");
+            const hasE2 = formulaInput.includes("E2");
+            const hasRepor = formulaInput.includes('"REPOR ESTOQUE"') || formulaInput.includes('"REPOR"');
+            const hasOK = formulaInput.includes('"ESTOQUE OK"') || formulaInput.includes('"OK"');
+
+            if (hasD2 && hasE2 && hasRepor && hasOK) {
+                feedbackBox.classList.add("bg-emerald-50", "text-emerald-800");
+                feedbackIcon.className = "fa-solid fa-circle-check text-emerald-600 text-sm mt-0.5";
+                feedbackText.innerHTML = "<strong>Excelente! Sua fórmula está corretíssima!</strong> Ela compara a célula D2 (Qtd) com E2 (Mínimo) e retorna os textos exatos entre aspas.";
+            } else if (!hasD2 || !hasE2) {
+                feedbackBox.classList.add("bg-amber-50", "text-amber-800");
+                feedbackIcon.className = "fa-solid fa-triangle-exclamation text-amber-600 text-sm mt-0.5";
+                feedbackText.innerHTML = "<strong>Atenção às Células:</strong> Lembre-se de usar a célula <strong>D2</strong> para a Quantidade e <strong>E2</strong> para o Estoque Mínimo.";
+            } else if (!hasRepor || !hasOK) {
+                feedbackBox.classList.add("bg-amber-50", "text-amber-800");
+                feedbackIcon.className = "fa-solid fa-triangle-exclamation text-amber-600 text-sm mt-0.5";
+                feedbackText.innerHTML = "<strong>Atenção aos Textos:</strong> Certifique-se de colocar as respostas entre aspas duplas, ex: <code>\"Repor Estoque\"</code> e <code>\"Estoque OK\"</code>.";
+            } else {
+                feedbackBox.classList.add("bg-emerald-50", "text-emerald-800");
+                feedbackIcon.className = "fa-solid fa-circle-check text-emerald-600 text-sm mt-0.5";
+                feedbackText.innerHTML = "<strong>Estrutura bem construída!</strong> Teste agora inserindo-a diretamente na sua planilha no Excel.";
+            }
+        }
+
+        function showToast(message, type = "success") {
+            const toast = document.getElementById("toast");
+            const toastMsg = document.getElementById("toast-message");
+            const toastIcon = document.getElementById("toast-icon");
+
+            toastMsg.textContent = message;
+            
+            if (type === "success") {
+                toastIcon.className = "fa-solid fa-circle-check text-emerald-400";
+            } else {
+                toastIcon.className = "fa-solid fa-circle-exclamation text-rose-400";
+            }
+
+            toast.classList.remove("opacity-0", "pointer-events-none", "translate-y-4");
+            
+            setTimeout(() => {
+                toast.classList.add("opacity-0", "pointer-events-none", "translate-y-4");
+            }, 3000);
+        }
+
+        // Initialize table on page load
+        window.onload = function() {
+            generateRandomStock();
+        };
+    </script>
+</body>
+</html>
