@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atividade Prática: Controle de Loja Escolar</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .excel-grid {
+            border-collapse: collapse;
+        }
+        .excel-cell {
+            border: 1px solid #e2e8f0;
+            min-width: 100px;
+        }
+        .excel-header {
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: #475569;
+            text-align: center;
+        }
+        .excel-row-num {
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: #64748b;
+            text-align: center;
+            width: 40px;
+        }
+        .active-cell {
+            outline: 2px solid #059669 !important;
+            z-index: 10;
+        }
+        /* Bloqueio de seleção de texto para impedir cópia */
+        .no-select {
+            -webkit-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            user-select: none !important;
+        }
+        /* Permitir digitação apenas nos campos de texto interativos do simulador */
+        input {
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+            user-select: text !important;
+        }
+        /* Custom scrollbar for spreadsheet view */
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col no-select" oncopy="return false" oncut="return false" ondragstart="return false">
+
+    <!-- Toast Notification para tentativas de cópia -->
+    <div id="copyNotice" class="fixed bottom-5 right-5 bg-slate-900 text-white text-xs px-4 py-3 rounded-xl shadow-2xl z-50 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-2 border border-slate-700 pointer-events-none">
+        <i data-lucide="lock" class="w-4 h-4 text-amber-400 shrink-0"></i>
+        <span><strong>Cópia Bloqueada:</strong> Digite os dados diretamente no Excel para praticar!</span>
+    </div>
+
+    <header class="bg-emerald-700 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-emerald-800 p-2 rounded-lg">
+                    <i data-lucide="file-spreadsheet" class="w-6 h-6 text-emerald-200"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg sm:text-xl leading-tight">Atividade Prática de Planilhas</h1>
+                    <p class="text-xs text-emerald-200">Controle de Estoque & Vendas da Loja Escolar</p>
+                </div>
+            </div>
+
+            <!-- Header Actions -->
+            <div class="flex items-center space-x-2">
+                <span class="bg-emerald-800 text-emerald-100 text-xs px-3 py-1 rounded-full font-medium flex items-center gap-1">
+                    <i data-lucide="graduation-cap" class="w-3.5 h-3.5"></i> Nível Iniciante
+                </span>
+                <button id="toggleAnswerKey" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1">
+                    <i data-lucide="eye" class="w-3.5 h-3.5"></i> Ver Gabarito
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full flex flex-col gap-6">
+
+        <!-- Navigation Tabs -->
+        <div class="flex border-b border-slate-200 bg-white rounded-t-xl px-2 pt-2 shadow-sm overflow-x-auto">
+            <button id="tabSimulator" class="tab-btn border-b-2 border-emerald-600 text-emerald-700 font-semibold py-3 px-5 text-sm flex items-center gap-2 whitespace-nowrap">
+                <i data-lucide="calculator" class="w-4 h-4"></i> Simulador de Planilha (Prática)
+            </button>
+            <button id="tabDataView" class="tab-btn border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-medium py-3 px-5 text-sm flex items-center gap-2 whitespace-nowrap">
+                <i data-lucide="table" class="w-4 h-4"></i> Tabela para Digitar no Excel (20 Itens)
+            </button>
+            <button id="tabGuide" class="tab-btn border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-medium py-3 px-5 text-sm flex items-center gap-2 whitespace-nowrap">
+                <i data-lucide="book-open" class="w-4 h-4"></i> Guia Passo a Passo
+            </button>
+        </div>
+
+        <!-- TAB 1: INTERACTIVE SIMULATOR -->
+        <div id="panelSimulator" class="space-y-4">
+            
+            <!-- Progress Bar Card -->
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-3 w-full sm:w-auto">
+                    <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-lg">
+                        <span id="completedPercentage">0%</span>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-slate-800 text-sm">Progresso do Desafio (20 Itens)</h3>
+                        <p class="text-xs text-slate-500" id="progressStatusText">Preencha as células com as fórmulas corretas (=)</p>
+                    </div>
+                </div>
+
+                <div class="w-full sm:w-64 bg-slate-100 rounded-full h-3 overflow-hidden">
+                    <div id="progressBar" class="bg-emerald-500 h-full w-0 transition-all duration-500"></div>
+                </div>
+
+                <div class="flex gap-2 w-full sm:w-auto justify-end">
+                    <button id="btnReset" class="text-xs px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium rounded-lg transition flex items-center gap-1">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reiniciar
+                    </button>
+                    <button id="btnCheckAll" class="text-xs px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition flex items-center gap-1 shadow-sm">
+                        <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Validar Fórmulas
+                    </button>
+                </div>
+            </div>
+
+            <!-- Formula Bar -->
+            <div class="bg-white p-2 sm:p-3 rounded-xl shadow-sm border border-slate-200 flex items-center gap-2 text-sm">
+                <div class="bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg font-mono font-bold text-xs flex items-center gap-1">
+                    <i data-lucide="grid" class="w-3.5 h-3.5"></i> <span id="activeCellRef">E2</span>
+                </div>
+                <div class="text-slate-400 font-serif italic text-base px-1">fx</div>
+                <input type="text" id="formulaInput" placeholder="Selecione uma célula e digite a fórmula (ex: =D2-C2)" class="flex-1 bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                <button id="btnApplyFormula" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">
+                    Aplicar
+                </button>
+            </div>
+
+            <!-- Excel Sheet Interface -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="overflow-x-auto custom-scrollbar max-h-[550px] overflow-y-auto">
+                    <table class="w-full text-xs sm:text-sm excel-grid">
+                        <thead class="sticky top-0 z-20">
+                            <tr>
+                                <th class="excel-row-num py-2 px-1"></th>
+                                <th class="excel-header p-2">A</th>
+                                <th class="excel-header p-2">B</th>
+                                <th class="excel-header p-2">C</th>
+                                <th class="excel-header p-2">D</th>
+                                <th class="excel-header p-2 bg-amber-50 text-amber-800">E</th>
+                                <th class="excel-header p-2 bg-amber-50 text-amber-800">F</th>
+                                <th class="excel-header p-2 bg-amber-50 text-amber-800">G</th>
+                                <th class="excel-header p-2 bg-amber-50 text-amber-800">H</th>
+                                <th class="excel-header p-2 bg-amber-50 text-amber-800">I</th>
+                            </tr>
+                            <tr class="border-b border-slate-200 bg-slate-100 text-slate-700 font-bold">
+                                <td class="excel-row-num py-2">1</td>
+                                <td class="p-2 min-w-[130px]">Produto</td>
+                                <td class="p-2 text-center min-w-[90px]">Quantidade</td>
+                                <td class="p-2 text-right min-w-[110px]">Preço Custo (R$)</td>
+                                <td class="p-2 text-right min-w-[110px]">Preço Venda (R$)</td>
+                                <td class="p-2 text-right bg-amber-50/50 min-w-[110px]" title="Subtração: =D2-C2">Lucro Unitário</td>
+                                <td class="p-2 text-right bg-amber-50/50 min-w-[110px]" title="Multiplicação: =B2*D2">Total Venda</td>
+                                <td class="p-2 text-right bg-amber-50/50 min-w-[110px]" title="Divisão: =F2/2">Parcela (2x)</td>
+                                <td class="p-2 text-right bg-amber-50/50 min-w-[110px]" title="Adição: =F2+5">Total + Frete</td>
+                                <td class="p-2 text-center bg-amber-50/50 min-w-[120px]" title="Função SE: =SE(F2>=80; &quot;Meta Ok&quot;; &quot;Abaixo&quot;)">Status Meta</td>
+                            </tr>
+                        </thead>
+                        <tbody id="spreadsheetBody" class="divide-y divide-slate-200">
+                            <!-- Rows 2 to 21 populated via JS -->
+                        </tbody>
+                        <tfoot>
+                            <tr class="bg-slate-100 font-bold border-t-2 border-slate-300">
+                                <td class="excel-row-num py-2">22</td>
+                                <td class="p-2"></td>
+                                <td class="p-2"></td>
+                                <td class="p-2"></td>
+                                <td class="p-2"></td>
+                                <td class="p-2"></td>
+                                <td class="p-2 text-right font-bold text-slate-800">TOTAL GERAL:</td>
+                                <td class="p-2"></td>
+                                <td class="p-2"></td>
+                                <td class="p-2"></td>
+                            </tr>
+                            <tr class="bg-emerald-50/50 font-bold">
+                                <td class="excel-row-num py-2 text-emerald-800">23</td>
+                                <td class="p-2"></td>
+                                <td class="p-2"></td>
+                                <td class="p-2"></td>
+                                <td class="p-2"></td>
+                                <td class="p-2"></td>
+                                <td class="p-2 text-right relative p-0">
+                                    <input type="text" id="cell-F23" data-cell="F23" placeholder="=SOMA(F2:F21)" class="w-full text-right bg-white p-2 rounded border border-slate-300 font-mono text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none shadow-inner">
+                                </td>
+                                <td class="p-2"></td>
+                                <td class="p-2"></td>
+                                <td class="p-2"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- Footer Hint Box -->
+                <div class="p-3 bg-slate-50 border-t border-slate-200 text-xs text-slate-600 flex items-center justify-between">
+                    <span class="flex items-center gap-1.5">
+                        <i data-lucide="info" class="w-4 h-4 text-emerald-600"></i>
+                        Clique em uma célula amarela para digitar a fórmula ou use a Barra de Fórmulas.
+                    </span>
+                    <span class="hidden md:inline text-slate-400">Dica: Aceitamos fórmulas com ponto e vírgula (;) ou vírgula (,).</span>
+                </div>
+            </div>
+
+            <!-- Quick Helper Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+                    <div class="text-xs font-bold text-slate-500 uppercase">1. Subtração (-)</div>
+                    <div class="text-xs font-semibold text-slate-800 mt-1">Lucro Unitário</div>
+                    <code class="block text-xs bg-slate-100 p-1 rounded mt-2 text-emerald-700 font-mono">=D2-C2</code>
+                </div>
+
+                <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+                    <div class="text-xs font-bold text-slate-500 uppercase">2. Multiplicação (*)</div>
+                    <div class="text-xs font-semibold text-slate-800 mt-1">Total da Venda</div>
+                    <code class="block text-xs bg-slate-100 p-1 rounded mt-2 text-emerald-700 font-mono">=B2*D2</code>
+                </div>
+
+                <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+                    <div class="text-xs font-bold text-slate-500 uppercase">3. Divisão (/)</div>
+                    <div class="text-xs font-semibold text-slate-800 mt-1">Parcela em 2x</div>
+                    <code class="block text-xs bg-slate-100 p-1 rounded mt-2 text-emerald-700 font-mono">=F2/2</code>
+                </div>
+
+                <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+                    <div class="text-xs font-bold text-slate-500 uppercase">4. Adição (+)</div>
+                    <div class="text-xs font-semibold text-slate-800 mt-1">Total + Frete</div>
+                    <code class="block text-xs bg-slate-100 p-1 rounded mt-2 text-emerald-700 font-mono">=F2+5</code>
+                </div>
+
+                <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+                    <div class="text-xs font-bold text-slate-500 uppercase">5. Função SE</div>
+                    <div class="text-xs font-semibold text-slate-800 mt-1">Status da Meta</div>
+                    <code class="block text-xs bg-slate-100 p-1 rounded mt-2 text-emerald-700 font-mono text-[10px] sm:text-xs">=SE(F2>=80;"Meta Ok";"Abaixo")</code>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- TAB 2: REFERENCE DATA TABLE FOR MANUAL TYPING -->
+        <div id="panelDataView" class="hidden space-y-4">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="bg-amber-100 p-2.5 rounded-lg text-amber-700">
+                        <i data-lucide="edit-3" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800">Tabela de Dados para Digitação (20 Itens)</h2>
+                        <p class="text-xs text-slate-500 mt-0.5">Olhe os dados abaixo e digite-os manualmente nas colunas A, B, C e D da sua planilha no Excel ou Google Sheets.</p>
+                    </div>
+                </div>
+
+                <!-- Aviso de Cópia Desativada -->
+                <div class="mb-4 bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-800 flex items-center gap-2">
+                    <i data-lucide="shield-alert" class="w-4 h-4 text-amber-600 shrink-0"></i>
+                    <span><strong>Atenção:</strong> O recurso de copiar e colar está desativado nesta atividade para incentivar a prática da digitação e localização das células na planilha!</span>
+                </div>
+
+                <div class="overflow-x-auto bg-slate-50 rounded-lg border border-slate-200">
+                    <table class="w-full text-xs sm:text-sm text-left border-collapse">
+                        <thead class="bg-slate-200 text-slate-700 font-bold">
+                            <tr>
+                                <th class="p-2 border border-slate-300 text-center bg-slate-300 w-12">Linha</th>
+                                <th class="p-2.5 border border-slate-300">Coluna A: Produto</th>
+                                <th class="p-2.5 border border-slate-300 text-center">Coluna B: Quantidade</th>
+                                <th class="p-2.5 border border-slate-300 text-right">Coluna C: Preço Custo (R$)</th>
+                                <th class="p-2.5 border border-slate-300 text-right">Coluna D: Preço Venda (R$)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="referenceDataBody" class="divide-y divide-slate-200 font-mono">
+                            <!-- Populated via Javascript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: STEP BY STEP GUIDE -->
+        <div id="panelGuide" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h2 class="text-xl font-bold text-slate-800 mb-2 flex items-center gap-2">
+                    <i data-lucide="compass" class="w-5 h-5 text-emerald-600"></i> Roteiro de Aprendizagem
+                </h2>
+                <p class="text-slate-600 text-sm mb-6">
+                    Siga os passos abaixo para entender o que cada fórmula calcula na nossa loja de material escolar.
+                </p>
+
+                <div class="space-y-6">
+                    <!-- Step 1 -->
+                    <div class="flex gap-4 items-start">
+                        <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center shrink-0 text-sm">1</div>
+                        <div class="flex-1 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                            <h3 class="font-bold text-slate-800 text-base">Subtração (`-`) — Lucro Unitário (Coluna E)</h3>
+                            <p class="text-xs text-slate-600 mt-1">Descobre quanto ganhamos de lucro em cada unidade vendida.</p>
+                            <div class="mt-3 bg-white p-3 rounded border border-slate-200 font-mono text-xs text-emerald-800">
+                                <strong>Fórmula na célula E2:</strong> <code>=D2-C2</code>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="flex gap-4 items-start">
+                        <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center shrink-0 text-sm">2</div>
+                        <div class="flex-1 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                            <h3 class="font-bold text-slate-800 text-base">Multiplicação (`*`) — Total da Venda (Coluna F)</h3>
+                            <p class="text-xs text-slate-600 mt-1">Multiplica a quantidade estocada/vendida pelo valor de venda individual.</p>
+                            <div class="mt-3 bg-white p-3 rounded border border-slate-200 font-mono text-xs text-emerald-800">
+                                <strong>Fórmula na célula F2:</strong> <code>=B2*D2</code>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="flex gap-4 items-start">
+                        <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center shrink-0 text-sm">3</div>
+                        <div class="flex-1 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                            <h3 class="font-bold text-slate-800 text-base">Divisão (`/`) — Valor da Parcela em 2x (Coluna G)</h3>
+                            <p class="text-xs text-slate-600 mt-1">Divide o valor total da venda por 2 parcelas iguais.</p>
+                            <div class="mt-3 bg-white p-3 rounded border border-slate-200 font-mono text-xs text-emerald-800">
+                                <strong>Fórmula na célula G2:</strong> <code>=F2/2</code>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="flex gap-4 items-start">
+                        <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center shrink-0 text-sm">4</div>
+                        <div class="flex-1 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                            <h3 class="font-bold text-slate-800 text-base">Adição (`+`) — Total com Frete (Coluna H)</h3>
+                            <p class="text-xs text-slate-600 mt-1">Soma uma taxa fixa de R$ 5,00 de entrega ao valor total da venda.</p>
+                            <div class="mt-3 bg-white p-3 rounded border border-slate-200 font-mono text-xs text-emerald-800">
+                                <strong>Fórmula na célula H2:</strong> <code>=F2+5</code>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 5 -->
+                    <div class="flex gap-4 items-start">
+                        <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center shrink-0 text-sm">5</div>
+                        <div class="flex-1 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                            <h3 class="font-bold text-slate-800 text-base">Função Condicional `=SE()` — Status da Meta (Coluna I)</h3>
+                            <p class="text-xs text-slate-600 mt-1">Muda o texto automaticamente. Se o Total da Venda for no mínimo R$ 80,00 mostra "Meta Ok", senão mostra "Abaixo".</p>
+                            <div class="mt-3 bg-white p-3 rounded border border-slate-200 font-mono text-xs text-emerald-800">
+                                <strong>Fórmula na célula I2:</strong> <code>=SE(F2&gt;=80; "Meta Ok"; "Abaixo")</code>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 6 -->
+                    <div class="flex gap-4 items-start">
+                        <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center shrink-0 text-sm">6</div>
+                        <div class="flex-1 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                            <h3 class="font-bold text-slate-800 text-base">Função de Soma `=SOMA()` — Total Geral (Célula F23)</h3>
+                            <p class="text-xs text-slate-600 mt-1">Soma todo o intervalo de valores da coluna F (da célula F2 até a célula F21).</p>
+                            <div class="mt-3 bg-white p-3 rounded border border-slate-200 font-mono text-xs text-emerald-800">
+                                <strong>Fórmula na célula F23:</strong> <code>=SOMA(F2:F21)</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ANSWER KEY MODAL -->
+        <div id="modalAnswerKey" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+            <div class="bg-white max-w-4xl w-full rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
+                <div class="p-4 bg-emerald-700 text-white flex items-center justify-between">
+                    <h3 class="font-bold flex items-center gap-2">
+                        <i data-lucide="key" class="w-5 h-5"></i> Gabarito de Conferência (20 Itens)
+                    </h3>
+                    <button id="btnCloseModal" class="text-emerald-200 hover:text-white">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                <div class="p-6 overflow-y-auto space-y-4 text-xs sm:text-sm">
+                    <p class="text-slate-600">Abaixo estão os resultados esperados para cada linha:</p>
+                    
+                    <div class="overflow-x-auto max-h-[400px] border border-slate-200 rounded-lg">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead class="bg-slate-100 font-semibold sticky top-0">
+                                <tr>
+                                    <th class="p-2 border">Produto (Linha)</th>
+                                    <th class="p-2 border">Lucro Unit. (E)</th>
+                                    <th class="p-2 border">Total Venda (F)</th>
+                                    <th class="p-2 border">Parcela 2x (G)</th>
+                                    <th class="p-2 border">Total + Frete (H)</th>
+                                    <th class="p-2 border">Status Meta (I)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="answerKeyTbody" class="divide-y divide-slate-200 font-mono">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="bg-emerald-50 p-3 rounded-lg border border-emerald-200 flex justify-between items-center">
+                        <span class="font-bold text-emerald-800">Total Geral (F23 com =SOMA(F2:F21)):</span>
+                        <span class="font-mono text-emerald-900 font-bold text-base">R$ 2.572,50</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // Expanded 20 Products Data
+        const productsData = [
+            { row: 2, name: 'Caderno', qty: 15, cost: 8.00, price: 12.00 },
+            { row: 3, name: 'Caneta', qty: 30, cost: 1.50, price: 3.00 },
+            { row: 4, name: 'Mochila', qty: 5, cost: 40.00, price: 70.00 },
+            { row: 5, name: 'Estojo', qty: 10, cost: 6.00, price: 10.00 },
+            { row: 6, name: 'Régua', qty: 8, cost: 2.00, price: 4.00 },
+            { row: 7, name: 'Lápis', qty: 50, cost: 0.80, price: 1.50 },
+            { row: 8, name: 'Borracha', qty: 40, cost: 1.00, price: 2.00 },
+            { row: 9, name: 'Apontador', qty: 25, cost: 2.50, price: 5.00 },
+            { row: 10, name: 'Marca-Texto', qty: 20, cost: 3.00, price: 6.00 },
+            { row: 11, name: 'Tesoura', qty: 12, cost: 5.00, price: 9.00 },
+            { row: 12, name: 'Cola Bastão', qty: 18, cost: 3.50, price: 7.00 },
+            { row: 13, name: 'Compasso', qty: 6, cost: 12.00, price: 20.00 },
+            { row: 14, name: 'Bloco de Notas', qty: 14, cost: 4.00, price: 8.00 },
+            { row: 15, name: 'Papel A4 (Pacote)', qty: 4, cost: 22.00, price: 32.00 },
+            { row: 16, name: 'Tinta Guache', qty: 10, cost: 7.00, price: 12.00 },
+            { row: 17, name: 'Pincel', qty: 15, cost: 2.00, price: 4.50 },
+            { row: 18, name: 'Pasta Sanfonada', qty: 7, cost: 15.00, price: 25.00 },
+            { row: 19, name: 'Fita Adesiva', qty: 22, cost: 1.80, price: 3.50 },
+            { row: 20, name: 'Calculadora', qty: 5, cost: 25.00, price: 45.00 },
+            { row: 21, name: 'Agenda Escolar', qty: 9, cost: 10.00, price: 18.00 }
+        ];
+
+        const expectedValues = { 'F23': 2572.50 };
+        productsData.forEach(p => {
+            const eVal = +(p.price - p.cost).toFixed(2);
+            const fVal = +(p.qty * p.price).toFixed(2);
+            const gVal = +(fVal / 2).toFixed(2);
+            const hVal = +(fVal + 5).toFixed(2);
+            const iVal = fVal >= 80 ? 'Meta Ok' : 'Abaixo';
+
+            expectedValues[`E${p.row}`] = eVal;
+            expectedValues[`F${p.row}`] = fVal;
+            expectedValues[`G${p.row}`] = gVal;
+            expectedValues[`H${p.row}`] = hVal;
+            expectedValues[`I${p.row}`] = iVal;
+        });
+
+        let selectedCellId = 'E2';
+
+        function renderTableRows() {
+            const tbody = document.getElementById('spreadsheetBody');
+            tbody.innerHTML = '';
+
+            productsData.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 transition-colors';
+
+                tr.innerHTML = `
+                    <td class="excel-row-num py-2">${p.row}</td>
+                    <td class="p-2 font-medium text-slate-800">${p.name}</td>
+                    <td class="p-2 text-center text-slate-600 font-mono">${p.qty}</td>
+                    <td class="p-2 text-right text-slate-600 font-mono">${p.cost.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                    <td class="p-2 text-right text-slate-600 font-mono">${p.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                    
+                    <!-- Editable Calculation Cells -->
+                    <td class="p-1 text-right bg-amber-50/30">
+                        <input type="text" id="cell-E${p.row}" data-cell="E${p.row}" placeholder="=D${p.row}-C${p.row}" class="excel-input w-full text-right bg-white p-1.5 rounded border border-slate-200 font-mono text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none shadow-sm">
+                    </td>
+                    <td class="p-1 text-right bg-amber-50/30">
+                        <input type="text" id="cell-F${p.row}" data-cell="F${p.row}" placeholder="=B${p.row}*D${p.row}" class="excel-input w-full text-right bg-white p-1.5 rounded border border-slate-200 font-mono text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none shadow-sm">
+                    </td>
+                    <td class="p-1 text-right bg-amber-50/30">
+                        <input type="text" id="cell-G${p.row}" data-cell="G${p.row}" placeholder="=F${p.row}/2" class="excel-input w-full text-right bg-white p-1.5 rounded border border-slate-200 font-mono text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none shadow-sm">
+                    </td>
+                    <td class="p-1 text-right bg-amber-50/30">
+                        <input type="text" id="cell-H${p.row}" data-cell="H${p.row}" placeholder="=F${p.row}+5" class="excel-input w-full text-right bg-white p-1.5 rounded border border-slate-200 font-mono text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none shadow-sm">
+                    </td>
+                    <td class="p-1 text-center bg-amber-50/30">
+                        <input type="text" id="cell-I${p.row}" data-cell="I${p.row}" placeholder='=SE(F${p.row}>=80;"Meta Ok";"Abaixo")' class="excel-input w-full text-center bg-white p-1.5 rounded border border-slate-200 font-mono text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none shadow-sm">
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            renderReferenceDataTable();
+            renderAnswerKeyModalTable();
+            attachCellEvents();
+        }
+
+        function renderReferenceDataTable() {
+            const refBody = document.getElementById('referenceDataBody');
+            refBody.innerHTML = '';
+
+            productsData.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-100 transition-colors';
+                tr.innerHTML = `
+                    <td class="p-2 border border-slate-200 text-center font-bold text-slate-500 bg-slate-100">${p.row}</td>
+                    <td class="p-2.5 border border-slate-200 font-sans font-medium text-slate-800">${p.name}</td>
+                    <td class="p-2.5 border border-slate-200 text-center text-slate-700">${p.qty}</td>
+                    <td class="p-2.5 border border-slate-200 text-right text-slate-700">${p.cost.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                    <td class="p-2.5 border border-slate-200 text-right text-slate-700">${p.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                `;
+                refBody.appendChild(tr);
+            });
+        }
+
+        function renderAnswerKeyModalTable() {
+            const keyBody = document.getElementById('answerKeyTbody');
+            keyBody.innerHTML = '';
+
+            productsData.forEach(p => {
+                const eVal = expectedValues[`E${p.row}`];
+                const fVal = expectedValues[`F${p.row}`];
+                const gVal = expectedValues[`G${p.row}`];
+                const hVal = expectedValues[`H${p.row}`];
+                const iVal = expectedValues[`I${p.row}`];
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-2 border font-sans font-medium">${p.name} (${p.row})</td>
+                    <td class="p-2 border">R$ ${eVal.toFixed(2).replace('.', ',')}</td>
+                    <td class="p-2 border">R$ ${fVal.toFixed(2).replace('.', ',')}</td>
+                    <td class="p-2 border">R$ ${gVal.toFixed(2).replace('.', ',')}</td>
+                    <td class="p-2 border">R$ ${hVal.toFixed(2).replace('.', ',')}</td>
+                    <td class="p-2 border ${iVal === 'Meta Ok' ? 'text-emerald-600' : 'text-amber-600'} font-bold">${iVal}</td>
+                `;
+                keyBody.appendChild(tr);
+            });
+        }
+
+        function evaluateFormula(inputStr, rowContext) {
+            if (!inputStr) return { raw: '', val: null, isValid: false };
+            let str = inputStr.trim();
+
+            if (!str.startsWith('=')) {
+                return { raw: str, val: str, isValid: false };
+            }
+
+            let expr = str.substring(1).toUpperCase();
+
+            try {
+                // 1. Handle =SOMA(F2:F21) or =SUM(F2:F21)
+                if (expr.startsWith('SOMA(') || expr.startsWith('SUM(')) {
+                    if (expr.includes('F2:F21') || expr.includes('F2:21')) {
+                        let sumVal = 0;
+                        productsData.forEach(p => {
+                            const fVal = getEvaluatedCellValue(`F${p.row}`);
+                            if (typeof fVal === 'number') sumVal += fVal;
+                        });
+                        return { raw: str, val: sumVal, isValid: true };
+                    }
+                }
+
+                // 2. Handle =SE(...) logic
+                if (expr.startsWith('SE(') || expr.startsWith('IF(')) {
+                    let inner = expr.substring(expr.indexOf('(') + 1, expr.lastIndexOf(')'));
+                    let parts = inner.split(/;|,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+
+                    if (parts.length >= 3) {
+                        let condition = parts[0].trim();
+                        let valTrue = parts[1].trim().replace(/^"|"$/g, '');
+                        let valFalse = parts[2].trim().replace(/^"|"$/g, '');
+
+                        if (condition.includes(`F${rowContext}`) || condition.includes('F')) {
+                            const fVal = getEvaluatedCellValue(`F${rowContext}`) || 0;
+                            let match = condition.match(/>=\s*(\d+)|>\s*(\d+)/);
+                            let target = match ? parseFloat(match[1] || match[2]) : 80;
+
+                            let pass = fVal >= target;
+                            return { raw: str, val: pass ? valTrue : valFalse, isValid: true };
+                        }
+                    }
+                }
+
+                // 3. Handle basic arithmetic (+, -, *, /)
+                productsData.forEach(p => {
+                    expr = expr.replace(new RegExp(`\\bB${p.row}\\b`, 'g'), p.qty);
+                    expr = expr.replace(new RegExp(`\\bC${p.row}\\b`, 'g'), p.cost);
+                    expr = expr.replace(new RegExp(`\\bD${p.row}\\b`, 'g'), p.price);
+                    
+                    const eVal = getEvaluatedCellValue(`E${p.row}`);
+                    if (eVal !== null) expr = expr.replace(new RegExp(`\\bE${p.row}\\b`, 'g'), eVal);
+                    const fVal = getEvaluatedCellValue(`F${p.row}`);
+                    if (fVal !== null) expr = expr.replace(new RegExp(`\\bF${p.row}\\b`, 'g'), fVal);
+                });
+
+                if (!/^[0-9+*\/\-.\(\)\s]+$/.test(expr)) {
+                    return { raw: str, val: 'ERR_SINTAXE', isValid: false };
+                }
+
+                let computed = Function(`"use strict"; return (${expr})`)();
+                return { raw: str, val: computed, isValid: true };
+
+            } catch (err) {
+                return { raw: str, val: '#ERRO!', isValid: false };
+            }
+        }
+
+        function getEvaluatedCellValue(cellKey) {
+            const el = document.querySelector(`[data-cell="${cellKey}"]`);
+            if (!el) return null;
+            const text = el.value.trim();
+            if (!text) return null;
+
+            const row = cellKey.replace(/\D/g, '');
+            const res = evaluateFormula(text, row);
+            return res.val;
+        }
+
+        function attachCellEvents() {
+            const inputs = document.querySelectorAll('input[data-cell]');
+            
+            inputs.forEach(input => {
+                input.addEventListener('focus', (e) => {
+                    selectedCellId = e.target.getAttribute('data-cell');
+                    document.getElementById('activeCellRef').innerText = selectedCellId;
+                    document.getElementById('formulaInput').value = e.target.value;
+
+                    inputs.forEach(i => i.classList.remove('active-cell'));
+                    e.target.classList.add('active-cell');
+                });
+
+                input.addEventListener('input', (e) => {
+                    document.getElementById('formulaInput').value = e.target.value;
+                    validateAndCalculateSingle(e.target);
+                    updateProgress();
+                });
+            });
+        }
+
+        function validateAndCalculateSingle(inputEl) {
+            const cellKey = inputEl.getAttribute('data-cell');
+            const row = cellKey.replace(/\D/g, '');
+            const val = inputEl.value;
+
+            if (!val) {
+                inputEl.classList.remove('bg-emerald-100', 'bg-red-100', 'border-emerald-500', 'border-red-400');
+                inputEl.classList.add('bg-white');
+                return;
+            }
+
+            const evalResult = evaluateFormula(val, row);
+            const expected = expectedValues[cellKey];
+
+            let isCorrect = false;
+            if (typeof expected === 'number' && typeof evalResult.val === 'number') {
+                isCorrect = Math.abs(expected - evalResult.val) < 0.01 && val.startsWith('=');
+            } else if (typeof expected === 'string') {
+                isCorrect = String(evalResult.val).toLowerCase() === expected.toLowerCase() && val.startsWith('=');
+            }
+
+            if (isCorrect) {
+                inputEl.classList.remove('bg-red-100', 'border-red-400', 'bg-white');
+                inputEl.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-900');
+                
+                if (typeof evalResult.val === 'number' && !cellKey.startsWith('I')) {
+                    inputEl.title = `Resultado calculado: R$ ${evalResult.val.toFixed(2)}`;
+                }
+            } else {
+                inputEl.classList.remove('bg-emerald-100', 'border-emerald-500', 'bg-white');
+                inputEl.classList.add('bg-red-100', 'border-red-400');
+            }
+        }
+
+        function updateProgress() {
+            const inputs = document.querySelectorAll('input[data-cell]');
+            let correctCount = 0;
+            const totalCells = Object.keys(expectedValues).length;
+
+            inputs.forEach(input => {
+                const cellKey = input.getAttribute('data-cell');
+                const row = cellKey.replace(/\D/g, '');
+                const val = input.value;
+                const evalResult = evaluateFormula(val, row);
+                const expected = expectedValues[cellKey];
+
+                let isCorrect = false;
+                if (typeof expected === 'number' && typeof evalResult.val === 'number') {
+                    isCorrect = Math.abs(expected - evalResult.val) < 0.01 && val.startsWith('=');
+                } else if (typeof expected === 'string') {
+                    isCorrect = String(evalResult.val).toLowerCase() === expected.toLowerCase() && val.startsWith('=');
+                }
+
+                if (isCorrect) correctCount++;
+            });
+
+            const pct = Math.round((correctCount / totalCells) * 100);
+            document.getElementById('completedPercentage').innerText = `${pct}%`;
+            document.getElementById('progressBar').style.width = `${pct}%`;
+
+            if (pct === 100) {
+                document.getElementById('progressStatusText').innerText = "🎉 Excelente! Todas as fórmulas foram completadas!";
+                document.getElementById('progressStatusText').className = "text-xs font-bold text-emerald-600";
+                
+                confetti({
+                    particleCount: 120,
+                    spread: 80,
+                    origin: { y: 0.6 }
+                });
+            } else {
+                document.getElementById('progressStatusText').innerText = `${correctCount} de ${totalCells} fórmulas corretas`;
+                document.getElementById('progressStatusText').className = "text-xs text-slate-500";
+            }
+        }
+
+        document.getElementById('formulaInput').addEventListener('input', (e) => {
+            if (!selectedCellId) return;
+            const targetCell = document.querySelector(`[data-cell="${selectedCellId}"]`);
+            if (targetCell) {
+                targetCell.value = e.target.value;
+                validateAndCalculateSingle(targetCell);
+                updateProgress();
+            }
+        });
+
+        document.getElementById('btnApplyFormula').addEventListener('click', () => {
+            if (!selectedCellId) return;
+            const targetCell = document.querySelector(`[data-cell="${selectedCellId}"]`);
+            if (targetCell) {
+                validateAndCalculateSingle(targetCell);
+                updateProgress();
+            }
+        });
+
+        document.getElementById('btnReset').addEventListener('click', () => {
+            const inputs = document.querySelectorAll('input[data-cell]');
+            inputs.forEach(input => {
+                input.value = '';
+                input.className = 'excel-input w-full text-right bg-white p-1.5 rounded border border-slate-200 font-mono text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none shadow-sm';
+            });
+            document.getElementById('formulaInput').value = '';
+            updateProgress();
+        });
+
+        document.getElementById('btnCheckAll').addEventListener('click', () => {
+            const inputs = document.querySelectorAll('input[data-cell]');
+            inputs.forEach(input => validateAndCalculateSingle(input));
+            updateProgress();
+        });
+
+        const tabSim = document.getElementById('tabSimulator');
+        const tabDat = document.getElementById('tabDataView');
+        const tabGui = document.getElementById('tabGuide');
+
+        const panSim = document.getElementById('panelSimulator');
+        const panDat = document.getElementById('panelDataView');
+        const panGui = document.getElementById('panelGuide');
+
+        function setActiveTab(activeBtn, activePanel) {
+            [tabSim, tabDat, tabGui].forEach(btn => {
+                btn.classList.remove('border-emerald-600', 'text-emerald-700', 'font-semibold');
+                btn.classList.add('border-transparent', 'text-slate-500');
+            });
+            [panSim, panDat, panGui].forEach(pan => pan.classList.add('hidden'));
+
+            activeBtn.classList.remove('border-transparent', 'text-slate-500');
+            activeBtn.classList.add('border-emerald-600', 'text-emerald-700', 'font-semibold');
+            activePanel.classList.remove('hidden');
+        }
+
+        tabSim.addEventListener('click', () => setActiveTab(tabSim, panSim));
+        tabDat.addEventListener('click', () => setActiveTab(tabDat, panDat));
+        tabGui.addEventListener('click', () => setActiveTab(tabGui, panGui));
+
+        const modal = document.getElementById('modalAnswerKey');
+        document.getElementById('toggleAnswerKey').addEventListener('click', () => {
+            modal.classList.remove('hidden');
+        });
+        document.getElementById('btnCloseModal').addEventListener('click', () => {
+            modal.classList.add('hidden');
+        });
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) modal.classList.add('hidden');
+        });
+
+        function showCopyNotice() {
+            const notice = document.getElementById('copyNotice');
+            if (!notice) return;
+            notice.classList.remove('translate-y-20', 'opacity-0');
+            notice.classList.add('translate-y-0', 'opacity-100');
+            
+            setTimeout(() => {
+                notice.classList.remove('translate-y-0', 'opacity-100');
+                notice.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        document.addEventListener('copy', (e) => {
+            e.preventDefault();
+            showCopyNotice();
+        });
+
+        document.addEventListener('cut', (e) => {
+            e.preventDefault();
+            showCopyNotice();
+        });
+
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            showCopyNotice();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && ['c', 'C', 'x', 'X', 'u', 'U', 's', 'S'].includes(e.key)) {
+                e.preventDefault();
+                showCopyNotice();
+            }
+        });
+
+        window.onload = function() {
+            renderTableRows();
+            lucide.createIcons();
+        };
+    </script>
+</body>
+</html>
