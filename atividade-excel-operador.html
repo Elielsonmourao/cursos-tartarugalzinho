@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atividade Prática: Introdução ao Microsoft Excel</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Bloqueio estrito de seleção de texto em toda a página */
+        * {
+            -webkit-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            user-select: none !important;
+            -webkit-touch-callout: none !important;
+        }
+
+        /* Permite digitação apenas nos campos de entrada do formulário */
+        input, textarea {
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+            user-select: text !important;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* Toast de aviso de cópia */
+        #copy-warning-toast {
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            transform: translateY(150%);
+            opacity: 0;
+        }
+
+        #copy-warning-toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #107c41;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen pb-12">
+
+    <!-- Top Header Ribbon -->
+    <header class="bg-gradient-to-r from-emerald-800 via-emerald-700 to-green-600 text-white shadow-lg sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white/10 p-3 rounded-xl backdrop-blur-md border border-white/20">
+                    <i class="fa-solid fa-file-excel text-3xl text-emerald-200"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold tracking-tight">Atividade Prática: Introdução ao Excel</h1>
+                    <p class="text-emerald-100 text-xs md:text-sm font-medium">Informática & Tecnologia • Conceitos e Fórmulas</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-2 bg-emerald-900/40 p-1.5 rounded-lg border border-emerald-500/30 text-xs">
+                <span class="px-2 py-1 bg-emerald-500/30 rounded text-emerald-100 font-semibold">
+                    <i class="fa-solid fa-lock mr-1"></i> Protegido contra Cópia
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-6xl mx-auto px-4 pt-8">
+
+        <!-- Student Info Card -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Aluno(a)</label>
+                    <input type="text" id="student-name" placeholder="Nome completo do aluno" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Turma / Ano</label>
+                    <input type="text" id="student-class" placeholder="Ex: 1º Ano B" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Professor(a)</label>
+                    <input type="text" id="teacher-name" placeholder="Nome do professor" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Data de Entrega</label>
+                    <input type="date" id="submission-date" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm">
+                </div>
+            </div>
+        </div>
+
+        <!-- Objectives Section -->
+        <section class="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 mb-8">
+            <h2 class="text-lg font-bold text-emerald-900 flex items-center mb-3">
+                <i class="fa-solid fa-bullseye text-emerald-600 mr-2"></i> Objetivos da Atividade
+            </h2>
+            <ul class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-emerald-800">
+                <li class="flex items-start">
+                    <i class="fa-solid fa-check text-emerald-600 mt-1 mr-2 text-xs"></i>
+                    <span>Compreender a função e importância das planilhas eletrônicas.</span>
+                </li>
+                <li class="flex items-start">
+                    <i class="fa-solid fa-check text-emerald-600 mt-1 mr-2 text-xs"></i>
+                    <span>Dominar a sintaxe de fórmulas com operadores fundamentais (<code class="bg-emerald-100 px-1 rounded code-font">+ - * /</code>).</span>
+                </li>
+                <li class="flex items-start">
+                    <i class="fa-solid fa-check text-emerald-600 mt-1 mr-2 text-xs"></i>
+                    <span>Aprender o uso das funções <code class="bg-emerald-100 px-1 rounded code-font">=SOMA</code>, <code class="bg-emerald-100 px-1 rounded code-font">=MÉDIA</code>, <code class="bg-emerald-100 px-1 rounded code-font">=MÍNIMO</code>, <code class="bg-emerald-100 px-1 rounded code-font">=MÁXIMO</code> e <code class="bg-emerald-100 px-1 rounded code-font">=SE</code>.</span>
+                </li>
+                <li class="flex items-start">
+                    <i class="fa-solid fa-check text-emerald-600 mt-1 mr-2 text-xs"></i>
+                    <span>Resolver exercícios de fixação em uma planilha interativa.</span>
+                </li>
+            </ul>
+        </section>
+
+        <!-- PARTE 1: PESQUISA TEÓRICA -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
+            <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
+                <h2 class="text-lg font-bold text-slate-800 flex items-center">
+                    <span class="bg-emerald-600 text-white text-xs font-bold px-2.5 py-1 rounded-md mr-2">PARTE 1</span>
+                    Pesquisa Teórica & Conceitos Iniciais
+                </h2>
+                <span class="text-xs text-slate-400 font-medium"><i class="fa-solid fa-pen-to-square mr-1"></i> Responda abaixo</span>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Question 1 -->
+                <div>
+                    <label class="block font-semibold text-slate-700 text-sm mb-2">
+                        1. O que é o Microsoft Excel e qual é a sua principal função? Explique onde ele é utilizado no dia a dia.
+                    </label>
+                    <textarea id="q1-answer" rows="3" placeholder="Escreva sua resposta aqui..." class="w-full p-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm bg-slate-50 focus:bg-white transition-all"></textarea>
+                </div>
+
+                <!-- Question 2 -->
+                <div>
+                    <label class="block font-semibold text-slate-700 text-sm mb-2">
+                        2. Defina os seguintes elementos básicos de uma planilha eletrônica:
+                    </label>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                            <span class="block font-bold text-xs text-emerald-700 uppercase mb-1"><i class="fa-solid fa-grip-lines-vertical mr-1"></i> Linha</span>
+                            <textarea id="q2-linha" rows="2" placeholder="O que é uma linha no Excel?" class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                            <span class="block font-bold text-xs text-emerald-700 uppercase mb-1"><i class="fa-solid fa-grip-lines mr-1"></i> Coluna</span>
+                            <textarea id="q2-coluna" rows="2" placeholder="O que é uma coluna no Excel?" class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                            <span class="block font-bold text-xs text-emerald-700 uppercase mb-1"><i class="fa-solid fa-border-all mr-1"></i> Célula (Ex: B5)</span>
+                            <textarea id="q2-celula" rows="2" placeholder="O que é uma célula e o que indica B5?" class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 3 -->
+                <div>
+                    <label class="block font-semibold text-slate-700 text-sm mb-2">
+                        3. Por que toda fórmula ou função no Excel deve começar obrigatoriamente com o sinal de igual (<code class="code-font text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">=</code>)?
+                    </label>
+                    <textarea id="q3-answer" rows="2" placeholder="Explique o motivo do sinal de igual..." class="w-full p-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm bg-slate-50 focus:bg-white transition-all"></textarea>
+                </div>
+            </div>
+        </section>
+
+        <!-- PARTE 2: OPERAÇÕES MATEMÁTICAS BÁSICAS -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
+            <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
+                <h2 class="text-lg font-bold text-slate-800 flex items-center">
+                    <span class="bg-emerald-600 text-white text-xs font-bold px-2.5 py-1 rounded-md mr-2">PARTE 2</span>
+                    Operações Matemáticas Básicas
+                </h2>
+                <span class="text-xs text-slate-400 font-medium"><i class="fa-solid fa-calculator mr-1"></i> Operadores & Cálculo</span>
+            </div>
+
+            <!-- Operators Reference Table -->
+            <div class="overflow-x-auto mb-6">
+                <table class="w-full text-left text-sm border-collapse">
+                    <thead>
+                        <tr class="bg-slate-100 border-b border-slate-200 text-slate-700">
+                            <th class="p-3 font-semibold">Operação</th>
+                            <th class="p-3 font-semibold">Símbolo no Excel</th>
+                            <th class="p-3 font-semibold">Exemplo de Fórmula</th>
+                            <th class="p-3 font-semibold">Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+                        <tr class="hover:bg-slate-50">
+                            <td class="p-3 font-medium text-slate-800"><i class="fa-solid fa-plus text-emerald-600 mr-2"></i>Soma</td>
+                            <td class="p-3"><code class="code-font font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded">+</code></td>
+                            <td class="p-3"><code class="code-font text-slate-700 bg-slate-100 px-2 py-1 rounded">=A1 + B1</code></td>
+                            <td class="p-3 text-slate-600">Soma o conteúdo da célula A1 com B1</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50">
+                            <td class="p-3 font-medium text-slate-800"><i class="fa-solid fa-minus text-emerald-600 mr-2"></i>Subtração</td>
+                            <td class="p-3"><code class="code-font font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded">-</code></td>
+                            <td class="p-3"><code class="code-font text-slate-700 bg-slate-100 px-2 py-1 rounded">=A1 - B1</code></td>
+                            <td class="p-3 text-slate-600">Subtrai o valor da célula B1 do valor da A1</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50">
+                            <td class="p-3 font-medium text-slate-800"><i class="fa-solid fa-xmark text-emerald-600 mr-2"></i>Multiplicação</td>
+                            <td class="p-3"><code class="code-font font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded">*</code></td>
+                            <td class="p-3"><code class="code-font text-slate-700 bg-slate-100 px-2 py-1 rounded">=A1 * B1</code></td>
+                            <td class="p-3 text-slate-600">Multiplica o valor da célula A1 pelo valor de B1</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50">
+                            <td class="p-3 font-medium text-slate-800"><i class="fa-solid fa-divide text-emerald-600 mr-2"></i>Divisão</td>
+                            <td class="p-3"><code class="code-font font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded">/</code></td>
+                            <td class="p-3"><code class="code-font text-slate-700 bg-slate-100 px-2 py-1 rounded">=A1 / B1</code></td>
+                            <td class="p-3 text-slate-600">Divide o valor da célula A1 pelo valor de B1</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Quick Interactive Quiz -->
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-5">
+                <h3 class="font-bold text-amber-900 text-sm flex items-center mb-3">
+                    <i class="fa-solid fa-bolt text-amber-500 mr-2"></i> Desafio Rápido de Fixação
+                </h3>
+                <p class="text-xs text-amber-800 mb-4">
+                    Considerando que na célula <code class="code-font font-bold">A1 = 10</code> e na célula <code class="code-font font-bold">B1 = 2</code>, digite o resultado retornado pelas fórmulas abaixo:
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white p-3 rounded-lg border border-amber-200 flex justify-between items-center">
+                        <span class="code-font font-semibold text-slate-700 text-sm">=A1 + B1</span>
+                        <input type="number" id="quiz-1" placeholder="Resultado" class="w-24 px-2 py-1 border border-slate-300 rounded text-center text-sm font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                    <div class="bg-white p-3 rounded-lg border border-amber-200 flex justify-between items-center">
+                        <span class="code-font font-semibold text-slate-700 text-sm">=A1 * B1</span>
+                        <input type="number" id="quiz-2" placeholder="Resultado" class="w-24 px-2 py-1 border border-slate-300 rounded text-center text-sm font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                    <div class="bg-white p-3 rounded-lg border border-amber-200 flex justify-between items-center">
+                        <span class="code-font font-semibold text-slate-700 text-sm">=A1 / B1</span>
+                        <input type="number" id="quiz-3" placeholder="Resultado" class="w-24 px-2 py-1 border border-slate-300 rounded text-center text-sm font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PARTE 3: FUNÇÕES ESSENCIAIS DO EXCEL -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
+            <div class="flex items-center justify-between mb-6 border-b border-slate-100 pb-3">
+                <h2 class="text-lg font-bold text-slate-800 flex items-center">
+                    <span class="bg-emerald-600 text-white text-xs font-bold px-2.5 py-1 rounded-md mr-2">PARTE 3</span>
+                    Funções Essenciais do Excel
+                </h2>
+                <span class="text-xs text-slate-400 font-medium"><i class="fa-solid fa-code mr-1"></i> Fórmulas Pré-programadas</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Function SOMA -->
+                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 hover:border-emerald-300 transition-all">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="code-font font-bold text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-md text-sm">=SOMA( : )</span>
+                        <span class="text-xs font-semibold text-slate-400">Adição de Intervalos</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Soma automaticamente todos os valores dentro de um intervalo de células.</p>
+                    <div class="mb-3">
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Qual a diferença entre usar <code class="code-font font-bold">:</code> (dois pontos) e <code class="code-font font-bold text-amber-600">;</code> (ponto e vírgula)?</label>
+                        <textarea id="q-soma-diff" rows="2" placeholder="Sua resposta..." class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+                    </div>
+                </div>
+
+                <!-- Function MEDIA -->
+                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 hover:border-emerald-300 transition-all">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="code-font font-bold text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-md text-sm">=MÉDIA( : )</span>
+                        <span class="text-xs font-semibold text-slate-400">Média Aritmética</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Calcula a média de um conjunto de números informados.</p>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Explique como o Excel calcula este valor matematicamente:</label>
+                        <textarea id="q-media-exp" rows="2" placeholder="Como é feito o cálculo da média?" class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+                    </div>
+                </div>
+
+                <!-- Function MINIMO & MAXIMO -->
+                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 hover:border-emerald-300 transition-all">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="space-x-1">
+                            <span class="code-font font-bold text-emerald-700 bg-emerald-100 px-2 py-1 rounded-md text-xs">=MÍNIMO()</span>
+                            <span class="code-font font-bold text-emerald-700 bg-emerald-100 px-2 py-1 rounded-md text-xs">=MÁXIMO()</span>
+                        </div>
+                        <span class="text-xs font-semibold text-slate-400">Valores Extremos</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Identificam o menor e o maior valor dentro de um grupo de dados.</p>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Em qual situação prática do dia a dia você utilizaria estas duas funções?</label>
+                        <textarea id="q-minmax-exp" rows="2" placeholder="Dê um exemplo prático..." class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+                    </div>
+                </div>
+
+                <!-- Function SE -->
+                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 hover:border-emerald-300 transition-all">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="code-font font-bold text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-md text-sm">=SE( ; ; )</span>
+                        <span class="text-xs font-semibold text-slate-400">Condicional Lógica</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-2"><code class="code-font text-xs font-bold">=SE(teste_lógico; valor_se_verdadeiro; valor_se_falso)</code></p>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">O que faz a fórmula <code class="code-font font-semibold text-slate-800">=SE(A1>=6; "Aprovado"; "Reprovado")</code>?</label>
+                        <textarea id="q-se-exp" rows="2" placeholder="Explique o funcionamento deste teste lógico..." class="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PARTE 4: EXERCÍCIO PRÁTICO INTERATIVO (SIMULADOR DE EXCEL) -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
+            <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
+                <h2 class="text-lg font-bold text-slate-800 flex items-center">
+                    <span class="bg-emerald-600 text-white text-xs font-bold px-2.5 py-1 rounded-md mr-2">PARTE 4</span>
+                    Exercício Prático Interativo (Simulador de Planilha)
+                </h2>
+                <span class="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full font-semibold">
+                    <i class="fa-solid fa-play mr-1"></i> Digite as Fórmulas
+                </span>
+            </div>
+
+            <p class="text-xs text-slate-600 mb-4">
+                Instruções: Digite as fórmulas do Excel nas células correspondentes das colunas <strong>Total</strong>, <strong>Média</strong> e <strong>Situação</strong> para realizar os cálculos da planilha.
+            </p>
+
+            <!-- Excel Table UI -->
+            <div class="border border-slate-300 rounded-xl overflow-hidden shadow-sm">
+                <div class="bg-slate-100 border-b border-slate-300 p-2 flex items-center space-x-2 text-xs font-mono text-slate-600">
+                    <span class="bg-white px-2 py-1 border border-slate-300 rounded font-bold text-emerald-700">fx</span>
+                    <input type="text" id="fx-bar" readonly placeholder="Selecione uma célula com fórmula para visualizar" class="w-full bg-white border border-slate-200 rounded px-2 py-1 text-slate-700 focus:outline-none">
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-slate-200 text-slate-600 font-semibold text-center divide-x divide-slate-300">
+                                <th class="p-2 w-10 bg-slate-300"></th>
+                                <th class="p-2 w-1/6">A (Aluno)</th>
+                                <th class="p-2 w-20">B (Nota 1)</th>
+                                <th class="p-2 w-20">C (Nota 2)</th>
+                                <th class="p-2 w-20">D (Nota 3)</th>
+                                <th class="p-2 w-1/4">E (Total / Soma)</th>
+                                <th class="p-2 w-1/4">F (Média)</th>
+                                <th class="p-2 w-1/4">G (Situação - SE)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 text-center">
+                            <!-- Row 2: Ana -->
+                            <tr class="divide-x divide-slate-200">
+                                <td class="bg-slate-200 font-bold text-slate-600">2</td>
+                                <td class="p-2 text-left font-medium text-slate-800 bg-slate-50">Ana Silva</td>
+                                <td class="p-2 font-mono">8.0</td>
+                                <td class="p-2 font-mono">7.5</td>
+                                <td class="p-2 font-mono">9.0</td>
+                                <td class="p-1">
+                                    <input type="text" id="cell-e2" placeholder="Fórmula da Soma" oninput="evaluateExcelTable()" class="w-full text-center p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 font-mono text-xs">
+                                </td>
+                                <td class="p-1">
+                                    <input type="text" id="cell-f2" placeholder="Fórmula da Média" oninput="evaluateExcelTable()" class="w-full text-center p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 font-mono text-xs">
+                                </td>
+                                <td class="p-1">
+                                    <input type="text" id="cell-g2" placeholder="Fórmula da Situação" oninput="evaluateExcelTable()" class="w-full text-center p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 font-mono text-xs">
+                                </td>
+                            </tr>
+                            <!-- Row 3: Bruno -->
+                            <tr class="divide-x divide-slate-200">
+                                <td class="bg-slate-200 font-bold text-slate-600">3</td>
+                                <td class="p-2 text-left font-medium text-slate-800 bg-slate-50">Bruno Souza</td>
+                                <td class="p-2 font-mono">5.0</td>
+                                <td class="p-2 font-mono">4.5</td>
+                                <td class="p-2 font-mono">6.0</td>
+                                <td class="p-1">
+                                    <input type="text" id="cell-e3" placeholder="Fórmula da Soma" oninput="evaluateExcelTable()" class="w-full text-center p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 font-mono text-xs">
+                                </td>
+                                <td class="p-1">
+                                    <input type="text" id="cell-f3" placeholder="Fórmula da Média" oninput="evaluateExcelTable()" class="w-full text-center p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 font-mono text-xs">
+                                </td>
+                                <td class="p-1">
+                                    <input type="text" id="cell-g3" placeholder="Fórmula da Situação" oninput="evaluateExcelTable()" class="w-full text-center p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 font-mono text-xs">
+                                </td>
+                            </tr>
+                            <!-- Row 4: Carla -->
+                            <tr class="divide-x divide-slate-200">
+                                <td class="bg-slate-200 font-bold text-slate-600">4</td>
+                                <td class="p-2 text-left font-medium text-slate-800 bg-slate-50">Carla Costa</td>
+                                <td class="p-2 font-mono">9.5</td>
+                                <td class="p-2 font-mono">9.0</td>
+                                <td class="p-2 font-mono">10.0</td>
+                                <td class="p-1">
+                                    <input type="text" id="cell-e4" placeholder="Fórmula da Soma" oninput="evaluateExcelTable()" class="w-full text-center p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 font-mono text-xs">
+                                </td>
+                                <td class="p-1">
+                                    <input type="text" id="cell-f4" placeholder="Fórmula da Média" oninput="evaluateExcelTable()" class="w-full text-center p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 font-mono text-xs">
+                                </td>
+                                <td class="p-1">
+                                    <input type="text" id="cell-g4" placeholder="Fórmula da Situação" oninput="evaluateExcelTable()" class="w-full text-center p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 font-mono text-xs">
+                                </td>
+                            </tr>
+                            <!-- Row 5: Diego -->
+                            <tr class="divide-x divide-slate-200">
+                                <td class="bg-slate-200 font-bold text-slate-600">5</td>
+                                <td class="p-2 text-left font-medium text-slate-800 bg-slate-50">Diego Lima</td>
+                                <td class="p-2 font-mono">3.0</td>
+                                <td class="p-2 font-mono">5.5</td>
+                                <td class="p-2 font-mono">4.0</td>
+                                <td class="p-1">
+                                    <input type="text" id="cell-e5" placeholder="Fórmula da Soma" oninput="evaluateExcelTable()" class="w-full text-center p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 font-mono text-xs">
+                                </td>
+                                <td class="p-1">
+                                    <input type="text" id="cell-f5" placeholder="Fórmula da Média" oninput="evaluateExcelTable()" class="w-full text-center p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 font-mono text-xs">
+                                </td>
+                                <td class="p-1">
+                                    <input type="text" id="cell-g5" placeholder="Fórmula da Situação" oninput="evaluateExcelTable()" class="w-full text-center p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 font-mono text-xs">
+                                </td>
+                            </tr>
+                            <!-- Row 6: Maior Nota -->
+                            <tr class="divide-x divide-slate-200 bg-slate-100 font-bold">
+                                <td class="bg-slate-300 text-slate-600">6</td>
+                                <td class="p-2 text-left text-emerald-800">Maior Nota Geral</td>
+                                <td colspan="3" class="p-1 text-slate-500 text-right pr-4 italic font-normal">Sua fórmula:</td>
+                                <td colspan="3" class="p-1">
+                                    <input type="text" id="cell-max" placeholder="Fórmula da Maior Nota" oninput="evaluateExcelTable()" class="w-full text-center p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 font-mono text-xs bg-white">
+                                </td>
+                            </tr>
+                            <!-- Row 7: Menor Nota -->
+                            <tr class="divide-x divide-slate-200 bg-slate-100 font-bold">
+                                <td class="bg-slate-300 text-slate-600">7</td>
+                                <td class="p-2 text-left text-emerald-800">Menor Nota Geral</td>
+                                <td colspan="3" class="p-1 text-slate-500 text-right pr-4 italic font-normal">Sua fórmula:</td>
+                                <td colspan="3" class="p-1">
+                                    <input type="text" id="cell-min" placeholder="Fórmula da Menor Nota" oninput="evaluateExcelTable()" class="w-full text-center p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 font-mono text-xs bg-white">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Calculated Output Live Summary -->
+            <div id="simulation-results" class="mt-4 p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+                <h4 class="font-bold text-emerald-900 text-xs uppercase tracking-wider mb-2 flex items-center">
+                    <i class="fa-solid fa-square-poll-vertical mr-2 text-emerald-600"></i> Resultado Interpretado das Fórmulas Digitações:
+                </h4>
+                <div id="results-output" class="text-xs text-emerald-800 font-mono space-y-1">
+                    Preencha as células acima com as fórmulas corretas para ver os resultados processados aqui.
+                </div>
+            </div>
+        </section>
+
+        <!-- PARTE 5: CRITÉRIOS DE AVALIAÇÃO -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
+            <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center border-b border-slate-100 pb-3">
+                <i class="fa-solid fa-clipboard-check text-emerald-600 mr-2"></i> Critérios de Avaliação
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-slate-800 text-sm">Conceituação Teórica</span>
+                        <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-0.5 rounded">4,0 Pontos</span>
+                    </div>
+                    <p class="text-xs text-slate-600">Clareza, precisão e exatidão nas respostas da pesquisa teórica.</p>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-slate-800 text-sm">Fórmulas & Funções</span>
+                        <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-0.5 rounded">4,0 Pontos</span>
+                    </div>
+                    <p class="text-xs text-slate-600">Sintaxe correta e funcionamento exato das fórmulas no exercício prático.</p>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-slate-800 text-sm">Organização</span>
+                        <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-0.5 rounded">2,0 Pontos</span>
+                    </div>
+                    <p class="text-xs text-slate-600">Preenchimento completo de todos os dados e boa apresentação visual.</p>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="mt-8 text-center">
+                <button onclick="finishActivity()" class="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center mx-auto text-sm">
+                    <i class="fa-solid fa-paper-plane mr-2"></i> Concluir e Enviar Respostas
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Toast Warning for Copy/Right-Click Blocking -->
+    <div id="copy-warning-toast" class="fixed bottom-6 right-6 z-50 bg-slate-900/95 text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-slate-700 flex items-center space-x-3 max-w-md">
+        <div class="p-2 bg-amber-500/20 text-amber-400 rounded-xl">
+            <i class="fa-solid fa-shield-halved text-xl"></i>
+        </div>
+        <div>
+            <h4 class="font-bold text-sm text-amber-300">Ação Bloqueada</h4>
+            <p class="text-xs text-slate-300">A cópia de texto e o menu de contexto foram desativados para esta atividade escolar.</p>
+        </div>
+    </div>
+
+    <script>
+        // Função para exibir o aviso toast quando o aluno tenta copiar ou usar o botão direito
+        function triggerCopyWarning(reason) {
+            const toast = document.getElementById('copy-warning-toast');
+            toast.classList.add('show');
+            
+            if (window.copyToastTimeout) clearTimeout(window.copyToastTimeout);
+            window.copyToastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // 1. Bloquear Clique Direito (Menu de Contexto)
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            triggerCopyWarning('contextmenu');
+            return false;
+        });
+
+        // 2. Bloquear Seleção de Texto (Salvo nos inputs)
+        document.addEventListener('selectstart', function(e) {
+            if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // 3. Bloquear Eventos de Copiar, Cortar e Colar (fora dos campos do formulário)
+        document.addEventListener('copy', function(e) {
+            if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+                triggerCopyWarning('copy');
+                return false;
+            }
+        });
+
+        document.addEventListener('cut', function(e) {
+            if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+                triggerCopyWarning('cut');
+                return false;
+            }
+        });
+
+        document.addEventListener('dragstart', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+        // 4. Bloquear Atalhos de Teclado comuns (Ctrl+C, Ctrl+U, Ctrl+S, F12, Ctrl+Shift+I, etc.)
+        document.addEventListener('keydown', function(e) {
+            const isCtrlOrCmd = e.ctrlKey || e.metaKey;
+            
+            // Permite digitação comum nos inputs
+            const isInput = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA';
+
+            // Bloqueia Ctrl+C se não estiver selecionando texto dentro de um input
+            if (isCtrlOrCmd && (e.key === 'c' || e.key === 'C')) {
+                if (!isInput) {
+                    e.preventDefault();
+                    triggerCopyWarning('ctrl+c');
+                }
+            }
+
+            // Bloqueia Ctrl+U (Ver Código Fonte)
+            if (isCtrlOrCmd && (e.key === 'u' || e.key === 'U')) {
+                e.preventDefault();
+                triggerCopyWarning('code_view');
+            }
+
+            // Bloqueia Ctrl+S (Salvar Página)
+            if (isCtrlOrCmd && (e.key === 's' || e.key === 'S')) {
+                e.preventDefault();
+            }
+
+            // Bloqueia F12 e Ctrl+Shift+I (Inspecionar Elemento)
+            if (e.key === 'F12' || (isCtrlOrCmd && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'C' || e.key === 'c' || e.key === 'J' || e.key === 'j'))) {
+                e.preventDefault();
+                triggerCopyWarning('devtools');
+            }
+        });
+
+        // Dados fixos da tabela de notas dos alunos
+        const studentsData = {
+            '2': { name: 'Ana Silva', n1: 8.0, n2: 7.5, n3: 9.0 },
+            '3': { name: 'Bruno Souza', n1: 5.0, n2: 4.5, n3: 6.0 },
+            '4': { name: 'Carla Costa', n1: 9.5, n2: 9.0, n3: 10.0 },
+            '5': { name: 'Diego Lima', n1: 3.0, n2: 5.5, n3: 4.0 }
+        };
+
+        const allGrades = [8.0, 7.5, 9.0, 5.0, 4.5, 6.0, 9.5, 9.0, 10.0, 3.0, 5.5, 4.0];
+
+        // Atualizar barra de fórmulas fx
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('focus', function() {
+                const fxBar = document.getElementById('fx-bar');
+                if (fxBar) fxBar.value = this.value;
+            });
+            input.addEventListener('keyup', function() {
+                const fxBar = document.getElementById('fx-bar');
+                if (fxBar) fxBar.value = this.value;
+            });
+        });
+
+        // Avaliador de Fórmulas Simples em Tempo Real
+        function evaluateExcelTable() {
+            const resultsDiv = document.getElementById('results-output');
+            let outputHTML = [];
+
+            // Avaliar linhas de alunos 2 a 5
+            ['2', '3', '4', '5'].forEach(row => {
+                const student = studentsData[row];
+                const sumFormula = (document.getElementById(`cell-e${row}`).value || '').trim().toUpperCase();
+                const avgFormula = (document.getElementById(`cell-f${row}`).value || '').trim().toUpperCase();
+                const seFormula = (document.getElementById(`cell-g${row}`).value || '').trim().toUpperCase();
+
+                let realSum = student.n1 + student.n2 + student.n3;
+                let realAvg = (realSum / 3).toFixed(1);
+                let realStatus = parseFloat(realAvg) >= 6.0 ? 'Aprovado' : 'Recuperação';
+
+                let sumValid = sumFormula.includes('SOMA') || sumFormula.includes('+');
+                let avgValid = avgFormula.includes('MÉDIA') || avgFormula.includes('MEDIA') || avgFormula.includes('/');
+                let seValid = seFormula.includes('SE');
+
+                outputHTML.push(`
+                    <div class="flex items-center justify-between border-b border-emerald-200/60 py-1">
+                        <span><strong>${student.name} (Linha ${row}):</strong></span>
+                        <span>
+                            Total: ${sumValid ? `<span class="text-emerald-700 font-bold">${realSum.toFixed(1)}</span>` : '<span class="text-slate-400">---</span>'} | 
+                            Média: ${avgValid ? `<span class="text-emerald-700 font-bold">${realAvg}</span>` : '<span class="text-slate-400">---</span>'} | 
+                            Situação: ${seValid ? `<span class="font-bold ${realStatus==='Aprovado'?'text-emerald-700':'text-amber-700'}">${realStatus}</span>` : '<span class="text-slate-400">---</span>'}
+                        </span>
+                    </div>
+                `);
+            });
+
+            // Avaliar Maior e Menor Nota
+            const maxFormula = (document.getElementById('cell-max').value || '').trim().toUpperCase();
+            const minFormula = (document.getElementById('cell-min').value || '').trim().toUpperCase();
+
+            let maxValid = maxFormula.includes('MÁXIMO') || maxFormula.includes('MAXIMO') || maxFormula.includes('MAX');
+            let minValid = minFormula.includes('MÍNIMO') || minFormula.includes('MINIMO') || minFormula.includes('MIN');
+
+            let maxVal = Math.max(...allGrades).toFixed(1);
+            let minVal = Math.min(...allGrades).toFixed(1);
+
+            outputHTML.push(`
+                <div class="pt-2 flex justify-between font-bold text-emerald-900">
+                    <span>Maior Nota (=MÁXIMO): ${maxValid ? maxVal : '___'}</span>
+                    <span>Menor Nota (=MÍNIMO): ${minValid ? minVal : '___'}</span>
+                </div>
+            `);
+
+            resultsDiv.innerHTML = outputHTML.join('');
+        }
+
+        function finishActivity() {
+            const studentName = document.getElementById('student-name').value.trim() || 'Sem_Nome';
+            const studentClass = document.getElementById('student-class').value.trim() || 'N/A';
+            const teacherName = document.getElementById('teacher-name').value.trim() || 'N/A';
+            const subDate = document.getElementById('submission-date').value || new Date().toLocaleDateString('pt-BR');
+
+            // Coletar respostas teóricas
+            const q1 = document.getElementById('q1-answer').value.trim();
+            const q2Linha = document.getElementById('q2-linha').value.trim();
+            const q2Coluna = document.getElementById('q2-coluna').value.trim();
+            const q2Celula = document.getElementById('q2-celula').value.trim();
+            const q3 = document.getElementById('q3-answer').value.trim();
+
+            const quiz1 = document.getElementById('quiz-1').value.trim();
+            const quiz2 = document.getElementById('quiz-2').value.trim();
+            const quiz3 = document.getElementById('quiz-3').value.trim();
+
+            const qSomaDiff = document.getElementById('q-soma-diff').value.trim();
+            const qMediaExp = document.getElementById('q-media-exp').value.trim();
+            const qMinMaxExp = document.getElementById('q-minmax-exp').value.trim();
+            const qSeExp = document.getElementById('q-se-exp').value.trim();
+
+            // Coletar Fórmulas da Tabela
+            const formulas = {
+                e2: document.getElementById('cell-e2').value.trim(),
+                f2: document.getElementById('cell-f2').value.trim(),
+                g2: document.getElementById('cell-g2').value.trim(),
+                e3: document.getElementById('cell-e3').value.trim(),
+                f3: document.getElementById('cell-f3').value.trim(),
+                g3: document.getElementById('cell-g3').value.trim(),
+                e4: document.getElementById('cell-e4').value.trim(),
+                f4: document.getElementById('cell-f4').value.trim(),
+                g4: document.getElementById('cell-g4').value.trim(),
+                e5: document.getElementById('cell-e5').value.trim(),
+                f5: document.getElementById('cell-f5').value.trim(),
+                g5: document.getElementById('cell-g5').value.trim(),
+                max: document.getElementById('cell-max').value.trim(),
+                min: document.getElementById('cell-min').value.trim(),
+            };
+
+            // Criar HTML do relatório de correção para o professor
+            const reportHTML = `
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Correção: ${studentName} - Introdução ao Excel</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; line-height: 1.5; color: #1e293b; background: #f8fafc; }
+        .card { background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #cbd5e1; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        h1 { color: #047857; margin-top: 0; }
+        h2 { color: #065f46; border-bottom: 2px solid #a7f3d0; padding-bottom: 5px; margin-top: 25px; }
+        .meta { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; background: #ecfdf5; padding: 15px; border-radius: 8px; font-weight: bold; }
+        .label { font-weight: bold; color: #0f766e; }
+        .answer-box { background: #f1f5f9; padding: 10px; border-left: 4px solid #059669; border-radius: 4px; margin-top: 5px; white-space: pre-wrap; font-size: 14px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+        th, td { border: 1px solid #cbd5e1; padding: 8px; text-align: left; }
+        th { background: #e2e8f0; }
+        .code { font-family: monospace; font-weight: bold; color: #047857; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Relatório de Entrega: Introdução ao Excel</h1>
+        <div class="meta">
+            <div><span class="label">Aluno(a):</span> ${studentName}</div>
+            <div><span class="label">Turma:</span> ${studentClass}</div>
+            <div><span class="label">Professor(a):</span> ${teacherName}</div>
+            <div><span class="label">Data de Entrega:</span> ${subDate}</div>
+        </div>
+
+        <h2>Parte 1: Pesquisa Teórica</h2>
+        <p><strong>1. O que é o Excel e sua função?</strong></p>
+        <div class="answer-box">${q1 || 'Não respondido'}</div>
+
+        <p><strong>2. Definição de Linha, Coluna e Célula:</strong></p>
+        <div class="answer-box">
+            <strong>Linha:</strong> ${q2Linha || 'N/A'}<br>
+            <strong>Coluna:</strong> ${q2Coluna || 'N/A'}<br>
+            <strong>Célula (ex: B5):</strong> ${q2Celula || 'N/A'}
+        </div>
+
+        <p><strong>3. Por que toda fórmula começa com '='?</strong></p>
+        <div class="answer-box">${q3 || 'Não respondido'}</div>
+
+        <h2>Parte 2 & 3: Conceitos e Funções</h2>
+        <p><strong>Desafio Rápido de Fixação:</strong></p>
+        <div class="answer-box">
+            =A1 + B1: <strong>${quiz1 || '---'}</strong> (Esperado: 12)<br>
+            =A1 * B1: <strong>${quiz2 || '---'}</strong> (Esperado: 20)<br>
+            =A1 / B1: <strong>${quiz3 || '---'}</strong> (Esperado: 5)
+        </div>
+
+        <p><strong>Diferença entre ':' e ';':</strong></p>
+        <div class="answer-box">${qSomaDiff || 'Não respondido'}</div>
+
+        <p><strong>Funcionamento da MÉDIA:</strong></p>
+        <div class="answer-box">${qMediaExp || 'Não respondido'}</div>
+
+        <p><strong>Aplicação do MÍNIMO e MÁXIMO:</strong></p>
+        <div class="answer-box">${qMinMaxExp || 'Não respondido'}</div>
+
+        <p><strong>Explicação da fórmula =SE:</strong></p>
+        <div class="answer-box">${qSeExp || 'Não respondido'}</div>
+
+        <h2>Parte 4: Fórmulas Digitações no Simulador</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Aluno / Item</th>
+                    <th>Fórmula Soma (E)</th>
+                    <th>Fórmula Média (F)</th>
+                    <th>Fórmula SE / Situação (G)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Ana Silva (Linha 2)</strong></td>
+                    <td class="code">${formulas.e2 || 'Vazio'}</td>
+                    <td class="code">${formulas.f2 || 'Vazio'}</td>
+                    <td class="code">${formulas.g2 || 'Vazio'}</td>
+                </tr>
+                <tr>
+                    <td><strong>Bruno Souza (Linha 3)</strong></td>
+                    <td class="code">${formulas.e3 || 'Vazio'}</td>
+                    <td class="code">${formulas.f3 || 'Vazio'}</td>
+                    <td class="code">${formulas.g3 || 'Vazio'}</td>
+                </tr>
+                <tr>
+                    <td><strong>Carla Costa (Linha 4)</strong></td>
+                    <td class="code">${formulas.e4 || 'Vazio'}</td>
+                    <td class="code">${formulas.f4 || 'Vazio'}</td>
+                    <td class="code">${formulas.g4 || 'Vazio'}</td>
+                </tr>
+                <tr>
+                    <td><strong>Diego Lima (Linha 5)</strong></td>
+                    <td class="code">${formulas.e5 || 'Vazio'}</td>
+                    <td class="code">${formulas.f5 || 'Vazio'}</td>
+                    <td class="code">${formulas.g5 || 'Vazio'}</td>
+                </tr>
+                <tr>
+                    <td><strong>Maior Nota Geral (Linha 6)</strong></td>
+                    <td colspan="3" class="code">${formulas.max || 'Vazio'}</td>
+                </tr>
+                <tr>
+                    <td><strong>Menor Nota Geral (Linha 7)</strong></td>
+                    <td colspan="3" class="code">${formulas.min || 'Vazio'}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
+            `;
+
+            // Fazer o download do arquivo HTML para o aluno entregar ao professor
+            const fileName = `Resposta_Excel_${studentName.replace(/\s+/g, '_')}.html`;
+            const blob = new Blob([reportHTML], { type: 'text/html;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Exibir modal amigável avisando sobre o download
+            const modal = document.createElement('div');
+            modal.className = "fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4";
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl p-6 max-w-md w-full text-center shadow-2xl border border-slate-100">
+                    <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                        <i class="fa-solid fa-file-arrow-down"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-2">Arquivo de Respostas Gerado!</h3>
+                    <p class="text-xs text-slate-600 mb-4">
+                        O arquivo <strong>"${fileName}"</strong> foi baixado no seu computador/dispositivo.
+                    </p>
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-left text-xs text-emerald-800 mb-6 space-y-1">
+                        <p class="font-bold"><i class="fa-solid fa-circle-info mr-1"></i> Instruções para o aluno:</p>
+                        <p>Envie este arquivo baixado ao seu professor por e-mail, Google Classroom, Teams ou WhatsApp para que ele faça a correção.</p>
+                    </div>
+                    <button onclick="this.closest('.fixed').remove()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs transition-all">
+                        Entendido
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+    </script>
+</body>
+</html>
