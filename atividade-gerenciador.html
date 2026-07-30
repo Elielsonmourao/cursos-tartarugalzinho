@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atividade de Pesquisa - Ferramentas do Sistema Operacional</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+      body {
+        background-color: white !important;
+        color: black !important;
+      }
+      .print-shadow-none {
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+      }
+      textarea {
+        border: 1px solid #999 !important;
+        resize: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen pb-12">
+
+  <!-- Header -->
+  <header class="bg-indigo-700 text-white py-8 px-4 shadow-lg no-print">
+    <div class="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+      <div>
+        <span class="bg-indigo-500 text-indigo-100 text-xs font-semibold px-2.5 py-1 rounded uppercase tracking-wider">Atividade Prática de Pesquisa</span>
+        <h1 class="text-2xl md:text-3xl font-bold mt-2">Ferramentas do Sistema Operacional</h1>
+        <p class="text-indigo-200 text-sm mt-1">Gerenciador de Tarefas | Gerenciador de Dispositivos | Firewall</p>
+      </div>
+      <div class="bg-indigo-800/80 p-3 rounded-lg border border-indigo-600 text-right text-xs">
+        <p class="font-medium text-indigo-200">Progresso do Preenchimento</p>
+        <div class="w-48 bg-indigo-950 rounded-full h-3 mt-1.5 overflow-hidden">
+          <div id="progressBar" class="bg-emerald-400 h-full w-0 transition-all duration-300"></div>
+        </div>
+        <p id="progressText" class="mt-1 font-semibold text-emerald-300">0% concluído</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-4 mt-8">
+
+    <!-- Print Title Header (Only visible on PDF / Print) -->
+    <div class="hidden print:block text-center mb-6 border-b pb-4">
+      <h1 class="text-2xl font-bold">Atividade de Pesquisa: Ferramentas do Sistema Operacional</h1>
+      <p class="text-sm text-gray-600">Sistemas Operacionais e Redes de Computadores</p>
+    </div>
+
+    <!-- Student Identification Card -->
+    <section class="bg-white p-6 rounded-xl shadow-md border border-slate-200 mb-8 print-shadow-none">
+      <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+        <svg class="w-5 h-5 text-indigo-600 no-print" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+        Identificação do Aluno
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="md:col-span-2">
+          <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Nome Completo do Aluno <span class="text-red-500">*</span></label>
+          <input type="text" id="studentName" placeholder="Digite seu nome completo aqui..." oninput="updateProgress()" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Turma / Turno</label>
+          <input type="text" id="studentClass" placeholder="Ex: 2º Ano A / Matutino" oninput="updateProgress()" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+        </div>
+      </div>
+    </section>
+
+    <!-- Instructions Callout -->
+    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg mb-8 text-blue-900 text-sm no-print">
+      <p class="font-bold mb-1">Orientação para a Pesquisa:</p>
+      <p>Pesquise nos materiais fornecidos ou na internet e responda a cada uma das questões abaixo com suas próprias palavras. Ao finalizar, utilize o botão ao fim da página para **Salvar o arquivo de respostas** e enviá-lo ao professor.</p>
+    </div>
+
+    <!-- Form / Questions Section -->
+    <form id="activityForm" class="space-y-8">
+
+      <!-- Module 1: Gerenciador de Tarefas -->
+      <section class="bg-white p-6 rounded-xl shadow-md border border-slate-200 print-shadow-none">
+        <div class="border-b border-slate-200 pb-3 mb-4">
+          <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider">Parte 1</span>
+          <h2 class="text-xl font-bold text-slate-800">Gerenciador de Tarefas (Task Manager)</h2>
+        </div>
+
+        <div class="space-y-6">
+          <div>
+            <label class="block font-medium text-slate-800 mb-2">
+              1. O que é o Gerenciador de Tarefas e qual é a sua principal finalidade em um sistema operacional?
+            </label>
+            <textarea id="q1" rows="3" oninput="updateProgress()" placeholder="Sua resposta..." class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition"></textarea>
+          </div>
+
+          <div>
+            <label class="block font-medium text-slate-800 mb-2">
+              2. Quais componentes de hardware podem ser monitorados em tempo real por essa ferramenta? Explique o que fazer quando um programa trava ("não responde").
+            </label>
+            <textarea id="q2" rows="3" oninput="updateProgress()" placeholder="Sua resposta..." class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- Module 2: Gerenciador de Dispositivos -->
+      <section class="bg-white p-6 rounded-xl shadow-md border border-slate-200 print-shadow-none">
+        <div class="border-b border-slate-200 pb-3 mb-4">
+          <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider">Parte 2</span>
+          <h2 class="text-xl font-bold text-slate-800">Gerenciador de Dispositivos (Device Manager)</h2>
+        </div>
+
+        <div class="space-y-6">
+          <div>
+            <label class="block font-medium text-slate-800 mb-2">
+              3. Para que serve o Gerenciador de Dispositivos? Qual a relação dele com os *drivers* do computador?
+            </label>
+            <textarea id="q3" rows="3" oninput="updateProgress()" placeholder="Sua resposta..." class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition"></textarea>
+          </div>
+
+          <div>
+            <label class="block font-medium text-slate-800 mb-2">
+              4. Se um componente de hardware apresentar um ícone de exclamação amarela no Gerenciador de Dispositivos, o que isso significa e como você resolveria esse problema?
+            </label>
+            <textarea id="q4" rows="3" oninput="updateProgress()" placeholder="Sua resposta..." class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- Module 3: Firewall -->
+      <section class="bg-white p-6 rounded-xl shadow-md border border-slate-200 print-shadow-none">
+        <div class="border-b border-slate-200 pb-3 mb-4">
+          <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider">Parte 3</span>
+          <h2 class="text-xl font-bold text-slate-800">Firewall do Sistema Operacional</h2>
+        </div>
+
+        <div class="space-y-6">
+          <div>
+            <label class="block font-medium text-slate-800 mb-2">
+              5. O que é um Firewall e qual o seu papel no controle do tráfego de rede?
+            </label>
+            <textarea id="q5" rows="3" oninput="updateProgress()" placeholder="Sua resposta..." class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition"></textarea>
+          </div>
+
+          <div>
+            <label class="block font-medium text-slate-800 mb-2">
+              6. Qual é a diferença fundamental entre a atuação do Firewall e a atuação de um Antivírus?
+            </label>
+            <textarea id="q6" rows="3" oninput="updateProgress()" placeholder="Sua resposta..." class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- Module 4: Estudo de Caso -->
+      <section class="bg-white p-6 rounded-xl shadow-md border border-slate-200 print-shadow-none">
+        <div class="border-b border-slate-200 pb-3 mb-4">
+          <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider">Parte 4</span>
+          <h2 class="text-xl font-bold text-slate-800">Estudo de Caso Prático</h2>
+        </div>
+
+        <div>
+          <label class="block font-medium text-slate-800 mb-2">
+            7. Imagine a seguinte situação: Um computador da escola está extremamente lento, com a ventoinha do processador girando em velocidade máxima e conexões suspeitas acontecendo. Descreva qual das três ferramentas (Gerenciador de Tarefas, Gerenciador de Dispositivos ou Firewall) você utilizaria para investigar cada um desses problemas e por quê.
+          </label>
+          <textarea id="q7" rows="4" oninput="updateProgress()" placeholder="Sua resposta..." class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition"></textarea>
+        </div>
+      </section>
+    </form>
+
+    <!-- Submission / Download Controls -->
+    <div class="mt-8 bg-slate-800 text-white p-6 rounded-xl shadow-lg flex flex-col md:flex-row justify-between items-center gap-4 no-print">
+      <div>
+        <h3 class="font-bold text-lg">Pronto para enviar?</h3>
+        <p class="text-slate-300 text-sm">Certifique-se de preencher o nome completo antes de gerar o arquivo.</p>
+      </div>
+
+      <div class="flex flex-wrap gap-3 w-full md:w-auto">
+        <button type="button" onclick="window.print()" class="flex-1 md:flex-initial bg-slate-700 hover:bg-slate-600 text-white font-medium px-4 py-2.5 rounded-lg transition flex items-center justify-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 000-4h-6a2 2 0 000 4zm8-12V5a2 2 0 00-2-2H7a2 2 0 00-2 2v4h10z"></path></svg>
+          Salvar em PDF / Imprimir
+        </button>
+
+        <button type="button" onclick="generateFile()" class="flex-1 md:flex-initial bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-5 py-2.5 rounded-lg transition flex items-center justify-center gap-2 shadow-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+          Baixar Arquivo de Respostas (.txt)
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    function updateProgress() {
+      const fields = ['studentName', 'q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7'];
+      let filledCount = 0;
+
+      fields.forEach(id => {
+        const val = document.getElementById(id).value.trim();
+        if (val.length > 0) filledCount++;
+      });
+
+      const percentage = Math.round((filledCount / fields.length) * 100);
+      document.getElementById('progressBar').style.width = percentage + '%';
+      document.getElementById('progressText').innerText = percentage + '% concluído';
+    }
+
+    function generateFile() {
+      const studentName = document.getElementById('studentName').value.trim();
+      const studentClass = document.getElementById('studentClass').value.trim() || 'Não informada';
+      
+      if (!studentName) {
+        alert('Por favor, preencha o seu NOME COMPLETO antes de gerar o arquivo!');
+        document.getElementById('studentName').focus();
+        return;
+      }
+
+      const q1 = document.getElementById('q1').value.trim() || 'Sem resposta';
+      const q2 = document.getElementById('q2').value.trim() || 'Sem resposta';
+      const q3 = document.getElementById('q3').value.trim() || 'Sem resposta';
+      const q4 = document.getElementById('q4').value.trim() || 'Sem resposta';
+      const q5 = document.getElementById('q5').value.trim() || 'Sem resposta';
+      const q6 = document.getElementById('q6').value.trim() || 'Sem resposta';
+      const q7 = document.getElementById('q7').value.trim() || 'Sem resposta';
+
+      const dataHoje = new Date().toLocaleDateString('pt-BR');
+
+      const content = 
+`====================================================================
+          ATIVIDADE DE PESQUISA - FERRAMENTAS DO S.O.
+====================================================================
+
+IDENTIFICAÇÃO DO ALUNO:
+--------------------------------------------------------------------
+Nome Completo: ${studentName}
+Turma/Turno  : ${studentClass}
+Data de Envio: ${dataHoje}
+====================================================================
+
+PARTE 1: GERENCIADOR DE TAREFAS
+--------------------------------------------------------------------
+1. O que é o Gerenciador de Tarefas e sua finalidade?
+R: ${q1}
+
+2. Componentes monitorados e procedimento quando um programa trava:
+R: ${q2}
+
+
+PARTE 2: GERENCIADOR DE DISPOSITIVOS
+--------------------------------------------------------------------
+3. O que é o Gerenciador de Dispositivos e relação com drivers:
+R: ${q3}
+
+4. Significado do ícone de exclamação amarela e solução:
+R: ${q4}
+
+
+PARTE 3: FIREWALL
+--------------------------------------------------------------------
+5. O que é o Firewall e seu papel no tráfego de rede:
+R: ${q5}
+
+6. Diferença fundamental entre Firewall e Antivírus:
+R: ${q6}
+
+
+PARTE 4: ESTUDO DE CASO PRÁTICO
+--------------------------------------------------------------------
+7. Análise da situação do computador da escola (Lentidão, cooler e rede):
+R: ${q7}
+
+====================================================================
+Fim do Arquivo de Respostas
+====================================================================`;
+
+      const fileNameSanitized = studentName.toLowerCase().replace(/[^a-z0-9]/g, '_');
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `Respostas_SO_${fileNameSanitized}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  </script>
+</body>
+</html>
