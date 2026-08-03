@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atividade Prática: Configurações do Windows 11</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts: Inter & Segoe UI fallback -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            winBlue: {
+              50: '#eff6fc',
+              100: '#deecf9',
+              500: '#0078d4',
+              600: '#005a9e',
+              700: '#004578',
+            },
+            winDark: {
+              bg: '#202020',
+              card: '#2c2c2c',
+              border: '#383838'
+            }
+          },
+          fontFamily: {
+            sans: ['Segoe UI', 'Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .dark .glass-effect {
+      background: rgba(32, 32, 32, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(156, 163, 175, 0.5);
+      border-radius: 9999px;
+    }
+    @keyframes pulse-soft {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+    .animate-pulse-soft {
+      animation: pulse-soft 2s infinite ease-in-out;
+    }
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white !important; color: black !important; }
+      .print-shadow-none { box-shadow: none !important; border: 1px solid #ccc !important; }
+    }
+  </style>
+</head>
+
+<body class="bg-slate-100 dark:bg-zinc-900 text-slate-800 dark:text-slate-100 font-sans min-h-full flex flex-col transition-colors duration-300">
+
+  <!-- Top Navigation Bar -->
+  <header class="sticky top-0 z-40 glass-effect border-b border-slate-200 dark:border-zinc-800 shadow-sm no-print">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-9 h-9 rounded-lg bg-winBlue-500 text-white flex items-center justify-center font-bold text-xl shadow-md">
+          <i class="fab fa-windows"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg leading-tight text-slate-900 dark:text-white">Windows 11 para Iniciantes</h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Atividade Interativa de Configurações</p>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <!-- Progress badge -->
+        <div class="hidden sm:flex items-center space-x-2 bg-slate-200/70 dark:bg-zinc-800 px-3 py-1.5 rounded-full text-xs font-semibold">
+          <span>Progresso Total:</span>
+          <span id="overallProgressText" class="text-winBlue-600 dark:text-winBlue-400 font-bold">0%</span>
+        </div>
+
+        <!-- Dark mode toggle -->
+        <button id="themeToggleBtn" onclick="toggleDarkMode()" class="w-9 h-9 rounded-full bg-slate-200 dark:bg-zinc-800 hover:bg-slate-300 dark:hover:bg-zinc-700 text-slate-700 dark:text-slate-200 flex items-center justify-center transition-colors" title="Alternar Modo Escuro/Claro">
+          <i class="fas fa-moon dark:hidden"></i>
+          <i class="fas fa-sun hidden dark:inline"></i>
+        </button>
+
+        <!-- Print button -->
+        <button onclick="window.print()" class="px-3 py-1.5 rounded-lg bg-slate-200 dark:bg-zinc-800 hover:bg-slate-300 dark:hover:bg-zinc-700 text-slate-700 dark:text-slate-200 font-medium text-xs flex items-center space-x-1.5 transition-colors">
+          <i class="fas fa-print"></i>
+          <span class="hidden md:inline">Imprimir</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-6 space-y-8">
+
+    <!-- Hero Banner -->
+    <section class="bg-gradient-to-r from-winBlue-600 via-winBlue-500 to-indigo-600 text-white rounded-2xl p-6 md:p-8 shadow-lg relative overflow-hidden">
+      <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl select-none pointer-events-none">
+        <i class="fab fa-windows"></i>
+      </div>
+      <div class="relative z-10 max-w-2xl">
+        <span class="inline-block bg-white/20 backdrop-blur-md text-white text-xs font-semibold px-3 py-1 rounded-full mb-3">
+          <i class="fas fa-graduation-cap mr-1"></i> Guia Prático para Alunos
+        </span>
+        <h2 class="text-2xl md:text-3xl font-bold mb-2">Aprenda a dominar o Windows 11</h2>
+        <p class="text-slate-100 text-sm md:text-base leading-relaxed mb-4">
+          Complete os desafios práticos no simulador e responda aos testes para praticar a personalização, segurança e ajustes básicos do seu computador.
+        </p>
+
+        <!-- Global Progress Bar -->
+        <div class="space-y-1">
+          <div class="flex justify-between text-xs font-medium text-slate-100">
+            <span>Seu progresso da atividade</span>
+            <span id="progressBarLabel">0 de 15 concluídos</span>
+          </div>
+          <div class="w-full bg-black/20 rounded-full h-3 overflow-hidden p-0.5 border border-white/20">
+            <div id="mainProgressBar" class="bg-emerald-400 h-full rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <div class="flex border-b border-slate-200 dark:border-zinc-800 space-x-2 md:space-x-4 overflow-x-auto custom-scrollbar no-print">
+      <button onclick="switchTab('simulador')" id="tab-simulador" class="tab-btn px-4 py-3 font-semibold text-sm border-b-2 border-winBlue-500 text-winBlue-600 dark:text-winBlue-400 flex items-center space-x-2 whitespace-nowrap">
+        <i class="fas fa-desktop"></i>
+        <span>1. Simulador Interativo</span>
+      </button>
+      <button onclick="switchTab('desafios')" id="tab-desafios" class="tab-btn px-4 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center space-x-2 whitespace-nowrap">
+        <i class="fas fa-list-check"></i>
+        <span>2. Checklist de Tarefas</span>
+      </button>
+      <button onclick="switchTab('quiz')" id="tab-quiz" class="tab-btn px-4 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center space-x-2 whitespace-nowrap">
+        <i class="fas fa-question-circle"></i>
+        <span>3. Quiz de Fixação (10 Qs)</span>
+      </button>
+      <button onclick="switchTab('atalhos')" id="tab-atalhos" class="tab-btn px-4 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center space-x-2 whitespace-nowrap">
+        <i class="fas fa-keyboard"></i>
+        <span>4. Guia de Atalhos</span>
+      </button>
+    </div>
+
+    <!-- SECTION 1: SIMULATOR -->
+    <div id="content-simulador" class="tab-content block space-y-6">
+      <div class="bg-white dark:bg-zinc-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-zinc-700 print-shadow-none">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+          <div>
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <i class="fas fa-sliders text-winBlue-500"></i> Simulador Virtual de Configurações
+            </h3>
+            <p class="text-slate-600 dark:text-slate-300 text-sm">
+              Navegue pelos menus simulados do Windows 11 abaixo para testar onde fica cada opção sem medo de errar!
+            </p>
+          </div>
+          <div class="bg-winBlue-50 dark:bg-winBlue-900/30 text-winBlue-700 dark:text-winBlue-300 text-xs px-3 py-2 rounded-xl border border-winBlue-200 dark:border-winBlue-800 flex items-center gap-2">
+            <i class="fas fa-info-circle text-base"></i>
+            <span>Dica: Clique nos menus à esquerda para explorar cada categoria.</span>
+          </div>
+        </div>
+
+        <!-- Simulated Windows 11 Window -->
+        <div class="border border-slate-300 dark:border-zinc-700 rounded-xl overflow-hidden shadow-xl bg-slate-50 dark:bg-zinc-900 flex flex-col min-h-[460px]">
+          <!-- Window Header bar -->
+          <div class="bg-slate-200 dark:bg-zinc-800 px-4 py-2 flex items-center justify-between border-b border-slate-300 dark:border-zinc-700 select-none">
+            <div class="flex items-center space-x-2 text-xs font-medium text-slate-600 dark:text-slate-300">
+              <i class="fab fa-windows text-winBlue-500"></i>
+              <span>Configurações (Simulado)</span>
+            </div>
+            <div class="flex items-center space-x-3 text-slate-400 text-xs">
+              <span class="hover:text-slate-700 dark:hover:text-white cursor-pointer"><i class="fas fa-minus"></i></span>
+              <span class="hover:text-slate-700 dark:hover:text-white cursor-pointer"><i class="far fa-square"></i></span>
+              <span class="hover:text-red-500 cursor-pointer"><i class="fas fa-times"></i></span>
+            </div>
+          </div>
+
+          <!-- Window Content (Sidebar + Main View) -->
+          <div class="flex flex-col md:flex-row flex-grow">
+            <!-- Sidebar -->
+            <div class="w-full md:w-64 bg-slate-100 dark:bg-zinc-900/80 p-3 border-r border-slate-200 dark:border-zinc-800 space-y-1">
+              <!-- User Profile Header in Settings -->
+              <div class="flex items-center space-x-3 p-2 mb-3 bg-white dark:bg-zinc-800 rounded-lg border border-slate-200 dark:border-zinc-700">
+                <div class="w-8 h-8 rounded-full bg-winBlue-500 text-white flex items-center justify-center font-bold text-sm">
+                  A
+                </div>
+                <div class="overflow-hidden">
+                  <p class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">Aluno Iniciante</p>
+                  <p class="text-[10px] text-slate-500 dark:text-slate-400 truncate">Conta Local</p>
+                </div>
+              </div>
+
+              <!-- Menu Items -->
+              <button onclick="loadSimCategory('sistema')" id="sim-menu-sistema" class="sim-menu-btn w-full text-left px-3 py-2 rounded-md text-xs font-semibold flex items-center space-x-3 bg-winBlue-500 text-white">
+                <i class="fas fa-laptop w-4 text-center"></i>
+                <span>Sistema</span>
+              </button>
+              <button onclick="loadSimCategory('bluetooth')" id="sim-menu-bluetooth" class="sim-menu-btn w-full text-left px-3 py-2 rounded-md text-xs font-semibold flex items-center space-x-3 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-zinc-800">
+                <i class="fab fa-bluetooth-b w-4 text-center text-blue-500"></i>
+                <span>Bluetooth e dispositivos</span>
+              </button>
+              <button onclick="loadSimCategory('personalizacao')" id="sim-menu-personalizacao" class="sim-menu-btn w-full text-left px-3 py-2 rounded-md text-xs font-semibold flex items-center space-x-3 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-zinc-800">
+                <i class="fas fa-paint-brush w-4 text-center text-purple-500"></i>
+                <span>Personalização</span>
+              </button>
+              <button onclick="loadSimCategory('aplicativos')" id="sim-menu-aplicativos" class="sim-menu-btn w-full text-left px-3 py-2 rounded-md text-xs font-semibold flex items-center space-x-3 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-zinc-800">
+                <i class="fas fa-th-large w-4 text-center text-emerald-500"></i>
+                <span>Aplicativos</span>
+              </button>
+              <button onclick="loadSimCategory('privacidade')" id="sim-menu-privacidade" class="sim-menu-btn w-full text-left px-3 py-2 rounded-md text-xs font-semibold flex items-center space-x-3 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-zinc-800">
+                <i class="fas fa-shield-alt w-4 text-center text-amber-500"></i>
+                <span>Privacidade e segurança</span>
+              </button>
+              <button onclick="loadSimCategory('update')" id="sim-menu-update" class="sim-menu-btn w-full text-left px-3 py-2 rounded-md text-xs font-semibold flex items-center space-x-3 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-zinc-800">
+                <i class="fas fa-sync-alt w-4 text-center text-sky-500"></i>
+                <span>Windows Update</span>
+              </button>
+            </div>
+
+            <!-- Main Panel Content -->
+            <div id="sim-panel-content" class="flex-grow p-6 bg-white dark:bg-zinc-900 overflow-y-auto max-h-[460px]">
+              <!-- Content populated dynamically via JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: CHECKLIST -->
+    <div id="content-desafios" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-zinc-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-zinc-700 print-shadow-none">
+        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+          <i class="fas fa-tasks text-winBlue-500"></i> Desafios Práticos no Seu Computador
+        </h3>
+        <p class="text-slate-600 dark:text-slate-300 text-sm mb-6">
+          Abra as Configurações reais do seu computador Windows 11 (usando o atalho <kbd class="px-2 py-0.5 bg-slate-200 dark:bg-zinc-700 rounded text-xs font-mono">Win + I</kbd>) e execute cada missão abaixo. Marque as caixas para salvar o progresso!
+        </p>
+
+        <div class="space-y-4" id="tasksContainer">
+          <!-- Tasks dynamically generated or hardcoded -->
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: QUIZ -->
+    <div id="content-quiz" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-zinc-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-zinc-700 print-shadow-none">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+          <div>
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <i class="fas fa-clipboard-question text-winBlue-500"></i> Questionário de Fixação
+            </h3>
+            <p class="text-slate-600 dark:text-slate-300 text-sm">
+              Teste o conhecimento adquirido respondendo às 10 perguntas abaixo.
+            </p>
+          </div>
+          <div class="flex items-center space-x-3">
+            <span class="text-xs font-medium text-slate-500">Pontuação do Quiz:</span>
+            <span id="quizScoreBadge" class="bg-slate-100 dark:bg-zinc-700 px-3 py-1 rounded-full text-sm font-bold text-winBlue-600 dark:text-winBlue-400 border border-slate-200 dark:border-zinc-600">
+              0 / 10
+            </span>
+          </div>
+        </div>
+
+        <!-- Questions List Container -->
+        <div id="quizQuestionsContainer" class="space-y-6">
+          <!-- Populated by JavaScript -->
+        </div>
+
+        <div class="mt-8 flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 border-t border-slate-200 dark:border-zinc-700">
+          <button onclick="resetQuiz()" class="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-zinc-700 text-sm font-medium transition-colors">
+            <i class="fas fa-undo mr-1.5"></i> Reiniciar Quiz
+          </button>
+          <button onclick="evaluateQuiz()" class="px-6 py-2.5 rounded-xl bg-winBlue-500 hover:bg-winBlue-600 text-white font-bold text-sm shadow-md transition-transform active:scale-95 flex items-center space-x-2">
+            <i class="fas fa-check-double"></i>
+            <span>Verificar Todas as Respostas</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 4: SHORTCUTS -->
+    <div id="content-atalhos" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-zinc-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-zinc-700 print-shadow-none">
+        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+          <i class="fas fa-keyboard text-winBlue-500"></i> Atalhos de Teclado Indispensáveis
+        </h3>
+        <p class="text-slate-600 dark:text-slate-300 text-sm mb-6">
+          Os atalhos de teclado tornam a navegação no Windows 11 muito mais ágil e produtiva. Experimente estes atalhos no seu teclado!
+        </p>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-zinc-700 text-slate-500 dark:text-slate-400 uppercase text-[11px] font-semibold tracking-wider">
+                <th class="pb-3 px-2">Atalho</th>
+                <th class="pb-3 px-2">Função Principal</th>
+                <th class="pb-3 px-2">Dica Útil</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-zinc-700/50 text-slate-700 dark:text-slate-200">
+              <tr class="hover:bg-slate-50 dark:hover:bg-zinc-700/30">
+                <td class="py-3 px-2 font-mono whitespace-nowrap">
+                  <kbd class="px-2 py-1 bg-slate-200 dark:bg-zinc-700 rounded text-xs font-bold shadow-sm">Win</kbd> + <kbd class="px-2 py-1 bg-slate-200 dark:bg-zinc-700 rounded text-xs font-bold shadow-sm">I</kbd>
+                </td>
+                <td class="py-3 px-2 font-semibold text-winBlue-600 dark:text-winBlue-400">Abre as Configurações</td>
+                <td class="py-3 px-2 text-xs text-slate-500 dark:text-slate-400">Atalho direto para o painel principal do sistema.</td>
+              </tr>
+              <tr class="hover:bg-slate-50 dark:hover:bg-zinc-700/30">
+                <td class="py-3 px-2 font-mono whitespace-nowrap">
+                  <kbd class="px-2 py-1 bg-slate-200 dark:bg-zinc-700 rounded text-xs font-bold shadow-sm">Win</kbd> + <kbd class="px-2 py-1 bg-slate-200 dark:bg-zinc-700 rounded text-xs font-bold shadow-sm">A</kbd>
+                </td>
+                <td class="py-3 px-2 font-semibold">Configurações Rápidas</td>
+                <td class="py-3 px-2 text-xs text-slate-500 dark:text-slate-400">Ajuste de volume, brilho, Wi-Fi e Bluetooth rapidamente.</td>
+              </tr>
+              <tr class="hover:bg-slate-50 dark:hover:bg-zinc-700/30">
+                <td class="py-3 px-2 font-mono whitespace-nowrap">
+                  <kbd class="px-2 py-1 bg-slate-200 dark:bg-zinc-700 rounded text-xs font-bold shadow-sm">Win</kbd> + <kbd class="px-2 py-1 bg-slate-200 dark:bg-zinc-700 rounded text-xs font-bold shadow-sm">N</kbd>
+                </td>
+                <td class="py-3 px-2 font-semibold">Notificações e Calendário</td>
+                <td class="py-3 px-2 text-xs text-slate-500 dark:text-slate-400">Exibe suas mensagens pendentes e a agenda do mês.</td>
+              </tr>
+              <tr class="hover:bg-slate-50 dark:hover:bg-zinc-700/30">
+                <td class="py-3 px-2 font-mono whitespace-nowrap">
+                  <kbd class="px-2 py-1 bg-slate-200 dark:bg-zinc-700 rounded text-xs font-bold shadow-sm">Win</kbd> + <kbd class="px-2 py-1 bg-slate-200 dark:bg-zinc-700 rounded text-xs font-bold shadow-sm">E</kbd>
+                </td>
+                <td class="py-3 px-2 font-semibold">Explorador de Arquivos</td>
+                <td class="py-3 px-2 text-xs text-slate-500 dark:text-slate-400">Para encontrar suas pastas de Documentos, Downloads e Imagens.</td>
+              </tr>
+              <tr class="hover:bg-slate-50 dark:hover:bg-zinc-700/30">
+                <td class="py-3 px-2 font-mono whitespace-nowrap">
+                  <kbd class="px-2 py-1 bg-slate-200 dark:bg-zinc-700 rounded text-xs font-bold shadow-sm">Win</kbd> + <kbd class="px-2 py-1 bg-slate-200 dark:bg-zinc-700 rounded text-xs font-bold shadow-sm">L</kbd>
+                </td>
+                <td class="py-3 px-2 font-semibold">Bloquear Tela</td>
+                <td class="py-3 px-2 text-xs text-slate-500 dark:text-slate-400">Proteja seu computador quando se ausentar da mesa.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Completion Card (Shown when all finished) -->
+    <div id="completionCard" class="hidden bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl p-6 shadow-xl text-center space-y-3">
+      <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto text-3xl">
+        🎉
+      </div>
+      <h3 class="text-2xl font-bold">Parabéns! Atividade Concluída com Sucesso!</h3>
+      <p class="text-sm max-w-lg mx-auto opacity-95">
+        Você completou os desafios e demonstrou excelente compreensão das configurações fundamentais do Windows 11.
+      </p>
+      <button onclick="window.print()" class="px-5 py-2.5 bg-white text-emerald-800 font-bold rounded-xl text-sm shadow hover:bg-slate-100 transition-colors inline-flex items-center space-x-2">
+        <i class="fas fa-file-pdf"></i>
+        <span>Gerar Comprovante / Salvar PDF</span>
+      </button>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-auto border-t border-slate-200 dark:border-zinc-800 py-6 text-center text-xs text-slate-500 dark:text-slate-400 no-print">
+    <div class="max-w-6xl mx-auto px-4 space-y-1">
+      <p>Material Educativo Interativo • Windows 11 para Iniciantes</p>
+      <p>Desenvolvido para ensino de informática básica e capacitação digital.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Quiz Questions Data (10 Items)
+    const quizData = [
+      {
+        id: 1,
+        question: "Qual é o atalho de teclado mais rápido para abrir o menu de Configurações principal do Windows 11?",
+        options: ["Ctrl + Alt + Del", "Windows + I", "Windows + E", "Alt + Tab"],
+        answer: 1,
+        explanation: "Pressionar Windows + I abre instantaneamente o aplicativo de Configurações do Windows 11."
+      },
+      {
+        id: 2,
+        question: "Onde você deve ir para mudar o papel de parede (imagem de fundo) da sua área de trabalho?",
+        options: ["Sistema", "Aplicativos", "Personalização", "Acessibilidade"],
+        answer: 2,
+        explanation: "Na categoria Personalização, você encontra as opções de Plano de fundo, Cores, Temas e Tela de bloqueio."
+      },
+      {
+        id: 3,
+        question: "Para garantir que seu computador receba as últimas correções de segurança, qual seção você deve verificar regularmente?",
+        options: ["Contas", "Rede e Internet", "Windows Update", "Jogos"],
+        answer: 2,
+        explanation: "O Windows Update é responsável por baixar e instalar atualizações de segurança e melhorias de sistema."
+      },
+      {
+        id: 4,
+        question: "Como se chama o painel que aparece ao clicar nos ícones de Wi-Fi ou Volume na barra de tarefas para ajustes rápidos?",
+        options: ["Painel de Controle", "Gerenciador de Tarefas", "Configurações Rápidas", "Menu Iniciar"],
+        answer: 2,
+        explanation: "As Configurações Rápidas (ou Atalho Win + A) permitem ligar/desligar Wi-Fi, Bluetooth e alterar brilho rapidamente."
+      },
+      {
+        id: 5,
+        question: "Qual opção no menu 'Sistema' deve ser usada para diminuir o cansaço visual durante a noite?",
+        options: ["Economizador de bateria", "Luz noturna", "Escala e layout", "Som"],
+        answer: 1,
+        explanation: "A Luz Noturna exibe cores mais quentes na tela para diminuir a emissão de luz azul e evitar a fadiga dos olhos."
+      },
+      {
+        id: 6,
+        question: "Onde você pode desinstalar um programa que não usa mais no Windows 11?",
+        options: ["Aplicativos > Aplicativos instalados", "Sistema > Armazenamento", "Personalização > Temas", "Hora e idioma"],
+        answer: 0,
+        explanation: "Em 'Aplicativos > Aplicativos instalados', você vê a lista completa de programas e pode clicar em '...' para desinstalar."
+      },
+      {
+        id: 7,
+        question: "Ao conectar um novo fone de ouvido Bluetooth, em qual categoria principal você deve ir para pareá-lo?",
+        options: ["Privacidade e segurança", "Bluetooth e dispositivos", "Rede e Internet", "Acessibilidade"],
+        answer: 1,
+        explanation: "Em 'Bluetooth e dispositivos', você pode adicionar novos aparelhos sem fio como mouse, teclado ou fones."
+      },
+      {
+        id: 8,
+        question: "Se o seu computador está ficando sem espaço, qual ferramenta nas configurações pode ajudar a apagar arquivos temporários automaticamente?",
+        options: ["Windows Defender", "Sensor de Armazenamento", "Limpeza de Disco Legada", "Otimizador de RAM"],
+        answer: 1,
+        explanation: "O Sensor de Armazenamento liberta espaço automaticamente apagando arquivos desnecessários e itens da lixeira."
+      },
+      {
+        id: 9,
+        question: "Em qual seção você pode impedir que certos aplicativos acessem sua localização ou câmera?",
+        options: ["Privacidade e segurança", "Contas", "Sistema", "Jogos"],
+        answer: 0,
+        explanation: "Na seção Privacidade e segurança, você controla quais permissões (câmera, microfone, localização) cada aplicativo possui."
+      },
+      {
+        id: 10,
+        question: "Qual configuração permite que você mude a posição dos ícones na Barra de Tarefas (do centro para a esquerda)?",
+        options: ["Personalização > Cores", "Personalização > Barra de Tarefas", "Sistema > Multitarefas", "Acessibilidade > Teclado"],
+        answer: 1,
+        explanation: "Em Personalização > Barra de Tarefas > Comportamentos da barra de tarefas, você pode escolher se deseja o alinhamento no Centro ou à Esquerda."
+      }
+    ];
+
+    // Checklist tasks
+    const tasksData = [
+      { id: 't1', title: 'Abrir as Configurações com Atalho', desc: 'Pressione Win + I e observe o menu lateral com todas as categorias do Windows 11.' },
+      { id: 't2', title: 'Testar o Modo Escuro', desc: 'Vá em Personalização > Cores e altere o modo padrão do Windows para "Escuro".' },
+      { id: 't3', title: 'Ativar a Luz Noturna', desc: 'Vá em Sistema > Tela e ative a "Luz Noturna" para sentir a diferença nos tons da tela.' },
+      { id: 't4', title: 'Verificar se há Atualizações', desc: 'Clique em Windows Update e clique no botão "Verificar se há atualizações".' },
+      { id: 't5', title: 'Explorar o Sensor de Armazenamento', desc: 'Acesse Sistema > Armazenamento e ative o Sensor de Armazenamento.' }
+    ];
+
+    // User responses state
+    let quizAnswers = {};
+    let completedTasks = new Set();
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderSimulatorContent('sistema');
+      renderChecklist();
+      renderQuiz();
+      updateOverallProgress();
+    });
+
+    // Dark Mode Toggle
+    function toggleDarkMode() {
+      document.documentElement.classList.toggle('dark');
+    }
+
+    // Navigation Tab Switching
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('border-winBlue-500', 'text-winBlue-600', 'dark:text-winBlue-400');
+        btn.classList.add('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+      });
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.add('hidden');
+        content.classList.remove('block');
+      });
+
+      const activeBtn = document.getElementById(`tab-${tabId}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+        activeBtn.classList.add('border-winBlue-500', 'text-winBlue-600', 'dark:text-winBlue-400');
+      }
+
+      const activeContent = document.getElementById(`content-${tabId}`);
+      if (activeContent) {
+        activeContent.classList.remove('hidden');
+        activeContent.classList.add('block');
+      }
+    }
+
+    function loadSimCategory(cat) {
+      document.querySelectorAll('.sim-menu-btn').forEach(btn => {
+        btn.classList.remove('bg-winBlue-500', 'text-white');
+        btn.classList.add('text-slate-700', 'dark:text-slate-300');
+      });
+
+      const activeBtn = document.getElementById(`sim-menu-${cat}`);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-winBlue-500', 'text-white');
+        activeBtn.classList.remove('text-slate-700', 'dark:text-slate-300');
+      }
+
+      renderSimulatorContent(cat);
+    }
+
+    function renderSimulatorContent(cat) {
+      const panel = document.getElementById('sim-panel-content');
+      
+      const contents = {
+        sistema: `
+          <div class="space-y-4">
+            <h4 class="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+              <i class="fas fa-laptop text-winBlue-500"></i> Sistema
+            </h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Ajustes gerais do computador, tela, som e energia.</p>
+            
+            <div class="space-y-2">
+              <div class="p-3 border border-slate-200 dark:border-zinc-700 rounded-lg flex items-center justify-between hover:bg-slate-50 dark:hover:bg-zinc-800 transition-colors">
+                <div>
+                  <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Tela (Brilho, Luz Noturna, Resolução)</p>
+                  <p class="text-[11px] text-slate-500">Ajuste o conforto visual e tamanho das fontes.</p>
+                </div>
+                <span class="text-xs text-winBlue-500 font-semibold">Configurar &rarr;</span>
+              </div>
+
+              <div class="p-3 border border-slate-200 dark:border-zinc-700 rounded-lg flex items-center justify-between hover:bg-slate-50 dark:hover:bg-zinc-800 transition-colors">
+                <div>
+                  <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Som (Volume, Alto-falantes, Microfone)</p>
+                  <p class="text-[11px] text-slate-500">Escolha onde o áudio deve ser reproduzido.</p>
+                </div>
+                <span class="text-xs text-winBlue-500 font-semibold">Configurar &rarr;</span>
+              </div>
+
+              <div class="p-3 border border-slate-200 dark:border-zinc-700 rounded-lg flex items-center justify-between hover:bg-slate-50 dark:hover:bg-zinc-800 transition-colors">
+                <div>
+                  <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Armazenamento (Sensor de Armazenamento)</p>
+                  <p class="text-[11px] text-slate-500">Limpe arquivos temporários para liberar espaço em disco.</p>
+                </div>
+                <span class="text-xs text-winBlue-500 font-semibold">Configurar &rarr;</span>
+              </div>
+            </div>
+          </div>
+        `,
+        bluetooth: `
+          <div class="space-y-4">
+            <h4 class="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+              <i class="fab fa-bluetooth-b text-blue-500"></i> Bluetooth e dispositivos
+            </h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Conecte novos fones, mouses, impressoras e celulares.</p>
+            
+            <div class="p-4 border border-dashed border-slate-300 dark:border-zinc-700 rounded-lg text-center space-y-2">
+              <i class="fas fa-plus-circle text-2xl text-winBlue-500"></i>
+              <p class="text-xs font-bold text-slate-700 dark:text-slate-300">Adicionar dispositivo Bluetooth</p>
+              <p class="text-[11px] text-slate-500">Certifique-se de que o dispositivo esteja ligado e visível.</p>
+            </div>
+          </div>
+        `,
+        personalizacao: `
+          <div class="space-y-4">
+            <h4 class="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+              <i class="fas fa-paint-brush text-purple-500"></i> Personalização
+            </h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Deixe o computador com a sua cara.</p>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div class="p-3 border border-slate-200 dark:border-zinc-700 rounded-lg text-center bg-slate-100 dark:bg-zinc-800">
+                <i class="fas fa-image text-xl text-purple-500 mb-1"></i>
+                <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Plano de Fundo</p>
+                <p class="text-[10px] text-slate-500">Trocar papel de parede</p>
+              </div>
+
+              <div class="p-3 border border-slate-200 dark:border-zinc-700 rounded-lg text-center bg-slate-100 dark:bg-zinc-800">
+                <i class="fas fa-adjust text-xl text-amber-500 mb-1"></i>
+                <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Cores</p>
+                <p class="text-[10px] text-slate-500">Modo Claro ou Escuro</p>
+              </div>
+
+              <div class="p-3 border border-slate-200 dark:border-zinc-700 rounded-lg text-center bg-slate-100 dark:bg-zinc-800 col-span-2">
+                <i class="fas fa-window-maximize text-xl text-winBlue-500 mb-1"></i>
+                <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Barra de Tarefas</p>
+                <p class="text-[10px] text-slate-500">Centralizar ou alinhar ícones à esquerda</p>
+              </div>
+            </div>
+          </div>
+        `,
+        aplicativos: `
+          <div class="space-y-4">
+            <h4 class="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+              <i class="fas fa-th-large text-emerald-500"></i> Aplicativos
+            </h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Gerencie todos os programas instalados no sistema.</p>
+
+            <div class="p-3 border border-slate-200 dark:border-zinc-700 rounded-lg">
+              <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Aplicativos instalados</p>
+              <p class="text-[11px] text-slate-500">Desinstale softwares desnecessários e libere espaço.</p>
+            </div>
+          </div>
+        `,
+        privacidade: `
+          <div class="space-y-4">
+            <h4 class="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+              <i class="fas fa-shield-alt text-amber-500"></i> Privacidade e segurança
+            </h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Gerencie a segurança da conta e permissões de apps.</p>
+
+            <div class="space-y-2">
+              <div class="p-3 border border-slate-200 dark:border-zinc-700 rounded-lg flex items-center justify-between">
+                <span class="text-xs font-semibold text-slate-700 dark:text-slate-300"><i class="fas fa-video mr-2 text-red-400"></i> Permissões da Câmera</span>
+                <span class="text-xs text-emerald-600 font-bold">Ativado</span>
+              </div>
+              <div class="p-3 border border-slate-200 dark:border-zinc-700 rounded-lg flex items-center justify-between">
+                <span class="text-xs font-semibold text-slate-700 dark:text-slate-300"><i class="fas fa-microphone mr-2 text-blue-400"></i> Permissões do Microfone</span>
+                <span class="text-xs text-emerald-600 font-bold">Ativado</span>
+              </div>
+            </div>
+          </div>
+        `,
+        update: `
+          <div class="space-y-4">
+            <h4 class="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+              <i class="fas fa-sync-alt text-sky-500"></i> Windows Update
+            </h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Mantenha seu sistema sempre seguro com as últimas atualizações.</p>
+
+            <div class="p-4 bg-winBlue-50 dark:bg-winBlue-900/20 border border-winBlue-200 dark:border-winBlue-800 rounded-xl space-y-3">
+              <div class="flex items-center space-x-3">
+                <i class="fas fa-check-circle text-emerald-500 text-2xl"></i>
+                <div>
+                  <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Seu computador está atualizado</p>
+                  <p class="text-[10px] text-slate-500">Última verificação: Hoje, agora há pouco.</p>
+                </div>
+              </div>
+              <button class="w-full py-2 bg-winBlue-500 hover:bg-winBlue-600 text-white rounded-lg text-xs font-bold shadow-sm transition-colors">
+                Verificar se há atualizações
+              </button>
+            </div>
+          </div>
+        `
+      };
+
+      panel.innerHTML = contents[cat] || contents['sistema'];
+    }
+
+    function renderChecklist() {
+      const container = document.getElementById('tasksContainer');
+      container.innerHTML = tasksData.map((task, idx) => `
+        <div class="p-4 border rounded-xl border-slate-200 dark:border-zinc-700 hover:border-winBlue-400 transition-all bg-slate-50/50 dark:bg-zinc-800/50 flex items-start space-x-3">
+          <input type="checkbox" id="task-${task.id}" onchange="toggleTask('${task.id}')" class="mt-1 w-5 h-5 rounded text-winBlue-500 focus:ring-winBlue-400 cursor-pointer accent-winBlue-500">
+          <label for="task-${task.id}" class="cursor-pointer flex-grow select-none">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-sm text-slate-900 dark:text-slate-100">Desafio ${idx + 1}: ${task.title}</span>
+              <span class="text-[11px] px-2 py-0.5 rounded bg-winBlue-100 dark:bg-winBlue-900/50 text-winBlue-700 dark:text-winBlue-300 font-semibold">
+                Prática
+              </span>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">${task.desc}</p>
+          </label>
+        </div>
+      `).join('');
+    }
+
+    function toggleTask(id) {
+      if (completedTasks.has(id)) {
+        completedTasks.delete(id);
+      } else {
+        completedTasks.add(id);
+      }
+      updateOverallProgress();
+    }
+
+    function renderQuiz() {
+      const container = document.getElementById('quizQuestionsContainer');
+      container.innerHTML = quizData.map((q, idx) => `
+        <div class="p-5 border rounded-xl border-slate-200 dark:border-zinc-700 bg-slate-50/50 dark:bg-zinc-800/40 space-y-3" id="q-card-${q.id}">
+          <p class="font-bold text-sm text-slate-900 dark:text-slate-100">
+            ${idx + 1}. ${q.question}
+          </p>
+
+          <div class="space-y-2">
+            ${q.options.map((opt, optIdx) => `
+              <label class="flex items-center space-x-3 p-2.5 rounded-lg border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-slate-100 dark:hover:bg-zinc-700/50 cursor-pointer text-xs font-medium text-slate-700 dark:text-slate-200 transition-colors">
+                <input type="radio" name="question-${q.id}" value="${optIdx}" onchange="selectQuizAnswer(${q.id}, ${optIdx})" class="accent-winBlue-500 w-4 h-4">
+                <span>${opt}</span>
+              </label>
+            `).join('')}
+          </div>
+
+          <!-- Feedback Box -->
+          <div id="feedback-${q.id}" class="hidden p-3 rounded-lg text-xs font-medium"></div>
+        </div>
+      `).join('');
+    }
+
+    function selectQuizAnswer(questionId, selectedIdx) {
+      quizAnswers[questionId] = selectedIdx;
+      updateOverallProgress();
+    }
+
+    function evaluateQuiz() {
+      let score = 0;
+
+      quizData.forEach(q => {
+        const userChoice = quizAnswers[q.id];
+        const feedbackEl = document.getElementById(`feedback-${q.id}`);
+        const cardEl = document.getElementById(`q-card-${q.id}`);
+
+        if (userChoice === undefined) {
+          feedbackEl.className = "p-3 rounded-lg text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200 border border-amber-300 dark:border-amber-800";
+          feedbackEl.innerHTML = `<i class="fas fa-exclamation-triangle mr-1"></i> Por favor, escolha uma opção para esta pergunta.`;
+          feedbackEl.classList.remove('hidden');
+        } else if (userChoice === q.answer) {
+          score++;
+          feedbackEl.className = "p-3 rounded-lg text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-800";
+          feedbackEl.innerHTML = `<i class="fas fa-check-circle mr-1"></i> <strong>Correto!</strong> ${q.explanation}`;
+          feedbackEl.classList.remove('hidden');
+        } else {
+          feedbackEl.className = "p-3 rounded-lg text-xs font-medium bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-200 border border-rose-300 dark:border-rose-800";
+          feedbackEl.innerHTML = `<i class="fas fa-times-circle mr-1"></i> <strong>Incorreto.</strong> Resposta certa: <em>${q.options[q.answer]}</em>. <br>${q.explanation}`;
+          feedbackEl.classList.remove('hidden');
+        }
+      });
+
+      document.getElementById('quizScoreBadge').innerText = `${score} / 10`;
+      updateOverallProgress();
+    }
+
+    function resetQuiz() {
+      quizAnswers = {};
+      document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+      quizData.forEach(q => {
+        const feedbackEl = document.getElementById(`feedback-${q.id}`);
+        if (feedbackEl) feedbackEl.classList.add('hidden');
+      });
+      document.getElementById('quizScoreBadge').innerText = `0 / 10`;
+      updateOverallProgress();
+    }
+
+    function updateOverallProgress() {
+      const totalTasksCount = tasksData.length; // 5 tasks
+      const totalQuestionsCount = quizData.length; // 10 questions
+      const grandTotalCount = totalTasksCount + totalQuestionsCount; // 15 items total
+
+      const tasksCompletedCount = completedTasks.size;
+      const questionsAnsweredCount = Object.keys(quizAnswers).length;
+
+      const currentTotalCompleted = tasksCompletedCount + questionsAnsweredCount;
+      const percent = Math.round((currentTotalCompleted / grandTotalCount) * 100);
+
+      document.getElementById('mainProgressBar').style.width = `${percent}%`;
+      document.getElementById('progressBarLabel').innerText = `${currentTotalCompleted} de ${grandTotalCount} concluídos`;
+      document.getElementById('overallProgressText').innerText = `${percent}%`;
+
+      // Show completion certificate if 100% completed
+      const completionCard = document.getElementById('completionCard');
+      if (percent === 100) {
+        completionCard.classList.remove('hidden');
+      } else {
+        completionCard.classList.add('hidden');
+      }
+    }
+  </script>
+</body>
+</html>
