@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atividade de Pesquisa: Usuários Avançados de Sistema</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Google Fonts - Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              500: '#2563eb',
+              600: '#1d4ed8',
+              700: '#1e40af',
+              800: '#1e3a8a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Estilos personalizados para impressão */
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+      body {
+        background: white !important;
+        color: black !important;
+        padding: 0 !important;
+      }
+      .card-print {
+        border: 1px solid #ccc !important;
+        box-shadow: none !important;
+        break-inside: avoid;
+        margin-bottom: 1.5rem !important;
+      }
+      textarea {
+        border: none !important;
+        resize: none !important;
+        background: #fafafa !important;
+        padding: 8px !important;
+        min-height: auto !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+
+  <header class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-40 no-print shadow-md">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-brand-600 flex items-center justify-center text-white font-bold text-xl shadow-inner">
+          <i class="fa-solid fa-laptop-code"></i>
+        </div>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold leading-tight">Caderno de Pesquisa Interativo</h1>
+          <p class="text-xs text-slate-400">UC: Usuários Avançados de Sistema • Curso Operador de Computador</p>
+        </div>
+      </div>
+
+      <!-- Barra de Progresso e Notificação de Salvamento -->
+      <div class="flex items-center space-x-6">
+        <div class="hidden md:flex flex-col items-end">
+          <div class="flex items-center space-x-2 text-xs text-slate-300 font-medium">
+            <span>Progresso da Atividade:</span>
+            <span id="progress-percent" class="font-bold text-brand-400">0%</span>
+          </div>
+          <div class="w-40 bg-slate-700 h-2 rounded-full overflow-hidden mt-1">
+            <div id="progress-bar" class="bg-brand-500 h-full transition-all duration-300 w-0"></div>
+          </div>
+        </div>
+
+        <div id="save-status" class="flex items-center text-xs text-emerald-400 bg-emerald-950/60 border border-emerald-800/50 px-2.5 py-1 rounded-lg">
+          <i class="fa-solid fa-floppy-disk mr-1.5"></i>
+          <span>Auto-salvo</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-8 flex-grow w-full space-y-8">
+    
+    <!-- Banner de Orientação -->
+    <section class="bg-gradient-to-r from-brand-700 to-indigo-900 rounded-2xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+      <div class="relative z-10 max-w-3xl space-y-3">
+        <span class="bg-brand-500/30 text-brand-200 border border-brand-400/30 text-xs font-semibold px-3 py-1 rounded-full inline-block uppercase tracking-wider">
+          Pesquisa Autônoma
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Atividade de Pesquisa e Aprendizado</h2>
+        <p class="text-slate-200 text-sm sm:text-base leading-relaxed">
+          Pesquise cada um dos tópicos abaixo utilizando o navegador no seu computador. Escreva as respostas com **suas próprias palavras** para fixar os conceitos. As alterações são salvas automaticamente neste navegador!
+        </p>
+      </div>
+      <div class="absolute -right-8 -bottom-8 opacity-10 text-9xl pointer-events-none">
+        <i class="fa-solid fa-brain"></i>
+      </div>
+    </section>
+
+    <!-- Dados do Aluno -->
+    <section class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4 card-print">
+      <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-100 pb-3">
+        <i class="fa-solid fa-id-card text-brand-600"></i>
+        Identificação do Aluno
+      </h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Nome Completo do Aluno</label>
+          <input type="text" id="student-name" placeholder="Digite seu nome..." class="w-full text-sm px-3.5 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Turma / Modalidade</label>
+          <input type="text" id="student-class" placeholder="Ex: Operador de Computador - T01" class="w-full text-sm px-3.5 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Nome do Docente</label>
+          <input type="text" id="teacher-name" placeholder="Nome do Professor(a)" class="w-full text-sm px-3.5 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Data da Entrega</label>
+          <input type="date" id="submission-date" class="w-full text-sm px-3.5 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition" />
+        </div>
+      </div>
+    </section>
+
+    <div class="space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+        <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <span class="w-7 h-7 bg-brand-100 text-brand-700 rounded-lg flex items-center justify-center text-sm font-black">1</span>
+          Módulo 1: Ferramentas dos Sistemas Operacionais
+        </h2>
+        <span class="text-xs font-medium text-slate-500">5 Tópicos</span>
+      </div>
+
+      <!-- Tópico 1.1 -->
+      <article class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4 transition hover:border-slate-300 card-print" id="card-1-1">
+        <div class="flex flex-wrap items-start justify-between gap-2 border-b border-slate-100 pb-3">
+          <div>
+            <span class="text-xs font-bold text-brand-600 uppercase tracking-wider">Tópico 1.1</span>
+            <h3 class="text-lg font-bold text-slate-800">Gerenciador de Contas e Perfis</h3>
+          </div>
+          <span class="status-badge bg-slate-100 text-slate-600 text-xs px-2.5 py-1 rounded-full font-medium">Pendente</span>
+        </div>
+
+        <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 text-xs text-slate-600 space-y-1">
+          <p class="font-semibold text-slate-700 flex items-center gap-1.5">
+            <i class="fa-solid fa-magnifying-glass text-brand-500"></i> Perguntas Guia para Pesquisa:
+          </p>
+          <ul class="list-disc list-inside space-y-0.5 pl-1 text-slate-600">
+            <li>O que são perfis de usuário em um sistema operacional?</li>
+            <li>Qual a diferença entre uma conta de <strong>Administrador</strong> e uma conta de <strong>Usuário Padrão/Convidado</strong>?</li>
+            <li>Por que é importante restringir privilégios em um computador corporativo?</li>
+          </ul>
+        </div>
+
+        <div>
+          <label for="q1_1" class="block text-xs font-semibold text-slate-700 mb-1">Sua Resposta e Explicação:</label>
+          <textarea id="q1_1" rows="5" placeholder="Digite sua explicação detalhada com suas palavras..." class="question-input w-full p-3.5 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition bg-slate-50/50 focus:bg-white"></textarea>
+          <div class="flex justify-between items-center text-xs text-slate-400 mt-1">
+            <span>Procure dar exemplos reais de uso em empresas.</span>
+            <span class="word-counter">0 palavras</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Tópico 1.2 -->
+      <article class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4 transition hover:border-slate-300 card-print" id="card-1-2">
+        <div class="flex flex-wrap items-start justify-between gap-2 border-b border-slate-100 pb-3">
+          <div>
+            <span class="text-xs font-bold text-brand-600 uppercase tracking-wider">Tópico 1.2</span>
+            <h3 class="text-lg font-bold text-slate-800">Gerenciador de Tarefas / Monitor do Sistema</h3>
+          </div>
+          <span class="status-badge bg-slate-100 text-slate-600 text-xs px-2.5 py-1 rounded-full font-medium">Pendente</span>
+        </div>
+
+        <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 text-xs text-slate-600 space-y-1">
+          <p class="font-semibold text-slate-700 flex items-center gap-1.5">
+            <i class="fa-solid fa-magnifying-glass text-brand-500"></i> Perguntas Guia para Pesquisa:
+          </p>
+          <ul class="list-disc list-inside space-y-0.5 pl-1 text-slate-600">
+            <li>Para que serve o Gerenciador de Tarefas (ou Monitor do Sistema no Linux/Mac)?</li>
+            <li>Como ele ajuda a identificar programas que estão travando ou consumindo muita memória/CPU?</li>
+            <li>O que são processos executados em segundo plano (*background*)?</li>
+          </ul>
+        </div>
+
+        <div>
+          <label for="q1_2" class="block text-xs font-semibold text-slate-700 mb-1">Sua Resposta e Explicação:</label>
+          <textarea id="q1_2" rows="5" placeholder="Digite sua explicação sobre a utilidade do Gerenciador de Tarefas..." class="question-input w-full p-3.5 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition bg-slate-50/50 focus:bg-white"></textarea>
+          <div class="flex justify-between items-center text-xs text-slate-400 mt-1">
+            <span>Dica: Pressione Ctrl + Shift + Esc no Windows para observar seu funcionamento.</span>
+            <span class="word-counter">0 palavras</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Tópico 1.3 -->
+      <article class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4 transition hover:border-slate-300 card-print" id="card-1-3">
+        <div class="flex flex-wrap items-start justify-between gap-2 border-b border-slate-100 pb-3">
+          <div>
+            <span class="text-xs font-bold text-brand-600 uppercase tracking-wider">Tópico 1.3</span>
+            <h3 class="text-lg font-bold text-slate-800">Gerenciador de E-mails (Clientes Desktop vs Webmail)</h3>
+          </div>
+          <span class="status-badge bg-slate-100 text-slate-600 text-xs px-2.5 py-1 rounded-full font-medium">Pendente</span>
+        </div>
+
+        <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 text-xs text-slate-600 space-y-1">
+          <p class="font-semibold text-slate-700 flex items-center gap-1.5">
+            <i class="fa-solid fa-magnifying-glass text-brand-500"></i> Perguntas Guia para Pesquisa:
+          </p>
+          <ul class="list-disc list-inside space-y-0.5 pl-1 text-slate-600">
+            <li>O que é um cliente de e-mails local (ex: Outlook, Thunderbird) e como se difere do Webmail (Navegador)?</li>
+            <li>Quais as vantagens de configurar uma conta corporativa em um gerenciador local?</li>
+            <li>Qual a diferença básica entre os protocolos de recebimento <strong>IMAP</strong> e <strong>POP3</strong>?</li>
+          </ul>
+        </div>
+
+        <div>
+          <label for="q1_3" class="block text-xs font-semibold text-slate-700 mb-1">Sua Resposta e Explicação:</label>
+          <textarea id="q1_3" rows="5" placeholder="Explique sobre os clientes de e-mail e os protocolos IMAP/POP3..." class="question-input w-full p-3.5 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition bg-slate-50/50 focus:bg-white"></textarea>
+          <div class="flex justify-between items-center text-xs text-slate-400 mt-1">
+            <span>Dica de busca: "Diferença entre IMAP e POP3" e "Vantagens do Microsoft Outlook".</span>
+            <span class="word-counter">0 palavras</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Tópico 1.4 -->
+      <article class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4 transition hover:border-slate-300 card-print" id="card-1-4">
+        <div class="flex flex-wrap items-start justify-between gap-2 border-b border-slate-100 pb-3">
+          <div>
+            <span class="text-xs font-bold text-brand-600 uppercase tracking-wider">Tópico 1.4</span>
+            <h3 class="text-lg font-bold text-slate-800">Adicionar e Remover Programas</h3>
+          </div>
+          <span class="status-badge bg-slate-100 text-slate-600 text-xs px-2.5 py-1 rounded-full font-medium">Pendente</span>
+        </div>
+
+        <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 text-xs text-slate-600 space-y-1">
+          <p class="font-semibold text-slate-700 flex items-center gap-1.5">
+            <i class="fa-solid fa-magnifying-glass text-brand-500"></i> Perguntas Guia para Pesquisa:
+          </p>
+          <ul class="list-disc list-inside space-y-0.5 pl-1 text-slate-600">
+            <li>Qual é a forma correta de desinstalar um aplicativo no sistema operacional?</li>
+            <li>Por que simplesmente deletar o atalho ou a pasta do programa enviando para a lixeira é incorreto?</li>
+            <li>O que são dependências ou componentes de sistema que às vezes são instalados junto com programas?</li>
+          </ul>
+        </div>
+
+        <div>
+          <label for="q1_4" class="block text-xs font-semibold text-slate-700 mb-1">Sua Resposta e Explicação:</label>
+          <textarea id="q1_4" rows="5" placeholder="Explique o processo de desinstalação correto e o registro do sistema..." class="question-input w-full p-3.5 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition bg-slate-50/50 focus:bg-white"></textarea>
+          <div class="flex justify-between items-center text-xs text-slate-400 mt-1">
+            <span>Explique o que acontece no registro e nos arquivos residuais do sistema.</span>
+            <span class="word-counter">0 palavras</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Tópico 1.5 -->
+      <article class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4 transition hover:border-slate-300 card-print" id="card-1-5">
+        <div class="flex flex-wrap items-start justify-between gap-2 border-b border-slate-100 pb-3">
+          <div>
+            <span class="text-xs font-bold text-brand-600 uppercase tracking-wider">Tópico 1.5</span>
+            <h3 class="text-lg font-bold text-slate-800">Ferramentas de Acessibilidade</h3>
+          </div>
+          <span class="status-badge bg-slate-100 text-slate-600 text-xs px-2.5 py-1 rounded-full font-medium">Pendente</span>
+        </div>
+
+        <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 text-xs text-slate-600 space-y-1">
+          <p class="font-semibold text-slate-700 flex items-center gap-1.5">
+            <i class="fa-solid fa-magnifying-glass text-brand-500"></i> Perguntas Guia para Pesquisa:
+          </p>
+          <ul class="list-disc list-inside space-y-0.5 pl-1 text-slate-600">
+            <li>Quais são as principais ferramentas de acessibilidade nativas (ex: Narrador, Lupa, Teclado Virtual, Alto Contraste)?</li>
+            <li>Qual a relevância dessas ferramentas para a inclusão de pessoas com deficiência no ambiente corporativo?</li>
+          </ul>
+        </div>
+
+        <div>
+          <label for="q1_5" class="block text-xs font-semibold text-slate-700 mb-1">Sua Resposta e Explicação:</label>
+          <textarea id="q1_5" rows="5" placeholder="Descreva os recursos de acessibilidade e sua importância social..." class="question-input w-full p-3.5 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition bg-slate-50/50 focus:bg-white"></textarea>
+          <div class="flex justify-between items-center text-xs text-slate-400 mt-1">
+            <span>Dica: Pesquise como atuar na inclusão digital no local de trabalho.</span>
+            <span class="word-counter">0 palavras</span>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div class="space-y-6 pt-4">
+      <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+        <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <span class="w-7 h-7 bg-emerald-100 text-emerald-800 rounded-lg flex items-center justify-center text-sm font-black">2</span>
+          Módulo 2: Segurança de Sistemas e Dados
+        </h2>
+        <span class="text-xs font-medium text-slate-500">3 Tópicos</span>
+      </div>
+
+      <!-- Tópico 2.1 -->
+      <article class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4 transition hover:border-slate-300 card-print" id="card-2-1">
+        <div class="flex flex-wrap items-start justify-between gap-2 border-b border-slate-100 pb-3">
+          <div>
+            <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Tópico 2.1</span>
+            <h3 class="text-lg font-bold text-slate-800">VPN de Acesso Remoto</h3>
+          </div>
+          <span class="status-badge bg-slate-100 text-slate-600 text-xs px-2.5 py-1 rounded-full font-medium">Pendente</span>
+        </div>
+
+        <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 text-xs text-slate-600 space-y-1">
+          <p class="font-semibold text-slate-700 flex items-center gap-1.5">
+            <i class="fa-solid fa-magnifying-glass text-emerald-600"></i> Perguntas Guia para Pesquisa:
+          </p>
+          <ul class="list-disc list-inside space-y-0.5 pl-1 text-slate-600">
+            <li>O que significa a sigla <strong>VPN</strong> (<em>Virtual Private Network</em>)?</li>
+            <li>Como a VPN funciona e por que ela é essencial para o trabalho remoto (<em>home office</em>) seguro?</li>
+            <li>De que forma ela protege os dados transmitidos pela internet (criptografia e túnel de comunicação)?</li>
+          </ul>
+        </div>
+
+        <div>
+          <label for="q2_1" class="block text-xs font-semibold text-slate-700 mb-1">Sua Resposta e Explicação:</label>
+          <textarea id="q2_1" rows="5" placeholder="Explique a tecnologia VPN e a importância do tunelamento de dados..." class="question-input w-full p-3.5 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition bg-slate-50/50 focus:bg-white"></textarea>
+          <div class="flex justify-between items-center text-xs text-slate-400 mt-1">
+            <span>Dica: Use a metáfora do "túnel privado na estrada pública da internet".</span>
+            <span class="word-counter">0 palavras</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Tópico 2.2 -->
+      <article class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4 transition hover:border-slate-300 card-print" id="card-2-2">
+        <div class="flex flex-wrap items-start justify-between gap-2 border-b border-slate-100 pb-3">
+          <div>
+            <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Tópico 2.2</span>
+            <h3 class="text-lg font-bold text-slate-800">Alteração e Gestão de Senhas</h3>
+          </div>
+          <span class="status-badge bg-slate-100 text-slate-600 text-xs px-2.5 py-1 rounded-full font-medium">Pendente</span>
+        </div>
+
+        <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 text-xs text-slate-600 space-y-1">
+          <p class="font-semibold text-slate-700 flex items-center gap-1.5">
+            <i class="fa-solid fa-magnifying-glass text-emerald-600"></i> Perguntas Guia para Pesquisa:
+          </p>
+          <ul class="list-disc list-inside space-y-0.5 pl-1 text-slate-600">
+            <li>Quais são as boas práticas para a criação de senhas verdadeiramente fortes?</li>
+            <li>Com que frequência as senhas devem ser alteradas em um ambiente de trabalho?</li>
+            <li>O que é a <strong>Autenticação em Dois Fatores (2FA/MFA)</strong> e por que ela é tão recomendada?</li>
+          </ul>
+        </div>
+
+        <div>
+          <label for="q2_2" class="block text-xs font-semibold text-slate-700 mb-1">Sua Resposta e Explicação:</label>
+          <textarea id="q2_2" rows="5" placeholder="Escreva sobre a complexidade de senhas e a importância do 2FA..." class="question-input w-full p-3.5 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition bg-slate-50/50 focus:bg-white"></textarea>
+          <div class="flex justify-between items-center text-xs text-slate-400 mt-1">
+            <span>Evite senhas como "123456" ou datas de aniversário!</span>
+            <span class="word-counter">0 palavras</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Tópico 2.3 -->
+      <article class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4 transition hover:border-slate-300 card-print" id="card-2-3">
+        <div class="flex flex-wrap items-start justify-between gap-2 border-b border-slate-100 pb-3">
+          <div>
+            <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Tópico 2.3</span>
+            <h3 class="text-lg font-bold text-slate-800">Atualização do Sistema Operacional</h3>
+          </div>
+          <span class="status-badge bg-slate-100 text-slate-600 text-xs px-2.5 py-1 rounded-full font-medium">Pendente</span>
+        </div>
+
+        <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 text-xs text-slate-600 space-y-1">
+          <p class="font-semibold text-slate-700 flex items-center gap-1.5">
+            <i class="fa-solid fa-magnifying-glass text-emerald-600"></i> Perguntas Guia para Pesquisa:
+          </p>
+          <ul class="list-disc list-inside space-y-0.5 pl-1 text-slate-600">
+            <li>Por que é vital manter o sistema operacional sempre atualizado (ex: Windows Update, pacotes Linux)?</li>
+            <li>O que são "patches de segurança" (*patches* de correção) e vulnerabilidades *Zero-Day*?</li>
+            <li>Quais os perigos de utilizar sistemas operacionais descontinuados ou sem suporte oficial?</li>
+          </ul>
+        </div>
+
+        <div>
+          <label for="q2_3" class="block text-xs font-semibold text-slate-700 mb-1">Sua Resposta e Explicação:</label>
+          <textarea id="q2_3" rows="5" placeholder="Explique os riscos de sistemas desatualizados e o papel dos patches de segurança..." class="question-input w-full p-3.5 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition bg-slate-50/50 focus:bg-white"></textarea>
+          <div class="flex justify-between items-center text-xs text-slate-400 mt-1">
+            <span>Dica: Pesquise sobre ataques de ransomware em sistemas desatualizados.</span>
+            <span class="word-counter">0 palavras</span>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <article class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4 card-print" id="card-conclusion">
+      <div class="border-b border-slate-100 pb-3">
+        <span class="text-xs font-bold text-purple-600 uppercase tracking-wider">Conclusão Final</span>
+        <h3 class="text-lg font-bold text-slate-800">Síntese do Aprendizado</h3>
+      </div>
+
+      <div class="bg-purple-50 border border-purple-200/80 rounded-xl p-3 text-xs text-purple-950">
+        <p class="font-semibold mb-1">Reflexão Prática:</p>
+        <p>Com base em tudo o que você pesquisou acima, como o conhecimento avançado de Sistema Operacional e Segurança ajudará no seu dia a dia profissional como <strong>Operador de Computador</strong>?</p>
+      </div>
+
+      <div>
+        <textarea id="q_conclusion" rows="5" placeholder="Escreva aqui sua síntese e reflexão final sobre a atividade..." class="question-input w-full p-3.5 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition bg-slate-50/50 focus:bg-white"></textarea>
+        <div class="flex justify-between items-center text-xs text-slate-400 mt-1">
+          <span>Resuma as competências adquiridas.</span>
+          <span class="word-counter">0 palavras</span>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <footer class="bg-white border-t border-slate-200 py-4 px-4 sticky bottom-0 z-30 shadow-lg no-print">
+    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center space-x-2 text-xs text-slate-500">
+        <i class="fa-solid fa-circle-info text-brand-500"></i>
+        <span>Seu texto é salvo automaticamente no seu computador.</span>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <button id="btn-copy" class="inline-flex items-center gap-2 px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition">
+          <i class="fa-solid fa-copy"></i>
+          <span>Copiar Tudo</span>
+        </button>
+
+        <button id="btn-download" class="inline-flex items-center gap-2 px-3.5 py-2 bg-brand-50 hover:bg-brand-100 text-brand-700 border border-brand-200 text-xs font-semibold rounded-xl transition">
+          <i class="fa-solid fa-download"></i>
+          <span>Baixar Arquivo (.txt)</span>
+        </button>
+
+        <button id="btn-print" class="inline-flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold rounded-xl shadow-sm transition">
+          <i class="fa-solid fa-print"></i>
+          <span>Imprimir / Salvar PDF</span>
+        </button>
+
+        <button id="btn-clear" class="inline-flex items-center gap-1.5 px-3 py-2 text-rose-600 hover:bg-rose-50 text-xs font-medium rounded-xl transition ml-2">
+          <i class="fa-solid fa-trash-can"></i>
+          <span>Limpar</span>
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Modal de Confirmação para Limpar -->
+  <div id="clear-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4">
+      <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-xl mx-auto">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <div class="text-center space-y-1">
+        <h3 class="font-bold text-slate-900 text-lg">Deseja apagar tudo?</h3>
+        <p class="text-xs text-slate-500">Todas as respostas e dados digitados serão removidos deste computador. Esta ação não pode ser desfeita.</p>
+      </div>
+      <div class="flex items-center gap-3 pt-2">
+        <button id="modal-cancel" class="w-1/2 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl transition">Cancelar</button>
+        <button id="modal-confirm" class="w-1/2 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs rounded-xl transition">Sim, Limpar Tudo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed top-20 right-6 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl z-50 text-xs font-medium flex items-center space-x-2 transition-all duration-300 transform translate-y-10 opacity-0 pointer-events-none">
+    <i id="toast-icon" class="fa-solid fa-check-circle text-emerald-400 text-sm"></i>
+    <span id="toast-msg">Mensagem</span>
+  </div>
+
+  <script>
+    // IDs de todos os campos salváveis
+    const fields = [
+      'student-name', 'student-class', 'teacher-name', 'submission-date',
+      'q1_1', 'q1_2', 'q1_3', 'q1_4', 'q1_5',
+      'q2_1', 'q2_2', 'q2_3', 'q_conclusion'
+    ];
+
+    const questionFields = ['q1_1', 'q1_2', 'q1_3', 'q1_4', 'q1_5', 'q2_1', 'q2_2', 'q2_3', 'q_conclusion'];
+
+    const STORAGE_KEY = 'TRABALHO_PESQUISA_SO_V1';
+
+    // Inicialização ao carregar
+    window.onload = function() {
+      loadSavedData();
+      attachEventListeners();
+      updateProgress();
+    };
+
+    // Carregar dados salvos do LocalStorage
+    function loadSavedData() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        try {
+          const data = JSON.parse(saved);
+          fields.forEach(id => {
+            const elem = document.getElementById(id);
+            if (elem && data[id] !== undefined) {
+              elem.value = data[id];
+              updateWordCount(elem);
+            }
+          });
+        } catch(e) {
+          console.error("Erro ao carregar dados", e);
+        }
+      }
+    }
+
+    // Salvar dados no LocalStorage
+    function saveData() {
+      const data = {};
+      fields.forEach(id => {
+        const elem = document.getElementById(id);
+        if (elem) {
+          data[id] = elem.value;
+        }
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      
+      // Animação visual de Auto-salvo
+      const status = document.getElementById('save-status');
+      status.classList.add('opacity-100');
+      status.style.transform = 'scale(1.03)';
+      setTimeout(() => {
+        status.style.transform = 'scale(1)';
+      }, 200);
+    }
+
+    // Atualizar contadores de palavras e progresso geral
+    function updateWordCount(textarea) {
+      const text = textarea.value.trim();
+      const count = text ? text.split(/\s+/).length : 0;
+      const card = textarea.closest('article');
+      
+      if (card) {
+        const counterElem = card.querySelector('.word-counter');
+        if (counterElem) counterElem.textContent = `${count} palavra${count === 1 ? '' : 's'}`;
+
+        const badge = card.querySelector('.status-badge');
+        if (badge) {
+          if (count > 5) {
+            badge.textContent = 'Respondido';
+            badge.className = 'status-badge bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs px-2.5 py-1 rounded-full font-semibold';
+          } else {
+            badge.textContent = 'Pendente';
+            badge.className = 'status-badge bg-slate-100 text-slate-600 text-xs px-2.5 py-1 rounded-full font-medium';
+          }
+        }
+      }
+    }
+
+    // Calcular o progresso total
+    function updateProgress() {
+      let completedCount = 0;
+      questionFields.forEach(id => {
+        const elem = document.getElementById(id);
+        if (elem && elem.value.trim().length > 15) {
+          completedCount++;
+        }
+      });
+
+      const percentage = Math.round((completedCount / questionFields.length) * 100);
+      
+      const bar = document.getElementById('progress-bar');
+      const text = document.getElementById('progress-percent');
+      if (bar) bar.style.width = percentage + '%';
+      if (text) text.textContent = percentage + '%';
+    }
+
+    // Adicionar escutadores de eventos
+    function attachEventListeners() {
+      fields.forEach(id => {
+        const elem = document.getElementById(id);
+        if (elem) {
+          elem.addEventListener('input', () => {
+            saveData();
+            if (elem.tagName.toLowerCase() === 'textarea') {
+              updateWordCount(elem);
+            }
+            updateProgress();
+          });
+        }
+      });
+
+      // Botão Imprimir
+      document.getElementById('btn-print').addEventListener('click', () => {
+        window.print();
+      });
+
+      // Botão Copiar Texto
+      document.getElementById('btn-copy').addEventListener('click', () => {
+        const formattedText = generateFormattedOutput();
+        copyToClipboard(formattedText);
+      });
+
+      // Botão Baixar TXT
+      document.getElementById('btn-download').addEventListener('click', () => {
+        downloadTextFile();
+      });
+
+      // Modal Limpar
+      const modal = document.getElementById('clear-modal');
+      document.getElementById('btn-clear').addEventListener('click', () => {
+        modal.classList.remove('hidden');
+      });
+      document.getElementById('modal-cancel').addEventListener('click', () => {
+        modal.classList.add('hidden');
+      });
+      document.getElementById('modal-confirm').addEventListener('click', () => {
+        fields.forEach(id => {
+          const elem = document.getElementById(id);
+          if (elem) elem.value = '';
+        });
+        localStorage.removeItem(STORAGE_KEY);
+        questionFields.forEach(id => {
+          const elem = document.getElementById(id);
+          if (elem) updateWordCount(elem);
+        });
+        updateProgress();
+        modal.classList.add('hidden');
+        showToast('Todas as respostas foram apagadas.', 'fa-trash-can', 'text-rose-400');
+      });
+    }
+
+    // Gerar texto formatado do trabalho completo
+    function generateFormattedOutput() {
+      const name = document.getElementById('student-name').value || 'Não informado';
+      const turma = document.getElementById('student-class').value || 'Não informada';
+      const teacher = document.getElementById('teacher-name').value || 'Não informado';
+      const date = document.getElementById('submission-date').value || 'Não informada';
+
+      return `==================================================
+TRABALHO DE PESQUISA: USUÁRIOS AVANÇADOS DE SISTEMA
+Curso: Operador de Computador
+==================================================
+
+[DADOS DO ALUNO]
+Nome do Aluno: ${name}
+Turma: ${turma}
+Professor(a): ${teacher}
+Data de Entrega: ${date}
+
+--------------------------------------------------
+MÓDULO 1: FERRAMENTAS DOS SISTEMAS OPERACIONAIS
+--------------------------------------------------
+
+1.1. Gerenciador de contas e perfis:
+${document.getElementById('q1_1').value || '(Sem resposta)'}
+
+1.2. Gerenciador de tarefas:
+${document.getElementById('q1_2').value || '(Sem resposta)'}
+
+1.3. Gerenciador de e-mails:
+${document.getElementById('q1_3').value || '(Sem resposta)'}
+
+1.4. Adicionar e remover programas:
+${document.getElementById('q1_4').value || '(Sem resposta)'}
+
+1.5. Ferramentas de acessibilidade:
+${document.getElementById('q1_5').value || '(Sem resposta)'}
+
+--------------------------------------------------
+MÓDULO 2: SEGURANÇA DE SISTEMAS E DADOS
+--------------------------------------------------
+
+2.1. VPN de acesso remoto:
+${document.getElementById('q2_1').value || '(Sem resposta)'}
+
+2.2. Alteração e gestão de senhas:
+${document.getElementById('q2_2').value || '(Sem resposta)'}
+
+2.3. Atualização do Sistema Operacional:
+${document.getElementById('q2_3').value || '(Sem resposta)'}
+
+--------------------------------------------------
+SÍNTESE / CONCLUSÃO FINAL
+--------------------------------------------------
+${document.getElementById('q_conclusion').value || '(Sem resposta)'}
+
+==================================================
+Gerado via Caderno Digital de Pesquisa
+==================================================`;
+    }
+
+    // Função de Cópia compatível com iFrames
+    function copyToClipboard(text) {
+      const dummy = document.createElement("textarea");
+      document.body.appendChild(dummy);
+      dummy.value = text;
+      dummy.select();
+      document.execCommand("copy");
+      document.body.removeChild(dummy);
+      showToast('Trabalho copiado para a área de transferência!', 'fa-clipboard-check', 'text-emerald-400');
+    }
+
+    // Download em formato .txt / .md
+    function downloadTextFile() {
+      const text = generateFormattedOutput();
+      const studentName = (document.getElementById('student-name').value.trim() || 'Aluno').replace(/[^a-zA-Z0-9]/g, '_');
+      const filename = `Trabalho_Usuarios_Avancados_${studentName}.txt`;
+      
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('Arquivo baixado com sucesso!', 'fa-circle-arrow-down', 'text-brand-400');
+    }
+
+    // Função Toast para avisos
+    function showToast(msg, icon = 'fa-check-circle', iconColor = 'text-emerald-400') {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-msg');
+      const toastIcon = document.getElementById('toast-icon');
+
+      toastMsg.textContent = msg;
+      toastIcon.className = `fa-solid ${icon} ${iconColor} text-sm`;
+
+      toast.classList.remove('translate-y-10', 'opacity-0', 'pointer-events-none');
+      
+      setTimeout(() => {
+        toast.classList.add('translate-y-10', 'opacity-0', 'pointer-events-none');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
